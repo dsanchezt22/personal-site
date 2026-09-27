@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diego Sanchez Tirado</title>
+  <meta name="description" content="Diego Sanchez Tirado is a Stanford electrical engineering student working on computer architecture, memory systems, and software. Seeking Summer 2027 internships.">
+  <meta name="robots" content="noindex">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f3f2ee">
+  <meta name="theme-color" content="#f3f2ee" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e0e0c" media="(prefers-color-scheme: dark)">
+  <meta property="og:title" content="Diego Sanchez Tirado">
+  <meta property="og:description" content="Stanford electrical engineering. Computer architecture, memory systems, and software. Summer 2027 internships.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="favicon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preload" href="fonts/inter-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    try {
+      var storedTheme = localStorage.getItem("theme");
+      if (storedTheme === "light" || storedTheme === "dark") {
+        document.documentElement.setAttribute("data-theme", storedTheme);
+      }
+    } catch (err) {}
+  </script>
+</head>
+<body>
+  <canvas id="field" aria-hidden="true"></canvas>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="top">
+    <div class="wrap top-inner">
+      <nav aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#work">Work</a>
+        <a class="nav-wide" href="#experience">Experience</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button type="button" class="theme" id="theme" aria-pressed="false">Dark</button>
+    </div>
+  </header>
+  <main id="content">
+    <div class="wrap">
+      <header class="hero">
+        <p class="kicker">Stanford EE · Class of 2029</p>
+        <h1>
+          <span>Diego</span>
+          <span>Sanchez</span>
+          <span>Tirado</span>
+        </h1>
+        <p class="dek">Computer architecture and software. Seeking Summer 2027 internships in hardware, memory systems, and AI/SWE.</p>
+        <p class="hero-links">
+          <a href="#work">Selected work</a>
+          <a href="Diego-Sanchez-Tirado-Resume.pdf">Resume</a>
+        </p>
+      </header>
+
+      <section id="about" class="reveal">
+        <h2><span>01</span> About</h2>
+        <p>I’m Diego Sanchez Tirado, a Stanford electrical engineering student (B.S. expected May 2029). I’m leaning toward VLSI, chip manufacturing, and circuit design. The research I do is in computer architecture and memory systems, and I build software alongside it.</p>
+        <p>I’m a researcher in Stanford’s Engineering Robust Systems Group with Prof. Subhasish Mitra, and a developer at Duna Strategies. In summer 2026 I interned at Amazon Lab126 as a software engineer and as a humanoid-robotics apprentice. I shipped Trus v2, a public generative interface at trus.dev, and I now focus on Duna.</p>
+      </section>
+
+      <section id="work">
+        <h2><span>02</span> Work</h2>
+        <div class="cards">
+          <article class="card reveal">
+            <p class="num">01</p>
+            <div class="card-main">
+              <h3>Area-scalable memory</h3>
+              <p class="meta">Research · <span class="when">Jan 2026 – present</span></p>
+              <p>Python models of LLM-inference throughput, latency, and memory under competing chip memory organizations. The work is with Stanford’s Engineering Robust Systems Group (Prof. Subhasish Mitra).</p>
+              <p>The models relate capacity, bandwidth density, and mesh or network-on-chip topology to batch size and context length. They compare a mesh-distributed, area-scalable backend with HBM under tensor- and pipeline-parallel plans, and report compute, memory, and interconnect in bandwidth-bound long-context KV-cache regimes.</p>
+              <p class="stack">Python</p>
+              <p class="links"><span class="todo">Public link TODO(Diego)</span></p>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <p class="num">02</p>
+            <div class="card-main">
+              <h3>Trus</h3>
+              <p class="meta">Product · shipped v2</p>
+              <p>A public generative interface. You describe an application in a sentence. Trus returns a tool built for that description, drawn from a trusted component library rather than from model-written UI code.</p>
+              <p>Shipped as v2 at trus.dev. A FastAPI service asks a model for a small JSON configuration. A Next.js canvas renders it with a fixed set of parts, on the order of 30. An event-sourced SQLite store sits under the generation path. I now focus on Duna.</p>
+              <p class="stack">Next.js, FastAPI, Python, SQLite</p>
+              <p class="links">
+                <a href="https://trus.dev" rel="noreferrer">trus.dev</a>
+                <span class="todo">Source TODO(Diego)</span>
+              </p>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <p class="num">03</p>
+            <div class="card-main">
+              <h3>FStea</h3>
+              <p class="meta">Duna Strategies · <span class="when">April 2026 – present</span></p>
+              <p>Collectors and a cockpit for a refrigerated ready-to-drink tea brand. Python collectors bring in public launch signals. A Node cockpit is the working surface.</p>
+              <p>Module 7, a news sweep, verified at 102 launch rows from 48 articles across 8 chains, mean quality 0.90. Modules 7–11 feed Module 4 scoring. When the collectors have no data, the fused score matches the previous score exactly.</p>
+              <p class="stack">Python, Node.js</p>
+              <p class="links">
+                <a href="https://github.com/dsanchezt22/FSTea" rel="noreferrer">Cockpit repository</a>
+                <span class="todo">Collectors TODO(Diego)</span>
+              </p>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <p class="num">04</p>
+            <div class="card-main">
+              <h3>Plate Scanner</h3>
+              <p class="meta">Personal</p>
+              <p>A phone web app for logging a Stanford dining-hall plate. A top photo, then a side photo. The portion comes from the plate’s dimensions and the two camera angles.</p>
+              <p>The browser checks the frame (whole rim, blur, glare). Grok vision names each food. A lookup against USDA FoodData Central, a restaurant page, or a brand label fills in closer numbers. A row is marked as a menu match only when it really is that dish. Otherwise it stays an estimate. The client is HTML, CSS, and JavaScript, served by a Python standard-library server.</p>
+              <p class="stack">HTML, CSS, JavaScript, Python</p>
+              <p class="links"><span class="todo">Public link TODO(Diego)</span></p>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <p class="num">05</p>
+            <div class="card-main">
+              <h3>D.O.S.</h3>
+              <p class="meta">Personal system</p>
+              <p>A private operating system for school, work, and the internship search. Domain agents keep their own context. A chief-of-staff agent handles the day, including calendar, mail, and a morning digest, and does not override the others.</p>
+              <p>Velvet, the console, generates the working surface. A deterministic ledger draws the same projections, so the data is still on screen if generation fails.</p>
+              <p class="stack">TypeScript</p>
+              <p class="links"><span class="todo">Public link TODO(Diego)</span></p>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <p class="num">06</p>
+            <div class="card-main">
+              <h3>Hardware builds</h3>
+              <p class="meta">Independent · <span class="when">Aug 2022 – present</span></p>
+              <p>Independent hardware, ongoing since 2022. A typing-force piezoelectric energy harvester with rectification and storage, measured for voltage and power against force and geometry.</p>
+              <p>A split ergonomic keyboard: CAD, a 3D-printed enclosure, and a custom PCB. A free-air active noise-control system with a microphone array and LiDAR on embedded hardware.</p>
+              <p class="stack">Onshape, custom PCB, 3D printing, embedded hardware</p>
+              <p class="links"><span class="todo">Public link TODO(Diego)</span></p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="experience" class="reveal">
+        <h2><span>03</span> Experience</h2>
+        <div class="roles">
+          <article class="role">
+            <div>
+              <div class="role-head">
+                <h3>Developer</h3>
+                <p class="role-when">April 2026 – present</p>
+              </div>
+              <p class="org"><a href="https://dunastrategies.com" rel="noreferrer">Duna Strategies</a></p>
+              <ul>
+                <li>Duna builds custom AI systems for small and mid-sized businesses.</li>
+                <li>Building FStea: Python collectors and a Node cockpit. Module 7 verified at 102 launch rows, 48 articles, 8 chains, mean quality 0.90. Modules 7–11 fused into Module 4 scoring.</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="role">
+            <div>
+              <div class="role-head">
+                <h3>Researcher</h3>
+                <p class="role-when">Jan 2026 – present</p>
+              </div>
+              <p class="org">Stanford Engineering Robust Systems Group · Prof. Subhasish Mitra</p>
+              <ul>
+                <li>Area-scalable memory analysis for LLM inference. Python models of throughput, latency, and memory under competing chip memory organizations, relating capacity, bandwidth density, and mesh or network-on-chip topology to batch size and context length.</li>
+                <li>Comparing mesh-distributed (area-scalable) and HBM backends with tensor- and pipeline-parallel planning. Reports break out compute, memory, and interconnect in bandwidth-bound long-context KV-cache regimes.</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="role">
+            <div>
+              <div class="role-head">
+                <h3>Software engineering intern</h3>
+                <p class="role-when">June 2026 – Sept 2026</p>
+              </div>
+              <p class="org">Amazon Lab126 · RAVEN, then Governed Knowledge Engine</p>
+              <ul>
+                <li>Built a daily idempotent ingest of Outlook, Slack (direct messages and channels), and Confluence into a searchable Markdown corpus.</li>
+                <li>Implemented an LLM-as-judge classifier with a hybrid preset and an auto-discovered taxonomy, typed links, and a conflict queue. It reached at least 80% accuracy on a labeled eval and indexed more than 2,000 items on the first production run.</li>
+                <li>Re-architected the pipeline as a Governed Knowledge Engine. MindCraft is the retrieval source of truth. Prompt-injection and PII checks gate admission before anything is indexed for retrieval agents.</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="role">
+            <div>
+              <div class="role-head">
+                <h3>Humanoid robotics apprentice</h3>
+                <p class="role-when">June 2026 – Sept 2026</p>
+              </div>
+              <p class="org">Amazon Lab126, Product Integrity / Reliability Lab · Dexmate “Labot”</p>
+              <ul>
+                <li>Ran VR-headset teleoperation demos on the Dexmate bimanual humanoid, under a senior test automation engineer, and labeled datasets for manipulation-policy training.</li>
+                <li>Trained and evaluated ACT and diffusion imitation policies on physical bimanual tasks, then applied residual RL (TD3) beyond the demonstrated behavior.</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="role">
+            <div>
+              <div class="role-head">
+                <h3>Head GTM intern</h3>
+                <p class="role-when">July 2025 – Oct 2025</p>
+              </div>
+              <p class="org">Code Four (YC X25)</p>
+              <ul>
+                <li>Built go-to-market automation in n8n, Apollo, and HubSpot, with agents and scrapers covering more than 10,000 police contacts and email and call sequencing.</li>
+                <li>Reached more than 1,100 departments, yielding more than 70 qualified meetings, more than 10 MOUs, and more than 520 officers.</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="role">
+            <div>
+              <div class="role-head">
+                <h3>Cyber threat intelligence research</h3>
+                <p class="role-when">Mar 2024 – July 2025</p>
+              </div>
+              <p class="org">Duke Pratt &amp; Digi Americas · Prof. Arturo F. Ehuan</p>
+              <ul>
+                <li>Co-authored LATAM Financial Threat Landscape 2025 with DigiAmericas and Recorded Future (LockBit, MisPadu, CL0P, Blind Eagle, HoraBot).</li>
+                <li>Maintained a Git-tracked indicator and TTP pipeline mapped to MITRE ATT&amp;CK.</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="education" class="reveal">
+        <h2><span>04</span> Education</h2>
+        <article class="school">
+          <div>
+            <div class="role-head">
+              <h3>Stanford University</h3>
+              <p class="school-when">Sept 2025 – May 2029</p>
+            </div>
+            <p class="org">B.S. Electrical Engineering, expected May 2029</p>
+            <p>Coursework: Intro to Making (EE 40M), Vector Calculus for Engineers (CME 100), Programming Abstractions (CS 106B), Probability (CS 109), ODEs for Engineers (CME 102).</p>
+            <p>Autumn 2026: EE 101A, EE 100, CS 329Z, ARCHLGY 151.</p>
+            <p>Earlier, at NCSSM (North Carolina School of Science and Mathematics): CS4270 Fundamentals of Object Oriented Design, and CS4330/CS4460 Server-Side Development.</p>
+            <p>FTC RoboKnights 8569: 5th of 390 at the NC State Championship.</p>
+          </div>
+        </article>
+      </section>
+
+      <section id="skills" class="reveal">
+        <h2><span>05</span> Skills</h2>
+        <dl class="ledger">
+          <dt>Hardware</dt>
+          <dd>Circuit design, PCB, soldering, CNC, 3D printing, laser cutting, piezoelectric instrumentation, microphone arrays, LiDAR.</dd>
+          <dt>Architecture</dt>
+          <dd>HBM, network-on-chip, tensor and pipeline parallelism. Models of capacity, bandwidth density, and KV-cache regimes.</dd>
+          <dt>Languages</dt>
+          <dd>Python, C++, JavaScript, TypeScript, HTML, CSS. English and Spanish.</dd>
+          <dt>ML / systems</dt>
+          <dd>LLM-as-judge pipelines, retrieval for agents, prompt-injection and PII gates, ACT, diffusion policies, TD3, FastAPI, Next.js, React.</dd>
+          <dt>CAD / tools</dt>
+          <dd>Onshape (certified), SolidWorks (FEA), Git, n8n. PLTW IED. MIT BSWI Python and GitHub.</dd>
+        </dl>
+      </section>
+
+      <section id="contact" class="reveal">
+        <h2><span>06</span> Contact</h2>
+        <dl class="ledger">
+          <dt>Email</dt>
+          <dd><a href="mailto:dsanchezt22@gmail.com">dsanchezt22@gmail.com</a></dd>
+          <dt>Phone</dt>
+          <dd><a href="tel:+19848956386">(984) 895-6386</a></dd>
+          <dt>GitHub</dt>
+          <dd><a href="https://github.com/dsanchezt22" rel="noreferrer">github.com/dsanchezt22</a></dd>
+          <dt>LinkedIn</dt>
+          <dd><span class="todo">TODO(Diego)</span></dd>
+          <dt>Headshot</dt>
+          <dd><span class="todo">TODO(Diego)</span></dd>
+          <dt>Resume</dt>
+          <dd><a href="Diego-Sanchez-Tirado-Resume.pdf">Download PDF</a></dd>
+          <dt>Location</dt>
+          <dd>Stanford, CA</dd>
+        </dl>
+      </section>
+
+      <footer class="colophon">
+        <p>Diego Sanchez Tirado · Stanford, CA</p>
+      </footer>
+    </div>
+  </main>
+  <script src="main.js"></script>
+</body>
+</html>
