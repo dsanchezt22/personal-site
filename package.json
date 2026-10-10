@@ -1,0 +1,13 @@
+{
+  "name": "diego-personal-site",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "deploy": "npm run build && wrangler deploy",
+    "deploy:check": "npm run build && wrangler deploy --dry-run",
+    "verify": "bash scripts/verify-site.sh"
+  },
+  "devDependencies": {
+    "wrangler": "4.149.0"
+  }
+}
