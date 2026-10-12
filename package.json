@@ -5,7 +5,7 @@
     "build": "node scripts/build.mjs",
     "deploy": "npm run build && wrangler deploy",
     "deploy:check": "npm run build && wrangler deploy --dry-run",
-    "verify": "bash scripts/verify-site.sh"
+    "verify": "npm run build && node --check main.js && bash scripts/verify-site.sh"
   },
   "devDependencies": {
     "wrangler": "4.149.0"

@@ -1,185 +1,194 @@
-/* Dot field: one canvas, paused when the tab is hidden.
-   prefers-reduced-motion paints a single static frame and stops. */
-
-(function () {
+(() => {
   const root = document.documentElement;
-  const button = document.getElementById("theme");
-  const header = document.querySelector(".top");
-  const canvas = document.getElementById("field");
-  const ctx = canvas.getContext("2d", { alpha: true });
-  const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const scheme = window.matchMedia("(prefers-color-scheme: dark)");
-  const fine = window.matchMedia("(pointer: fine)");
-  const pointer = { x: -9999, y: -9999, on: false };
-  let frame = 0;
-  let running = false;
-  let frames = 0;
+  const entrance = document.querySelector("#entrance");
+  const hero = document.querySelector(".hero");
+  const motionButton = document.querySelector("#motion");
+  const soundButton = document.querySelector("#sound");
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const finePointer = matchMedia("(pointer: fine)");
+  let motionOn = !reducedMotion.matches;
+  let soundOn = false;
+  let audio;
+  let pendingFrame = 0;
+  let closing = false;
 
-  function appearance() {
-    if (root.dataset.theme === "dark" || root.dataset.theme === "light") {
-      return root.dataset.theme;
+  function setMotion() {
+    root.classList.toggle("motion-off", !motionOn);
+    motionButton.setAttribute("aria-pressed", String(motionOn));
+    motionButton.setAttribute(
+      "aria-label",
+      `Turn motion ${motionOn ? "off" : "on"}`,
+    );
+    motionButton.querySelector(".control-label").textContent =
+      `Motion ${motionOn ? "on" : "off"}`;
+    if (!motionOn) {
+      root.style.setProperty("--pointer-x", "0px");
+      root.style.setProperty("--pointer-y", "0px");
     }
-    return scheme.matches ? "dark" : "light";
   }
 
-  function paintTheme() {
-    const dark = appearance() === "dark";
-    button.textContent = dark ? "Light" : "Dark";
-    button.setAttribute("aria-pressed", dark ? "true" : "false");
-    button.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
-    const themeMeta = document.querySelector('meta[name="theme-color"]:not([media])');
-    if (themeMeta) themeMeta.setAttribute("content", dark ? "#0e0e0c" : "#f3f2ee");
-  }
-
-  button.addEventListener("click", function () {
-    const next = appearance() === "dark" ? "light" : "dark";
-    root.dataset.theme = next;
+  // Sound starts only after an explicit click and consists of a short glass chime.
+  async function chime() {
+    if (!soundOn || document.hidden) return;
     try {
-      localStorage.setItem("theme", next);
-    } catch (err) {
-      /* private mode */
+      const Audio = window.AudioContext || window.webkitAudioContext;
+      if (!Audio) throw new Error("Audio unavailable");
+      audio ||= new Audio();
+      await audio.resume();
+      if (!soundOn || document.hidden) return;
+      [523.25, 783.99, 1046.5].forEach((frequency, index) => {
+        const tone = audio.createOscillator();
+        const gain = audio.createGain();
+        const start = audio.currentTime + index * 0.08;
+        tone.type = "sine";
+        tone.frequency.value = frequency;
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.035 / (index + 1), start + 0.008);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.8);
+        tone.connect(gain).connect(audio.destination);
+        tone.start(start);
+        tone.stop(start + 0.85);
+        tone.onended = () => {
+          tone.disconnect();
+          gain.disconnect();
+        };
+      });
+    } catch {
+      soundOn = false;
+      paintSound();
+      soundButton.setAttribute(
+        "aria-label",
+        "Sound unavailable in this browser",
+      );
+      soundButton.querySelector(".control-label").textContent =
+        "Sound unavailable";
     }
-    paintTheme();
-    if (!running) draw(0);
-  });
-
-  scheme.addEventListener("change", function () {
-    if (!root.dataset.theme) paintTheme();
-  });
-
-  paintTheme();
-
-  function onScroll() {
-    header.classList.toggle("is-scrolled", window.scrollY > 4);
   }
-  onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
 
-  root.classList.add("js");
-  if (!motion.matches && "IntersectionObserver" in window) {
-    const io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-in");
-          io.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+  function paintSound() {
+    soundButton.setAttribute("aria-pressed", String(soundOn));
+    soundButton.setAttribute(
+      "aria-label",
+      `Turn sound ${soundOn ? "off" : "on"}`,
     );
-    document.querySelectorAll(".reveal").forEach(function (el) {
-      io.observe(el);
-    });
-  } else {
-    document.querySelectorAll(".reveal").forEach(function (el) {
-      el.classList.add("is-in");
-    });
+    soundButton.querySelector(".control-label").textContent =
+      `Sound ${soundOn ? "on" : "off"}`;
   }
 
-  function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    canvas.width = Math.max(1, Math.floor(w * dpr));
-    canvas.height = Math.max(1, Math.floor(h * dpr));
-    canvas.style.width = w + "px";
-    canvas.style.height = h + "px";
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  function draw(t) {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    ctx.clearRect(0, 0, w, h);
-    const gap = w < 700 ? 36 : 30;
-    const color = getComputedStyle(root).getPropertyValue("--dot").trim() || "rgba(23,23,20,0.2)";
-    ctx.fillStyle = color;
-    const time = (t || 0) * 0.001;
-    const drift = motion.matches ? 0 : time * 7;
-    const cols = Math.ceil(w / gap) + 2;
-    const rows = Math.ceil(h / gap) + 2;
-    const span = rows * gap;
-    for (let y = 0; y < rows; y += 1) {
-      for (let x = 0; x < cols; x += 1) {
-        let px = x * gap + (y % 2) * gap * 0.5;
-        let py = y * gap + drift;
-        py = ((py % span) + span) % span;
-        if (!motion.matches) px += Math.sin(time * 0.32 + y * 0.45) * 2.5;
-        if (pointer.on && !motion.matches) {
-          const dx = px - pointer.x;
-          const dy = py - pointer.y;
-          const reach = 130;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < reach * reach && d2 > 1) {
-            const d = Math.sqrt(d2);
-            const push = (1 - d / reach) * 8;
-            px += (dx / d) * push;
-            py += (dy / d) * push;
-          }
-        }
-        ctx.fillRect(px, py, 1.35, 1.35);
-      }
+  function leaveEntrance(jumpToWork = false) {
+    if (closing || !entrance.open) return;
+    closing = true;
+    try {
+      sessionStorage.setItem("portfolio-entered", "true");
+    } catch {
+      /* Storage is optional. */
     }
-    frames += 1;
+    entrance.classList.add("leaving");
+    root.classList.remove("intro-playing");
+    root.classList.add("entered");
+    const finish = () => {
+      entrance.close();
+      entrance.classList.remove("leaving");
+      closing = false;
+      const target = document.querySelector(
+        jumpToWork ? "#work-title" : "#hero-title",
+      );
+      target.setAttribute("tabindex", "-1");
+      target.focus({ preventScroll: true });
+      if (jumpToWork)
+        document.querySelector("#work").scrollIntoView({ behavior: "instant" });
+    };
+    if (motionOn && !jumpToWork) setTimeout(finish, 900);
+    else finish();
+    chime();
   }
 
-  function stop() {
-    running = false;
-    if (frame) cancelAnimationFrame(frame);
-    frame = 0;
-    root.dataset.field = "paused";
-  }
+  document
+    .querySelector("#enter")
+    .addEventListener("click", () => leaveEntrance());
+  document
+    .querySelector("#enter-quiet")
+    .addEventListener("click", () => leaveEntrance(true));
+  entrance.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    leaveEntrance();
+  });
+  const replay = document.querySelector("#replay");
+  replay.addEventListener("click", () => {
+    if (closing) return;
+    window.scrollTo({ top: 0, behavior: "instant" });
+    root.classList.add("intro-playing");
+    entrance.showModal();
+  });
+  motionButton.addEventListener("click", () => {
+    motionOn = !motionOn;
+    setMotion();
+  });
+  reducedMotion.addEventListener("change", () => {
+    motionOn = !reducedMotion.matches;
+    setMotion();
+  });
+  soundButton.addEventListener("click", () => {
+    soundOn = !soundOn;
+    paintSound();
+    if (soundOn) chime();
+    else if (audio) audio.suspend().catch(() => {});
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && audio) audio.suspend().catch(() => {});
+  });
 
-  function loop(t) {
-    if (!running) return;
-    draw(t);
-    frame = requestAnimationFrame(loop);
-  }
-
-  function start() {
-    resize();
-    if (motion.matches || document.hidden) {
-      draw(0);
-      running = false;
-      root.dataset.field = motion.matches ? "static" : "paused";
-      return;
-    }
-    if (running) return;
-    running = true;
-    root.dataset.field = "live";
-    frame = requestAnimationFrame(loop);
-  }
-
-  if (fine.matches) {
-    window.addEventListener(
-      "pointermove",
-      function (event) {
-        pointer.x = event.clientX;
-        pointer.y = event.clientY;
-        pointer.on = true;
-      },
-      { passive: true }
+  function paintScroll() {
+    pendingFrame = 0;
+    if (!motionOn || document.hidden) return;
+    root.style.setProperty(
+      "--scroll",
+      String(Math.min(1, scrollY / hero.offsetHeight)),
     );
-    window.addEventListener("pointerleave", function () {
-      pointer.on = false;
-    });
   }
-
-  window.addEventListener("resize", function () {
-    resize();
-    if (!running) draw(0);
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!pendingFrame && motionOn)
+        pendingFrame = requestAnimationFrame(paintScroll);
+    },
+    { passive: true },
+  );
+  hero.addEventListener(
+    "pointermove",
+    (event) => {
+      if (!motionOn || !finePointer.matches || entrance.open) return;
+      const bounds = hero.getBoundingClientRect();
+      root.style.setProperty(
+        "--pointer-x",
+        `${(event.clientX / bounds.width - 0.5) * 10}px`,
+      );
+      root.style.setProperty(
+        "--pointer-y",
+        `${(event.clientY / bounds.height - 0.5) * 7}px`,
+      );
+    },
+    { passive: true },
+  );
+  hero.addEventListener("pointerleave", () => {
+    root.style.setProperty("--pointer-x", "0px");
+    root.style.setProperty("--pointer-y", "0px");
   });
-
-  document.addEventListener("visibilitychange", function () {
-    if (document.hidden) stop();
-    else start();
-  });
-
-  motion.addEventListener("change", start);
-
-  root.__fieldFrames = function () {
-    return frames;
-  };
-
-  start();
+  document
+    .querySelectorAll('a[href^="#"]')
+    .forEach((link) => link.addEventListener("click", chime));
+  setMotion();
+  paintScroll();
+  document.querySelector(".experience-controls").hidden = false;
+  replay.hidden = false;
+  let entered = false;
+  try {
+    entered = sessionStorage.getItem("portfolio-entered") === "true";
+  } catch {
+    /* Storage is optional. */
+  }
+  if (!entered && !location.hash && !reducedMotion.matches) {
+    root.classList.add("intro-playing");
+    entrance.showModal();
+  }
 })();

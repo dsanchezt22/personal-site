@@ -1,17 +1,5 @@
 # Experience and education
 
-## Sub-features
+About reaches #about. More about my work reaches #experience. The timeline covers Verdnt, Stanford research, Amazon Lab126, Code Four, and Duke. Stanford education appears at #education.
 
-Current roles, prior internships, research, education, and coursework.
-
-## How to get to it (user POV)
-
-Choose Experience in the primary navigation, then scroll to Education.
-
-## Driving it with browser and HTTP
-
-Navigate to `#experience`; verify role headings render and that `#education` appears later in document order.
-
-## Gotchas
-
-The Experience link is hidden at narrow breakpoints with `nav-wide`; mobile users reach it by scrolling.
+Drive both anchors and inspect desktop and phone layouts. Compare factual role names and dates against the supplied resume and current company naming. The course supplements the engineering identity; it is not the main introduction.
