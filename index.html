@@ -92,63 +92,70 @@
       </div>
     </dialog>
     <main id="content">
-      <section class="hero" id="home" aria-labelledby="hero-title">
-        <div class="hero-scene" aria-hidden="true">
-          <img
-            src="assets/tea-island.png"
-            width="1536"
-            height="1024"
-            alt=""
-            fetchpriority="high"
-          />
-          <div class="mist"></div>
-        </div>
-        <div class="hero-copy">
-          <p class="location">
-            <span class="status-dot"></span> Stanford, California
+      <div class="hero-journey">
+        <section class="hero" id="home" aria-labelledby="hero-title">
+          <div class="hero-scene" aria-hidden="true">
+            <img
+              src="assets/tea-island.png"
+              width="1536"
+              height="1024"
+              alt=""
+              fetchpriority="high"
+            />
+            <div class="mist"></div>
+          </div>
+          <div class="hero-copy">
+            <p class="location">
+              <span class="status-dot"></span> Stanford, California
+            </p>
+            <h1 id="hero-title">
+              Diego<br />Sanchez Tirado<span class="period">.</span>
+            </h1>
+            <p class="hero-dek">
+              Hardware, software, and a<br class="desktop-break" />
+              good dose of curiosity.
+            </p>
+            <p class="hero-bio">
+              Electrical engineering at Stanford. Building AI systems at Verdnt
+              Group. Finding better ways to make things work.
+            </p>
+            <div class="hero-links">
+              <a class="button primary" href="#work"
+                >Explore my work <span aria-hidden="true">↓</span></a
+              ><a
+                class="text-link"
+                href="https://github.com/dsanchezt22"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub <span aria-hidden="true">↗</span></a
+              ><a
+                class="text-link"
+                href="https://www.linkedin.com/in/diego-sanchez-tirado"
+                target="_blank"
+                rel="noopener noreferrer"
+                >LinkedIn <span aria-hidden="true">↗</span></a
+              >
+            </div>
+          </div>
+          <p class="hero-chapter" aria-hidden="true">
+            From the lab<br />to the test kitchen.
           </p>
-          <h1 id="hero-title">
-            Diego<br />Sanchez Tirado<span class="period">.</span>
-          </h1>
-          <p class="hero-dek">
-            Hardware, software, and a<br class="desktop-break" />
-            good dose of curiosity.
-          </p>
-          <p class="hero-bio">
-            Electrical engineering at Stanford. Building AI systems at Verdnt
-            Group. Finding better ways to make things work.
-          </p>
-          <div class="hero-links">
-            <a class="button primary" href="#work"
-              >Explore my work <span aria-hidden="true">↓</span></a
-            ><a
-              class="text-link"
-              href="https://github.com/dsanchezt22"
-              target="_blank"
-              rel="noopener noreferrer"
-              >GitHub <span aria-hidden="true">↗</span></a
-            ><a
-              class="text-link"
-              href="https://www.linkedin.com/in/diego-sanchez-tirado"
-              target="_blank"
-              rel="noopener noreferrer"
-              >LinkedIn <span aria-hidden="true">↗</span></a
+          <a class="scene-note" href="#verdnt"
+            ><span class="note-line"></span
+            ><span
+              >Currently brewing<br /><strong
+                >AI for the real world</strong
+              ></span
+            ></a
+          >
+          <div class="hero-bottom">
+            <span>Research meets the test kitchen.</span
+            ><a href="#work"
+              >Scroll to explore <span aria-hidden="true">↓</span></a
             >
           </div>
-        </div>
-        <a class="scene-note" href="#verdnt"
-          ><span class="note-line"></span
-          ><span
-            >Currently brewing<br /><strong>AI for the real world</strong></span
-          ></a
-        >
-        <div class="hero-bottom">
-          <span>Research meets the test kitchen.</span
-          ><a href="#work"
-            >Scroll to explore <span aria-hidden="true">↓</span></a
-          >
-        </div>
-      </section>
+        </section>
+      </div>
       <section
         class="intro-section section-pad"
         id="work"
@@ -173,42 +180,44 @@
         id="verdnt"
         aria-labelledby="verdnt-title"
       >
-        <div class="verdnt-main">
-          <div class="verdnt-copy">
-            <p class="section-label">The test kitchen / Verdnt Group</p>
-            <h2 id="verdnt-title">Good ideas.<br />Real-world flavor.</h2>
-            <p>
-              I build AI systems that help businesses turn scattered information
-              into something they can use. At Verdnt Group, that includes the
-              world of food and beverages.
-            </p>
-            <a class="text-link" href="#experience"
-              >More about my work <span aria-hidden="true">↓</span></a
+        <div class="verdnt-journey">
+          <div class="verdnt-main">
+            <div class="verdnt-copy">
+              <p class="section-label">The test kitchen / Verdnt Group</p>
+              <h2 id="verdnt-title">Good ideas.<br />Real-world flavor.</h2>
+              <p>
+                I build AI systems that help businesses turn scattered
+                information into something they can use. At Verdnt Group, that
+                includes the world of food and beverages.
+              </p>
+              <a class="text-link" href="#experience"
+                >More about my work <span aria-hidden="true">↓</span></a
+              >
+            </div>
+            <div
+              class="tea-diagram"
+              role="img"
+              aria-label="FStea turns market signals into trends and product concepts"
             >
-          </div>
-          <div
-            class="tea-diagram"
-            role="img"
-            aria-label="FStea turns market signals into trends and product concepts"
-          >
-            <div class="diagram-orbit orbit-one"></div>
-            <div class="diagram-orbit orbit-two"></div>
-            <span class="ingredient ingredient-one">Market signals</span
-            ><span class="ingredient ingredient-two">Consumer trends</span
-            ><span class="ingredient ingredient-three">Product concepts</span>
-            <div class="tea-bottle">
-              <div class="bottle-cap"></div>
-              <div class="bottle-neck"></div>
-              <div class="bottle-body">
-                <div class="bottle-liquid"></div>
-                <div class="bottle-label">
-                  <span>Fresh ideas,</span><strong>FStea</strong
-                  ><span>thoughtfully brewed.</span
-                  ><svg viewBox="0 0 90 35" aria-hidden="true">
-                    <path
-                      d="M45 32C18 30 10 17 16 4c19 0 28 11 29 28Zm0 0C43 12 59 1 77 4c-1 18-12 26-32 28Z"
-                    />
-                  </svg>
+              <div class="diagram-orbit orbit-one"></div>
+              <div class="diagram-orbit orbit-two"></div>
+              <span class="ingredient ingredient-one">Market signals</span
+              ><span class="ingredient ingredient-two">Consumer trends</span
+              ><span class="ingredient ingredient-three">Product concepts</span>
+              <div class="tea-bottle">
+                <div class="bottle-cap"></div>
+                <div class="bottle-neck"></div>
+                <div class="bottle-body">
+                  <div class="bottle-liquid"></div>
+                  <div class="bottle-label">
+                    <span>Fresh ideas,</span><strong>FStea</strong
+                    ><span>thoughtfully brewed.</span
+                    ><svg viewBox="0 0 90 35" aria-hidden="true">
+                      <path
+                        d="M45 32C18 30 10 17 16 4c19 0 28 11 29 28Zm0 0C43 12 59 1 77 4c-1 18-12 26-32 28Z"
+                      />
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>

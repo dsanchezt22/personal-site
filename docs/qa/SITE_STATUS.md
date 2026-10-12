@@ -2,6 +2,8 @@
 
 Updated 2026-10-12 for the beverage-themed portfolio.
 
+Scroll-motion correction: the initial implementation moved only the hero by up to 65px and left the work sections static. The replacement was driven in real Chrome at 1440x900, 1440x720, 814x900, 390x844, and 320x568. The pinned hero stayed at top 0 while its artwork scale changed from 1 to 1.32; its text transitioned and reverse scrolling returned to the initial transform. Bottle rotation and liquid fill, memory rotation, and notebook movement changed with scroll. Motion off canceled movement and retained the pinned content's viewport position within 1px. Keyboard-focused hero links remained visible, and replay, skip, and Escape still worked. No horizontal overflow or browser console errors were observed. Evidence: scroll-start.jpg, scroll-end.jpg, and scroll-checks.json in the local runtime directory. Other browsers and OS reduced-motion emulation were not exercised.
+
 Current checks are `npm run verify` and `.agents/skills/verify-personal-site/SKILL.md`. The previous dot-field/theme screenshots and overflow_check.mjs in this directory are historical artifacts from the earlier design, not current acceptance evidence.
 
 Verified locally on the built artifact:
