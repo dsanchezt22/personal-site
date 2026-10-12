@@ -66,7 +66,7 @@
       <section id="about" class="reveal">
         <h2><span>01</span> About</h2>
         <p>I’m Diego Sanchez Tirado, a Stanford electrical engineering student (B.S. expected May 2029). I’m leaning toward VLSI, chip manufacturing, and circuit design. The research I do is in computer architecture and memory systems, and I build software alongside it.</p>
-        <p>I’m a researcher in Stanford’s Engineering Robust Systems Group with Prof. Subhasish Mitra, and a developer at Duna Strategies. In summer 2026 I interned at Amazon Lab126 as a software engineer and as a humanoid-robotics apprentice. I shipped Trus v2, a public generative interface at trus.dev, and I now focus on Duna.</p>
+        <p>I’m a researcher in Stanford’s Engineering Robust Systems Group with Prof. Subhasish Mitra, and a developer at Verdnt Group. In summer 2026 I interned at Amazon Lab126 as a software engineer and as a humanoid-robotics apprentice. I previously shipped Trus v2, a generative interface that is now retired.</p>
       </section>
 
       <section id="work">
@@ -80,7 +80,6 @@
               <p>Python models of LLM-inference throughput, latency, and memory under competing chip memory organizations. The work is with Stanford’s Engineering Robust Systems Group (Prof. Subhasish Mitra).</p>
               <p>The models relate capacity, bandwidth density, and mesh or network-on-chip topology to batch size and context length. They compare a mesh-distributed, area-scalable backend with HBM under tensor- and pipeline-parallel plans, and report compute, memory, and interconnect in bandwidth-bound long-context KV-cache regimes.</p>
               <p class="stack">Python</p>
-              <p class="links"><span class="todo">Public link TODO(Diego)</span></p>
             </div>
           </article>
 
@@ -90,12 +89,8 @@
               <h3>Trus</h3>
               <p class="meta">Product · shipped v2</p>
               <p>A public generative interface. You describe an application in a sentence. Trus returns a tool built for that description, drawn from a trusted component library rather than from model-written UI code.</p>
-              <p>Shipped as v2 at trus.dev. A FastAPI service asks a model for a small JSON configuration. A Next.js canvas renders it with a fixed set of parts, on the order of 30. An event-sourced SQLite store sits under the generation path. I now focus on Duna.</p>
+              <p>Shipped as v2 and later retired. A FastAPI service asks a model for a small JSON configuration. A Next.js canvas renders it with a fixed set of parts, on the order of 30. An event-sourced SQLite store sits under the generation path.</p>
               <p class="stack">Next.js, FastAPI, Python, SQLite</p>
-              <p class="links">
-                <a href="https://trus.dev" rel="noreferrer">trus.dev</a>
-                <span class="todo">Source TODO(Diego)</span>
-              </p>
             </div>
           </article>
 
@@ -103,14 +98,10 @@
             <p class="num">03</p>
             <div class="card-main">
               <h3>FStea</h3>
-              <p class="meta">Duna Strategies · <span class="when">April 2026 – present</span></p>
+              <p class="meta">Verdnt Group · <span class="when">April 2026 – present</span></p>
               <p>Collectors and a cockpit for a refrigerated ready-to-drink tea brand. Python collectors bring in public launch signals. A Node cockpit is the working surface.</p>
               <p>Module 7, a news sweep, verified at 102 launch rows from 48 articles across 8 chains, mean quality 0.90. Modules 7–11 feed Module 4 scoring. When the collectors have no data, the fused score matches the previous score exactly.</p>
               <p class="stack">Python, Node.js</p>
-              <p class="links">
-                <a href="https://github.com/dsanchezt22/FSTea" rel="noreferrer">Cockpit repository</a>
-                <span class="todo">Collectors TODO(Diego)</span>
-              </p>
             </div>
           </article>
 
@@ -122,7 +113,6 @@
               <p>A phone web app for logging a Stanford dining-hall plate. A top photo, then a side photo. The portion comes from the plate’s dimensions and the two camera angles.</p>
               <p>The browser checks the frame (whole rim, blur, glare). Grok vision names each food. A lookup against USDA FoodData Central, a restaurant page, or a brand label fills in closer numbers. A row is marked as a menu match only when it really is that dish. Otherwise it stays an estimate. The client is HTML, CSS, and JavaScript, served by a Python standard-library server.</p>
               <p class="stack">HTML, CSS, JavaScript, Python</p>
-              <p class="links"><span class="todo">Public link TODO(Diego)</span></p>
             </div>
           </article>
 
@@ -134,7 +124,6 @@
               <p>A private operating system for school, work, and the internship search. Domain agents keep their own context. A chief-of-staff agent handles the day, including calendar, mail, and a morning digest, and does not override the others.</p>
               <p>Velvet, the console, generates the working surface. A deterministic ledger draws the same projections, so the data is still on screen if generation fails.</p>
               <p class="stack">TypeScript</p>
-              <p class="links"><span class="todo">Public link TODO(Diego)</span></p>
             </div>
           </article>
 
@@ -146,7 +135,6 @@
               <p>Independent hardware, ongoing since 2022. A typing-force piezoelectric energy harvester with rectification and storage, measured for voltage and power against force and geometry.</p>
               <p>A split ergonomic keyboard: CAD, a 3D-printed enclosure, and a custom PCB. A free-air active noise-control system with a microphone array and LiDAR on embedded hardware.</p>
               <p class="stack">Onshape, custom PCB, 3D printing, embedded hardware</p>
-              <p class="links"><span class="todo">Public link TODO(Diego)</span></p>
             </div>
           </article>
         </div>
@@ -161,9 +149,9 @@
                 <h3>Developer</h3>
                 <p class="role-when">April 2026 – present</p>
               </div>
-              <p class="org"><a href="https://dunastrategies.com" rel="noreferrer">Duna Strategies</a></p>
+              <p class="org">Verdnt Group</p>
               <ul>
-                <li>Duna builds custom AI systems for small and mid-sized businesses.</li>
+                <li>Verdnt Group builds custom AI systems for small and mid-sized businesses.</li>
                 <li>Building FStea: Python collectors and a Node cockpit. Module 7 verified at 102 launch rows, 48 articles, 8 chains, mean quality 0.90. Modules 7–11 fused into Module 4 scoring.</li>
               </ul>
             </div>
@@ -285,9 +273,7 @@
           <dt>GitHub</dt>
           <dd><a href="https://github.com/dsanchezt22" rel="noreferrer">github.com/dsanchezt22</a></dd>
           <dt>LinkedIn</dt>
-          <dd><span class="todo">TODO(Diego)</span></dd>
-          <dt>Headshot</dt>
-          <dd><span class="todo">TODO(Diego)</span></dd>
+          <dd><a href="https://www.linkedin.com/in/diego-sanchez-tirado" rel="noreferrer">linkedin.com/in/diego-sanchez-tirado</a></dd>
           <dt>Resume</dt>
           <dd><a href="Diego-Sanchez-Tirado-Resume.pdf">Download PDF</a></dd>
           <dt>Location</dt>
