@@ -1,22 +1,23 @@
-# Portfolio verification
+# Personal workspace verification
 
-Updated 2026-10-12 for the beverage-themed portfolio.
+Updated 2026-10-12 for the single continuous scene. Earlier tea-hero, bottle, and independent section-animation evidence is historical and does not describe this version.
 
-Scroll-motion correction: the initial implementation moved only the hero by up to 65px and left the work sections static. The replacement was driven in real Chrome at 1440x900, 1440x720, 814x900, 390x844, and 320x568. The pinned hero stayed at top 0 while its artwork scale changed from 1 to 1.32; its text transitioned and reverse scrolling returned to the initial transform. Bottle rotation and liquid fill, memory rotation, and notebook movement changed with scroll. Motion off canceled movement and retained the pinned content's viewport position within 1px. Keyboard-focused hero links remained visible, and replay, skip, and Escape still worked. No horizontal overflow or browser console errors were observed. Evidence: scroll-start.jpg, scroll-end.jpg, and scroll-checks.json in the local runtime directory. Other browsers and OS reduced-motion emulation were not exercised.
+The current acceptance workflow is `npm run verify` plus `.agents/skills/verify-personal-site/SKILL.md` on the built artifact.
 
-Current checks are `npm run verify` and `.agents/skills/verify-personal-site/SKILL.md`. The previous dot-field/theme screenshots and overflow_check.mjs in this directory are historical artifacts from the earlier design, not current acceptance evidence.
+Verified in real Chrome:
 
-Verified locally on the built artifact:
+- A fresh visit starts the ice-and-water introduction without a click. The camera automatically pulls back into the personal workspace. Skip, Escape, replay, and session reload work. The old headline and hero are absent.
+- One canvas persists across all six chapters. Desktop camera positions were recorded at progress 0, .2, .4, .6, .8, and 1. Actual wheel scrolling changes the camera between those stops; reverse scrolling retraces it. Screenshots show the same objects from changing viewpoints.
+- A keyboard focus transition from an intermediate camera position settles to readable copy. Native dialogs open, scroll, close with a button or Escape, and return focus to their triggers. All four detail dialogs were driven.
+- Motion off restores the readable document. After scrolling from Software to About in that mode, turning motion on retains About. Resizing from a narrow phone to tablet preserves the software chapter at approximately .6001 rather than jumping to another section.
+- Responsive layouts were inspected at 1440x900, 1440x720, 814x900, 390x844, and 320x568. All six desktop copy blocks fit above the footer. Phone and tablet layouts show no horizontal overflow or clipped headings. Course notes and project dialogs remain readable at 320 pixels.
+- Sound starts off and its on/off controls work without console errors. Audio quality was not evaluated by listening.
+- No warnings or errors appeared in the fresh final browser tab.
+- Every local link, asset, anchor, and current JavaScript bundle is checked through HTTP, with expected security headers. The served resume matches the supplied PDF: SHA-256 8820fcd0ea3ceb33e77a7b95f49a33dc4a86919b432e7a8b539195463a1a5ae5.
+- GitHub, LinkedIn, course, CMUX, Pi, and independent demo destinations are retained. Private assignments and client internals are excluded.
 
-- Entrance, Step inside, skip-to-work, replay, keyboard Tab and Escape, and focus handoff.
-- Motion on/off and optional sound on/off controls, with no browser console errors. Audio quality was not evaluated by listening.
-- All section navigation and the course notebook.
-- Responsive widths 320, 390, 814, and 1440. A one-pixel decorative-orbit overflow at 320 was reproduced and corrected.
-- Every local anchor and linked asset through the real HTTP server, including correct security headers.
-- The served resume matches the user's supplied PDF exactly: SHA-256 8820fcd0ea3ceb33e77a7b95f49a33dc4a86919b432e7a8b539195463a1a5ae5.
-- GitHub profile, course, CMUX, Pi, and both winery demos return HTTP 200. LinkedIn is the exact URL in the supplied resume.
-- JavaScript syntax, formatting, and Wrangler dry-run packaging pass.
+Automated checks cover bounded chapter progress, readable stops, clear travel transitions, reversal, JavaScript syntax, artifact integrity, and the resume. Formatting and Wrangler dry-run packaging are included in release verification.
 
-Screenshots and machine-readable browser observations are retained locally in docs/qa/runtime (gitignored). The OS reduced-motion preference is implemented using matchMedia and CSS; changing the OS preference was not exercised in this browser session. No JavaScript-disabled browser session was exercised.
+Screenshots and observations are local and gitignored in docs/qa/runtime, including world-journey.json, world-ice-intro.jpg, world-home.jpg, world-developer.jpg, world-mobile-home.jpg, world-short-desktop.jpg, and world-narrow-research.jpg. Live release checks are recorded there after deployment.
 
-The existing Cloudflare Worker is diego-personal-site. Domain and DNS settings are outside this change. Source changes include an automated GitHub Actions check for the built artifact.
+Coverage limits: Chrome responsive emulation is not physical mobile-device testing. Safari, Firefox, OS reduced-motion changes, WebGL context loss, and JavaScript-disabled browsing were not driven end to end. Their fallback paths were inspected in source. Domain and DNS settings are unchanged; the target remains the existing diego-personal-site Cloudflare Worker.

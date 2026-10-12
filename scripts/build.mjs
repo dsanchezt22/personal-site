@@ -1,6 +1,7 @@
 import { copyFile, cp, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { build } from "esbuild";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const dist = path.join(root, "dist");
@@ -11,7 +12,6 @@ await mkdir(dist, { recursive: true });
 const assets = [
   "index.html",
   "styles.css",
-  "main.js",
   "Diego-Sanchez-Tirado-Resume.pdf",
   "favicon.svg",
   "favicon-dark.svg",
@@ -25,10 +25,17 @@ for (const asset of assets) {
 await cp(path.join(root, "fonts"), path.join(dist, "fonts"), {
   recursive: true,
 });
-await cp(path.join(root, "assets"), path.join(dist, "assets"), {
-  recursive: true,
+await build({
+  entryPoints: [path.join(root, "main.js")],
+  bundle: true,
+  splitting: true,
+  format: "esm",
+  target: "es2022",
+  minify: true,
+  outdir: dist,
+  legalComments: "linked",
 });
 await copyFile(path.join(root, "deploy/_headers"), path.join(dist, "_headers"));
 console.log(
-  `Built ${assets.length} website files plus fonts and headers in dist/`,
+  `Built ${assets.length} website files plus bundled JavaScript, fonts, and headers in dist/`,
 );

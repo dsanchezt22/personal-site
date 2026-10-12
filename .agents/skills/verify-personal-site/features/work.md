@@ -1,5 +1,7 @@
-# Selected work and course notebook
+# Projects and course notebook
 
-Work links to #work. Category links reach #verdnt, #research, and #developer. The Verdnt section describes FStea and Plate Scanner and links to the two public winery demos, explicitly labeled fictional independent demos. Research and hardware include memory modeling, ErgoTouch, the bike, and digital logic.
+Work reaches the research chapter. The shared scene also has Software and tools and Applied AI chapters. Each opens a native detail dialog with a visible close button and Escape support. The dialog traps focus while open and returns focus to its trigger when closed.
 
-Follow all categories, check readable headings and text, and verify demo destinations. Course work names CS146S, CMUX, and Pi with links to the course and upstream projects, not the private assignment repository. Its three ordered notes summarize actual assignments. Check notebook layout and links at 320 and 390 pixels.
+Research includes memory modeling, ErgoTouch, the bike, and digital logic. The developer dialog names CS146S, CMUX, and Pi and has three ordered assignment notes. Links reach the course and upstream projects, never the private assignment repository. Verdnt describes FStea and Plate Scanner, with two public winery demos explicitly labeled fictional independent demos.
+
+Open and close every detail dialog, scroll its content, and check headings and link destinations. Verify course notes and close controls at 320 and 390 pixels. Returning to the journey must retain the current chapter.

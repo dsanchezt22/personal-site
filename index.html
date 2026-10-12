@@ -6,25 +6,18 @@
     <title>Diego Sanchez Tirado</title>
     <meta
       name="description"
-      content="Stanford electrical engineering student building hardware, memory systems, and AI software. Explore Diego's work at Verdnt Group, research, and developer tools."
+      content="Diego Sanchez Tirado. Electrical engineering at Stanford. Exploring hardware, computer architecture, and software through things I build."
     />
-    <meta name="theme-color" content="#e8eee0" />
-    <meta name="referrer" content="no-referrer" />
-    <meta
-      property="og:title"
-      content="Diego Sanchez Tirado | A fresh perspective"
-    />
+    <meta name="theme-color" content="#eef2f5" />
+    <link rel="canonical" href="https://diegosancheztirado.com/" />
+    <meta property="og:title" content="Diego Sanchez Tirado" />
     <meta
       property="og:description"
-      content="Hardware, software, and a good dose of curiosity. Stanford EE, Verdnt Group, and things I'm building."
+      content="Electrical engineering at Stanford. Ideas into things that work."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://diegosancheztirado.com/" />
-    <meta
-      property="og:image"
-      content="https://diegosancheztirado.com/assets/tea-island.png"
-    />
-    <link rel="canonical" href="https://diegosancheztirado.com/" />
+    <meta property="og:image" content="https://diegosancheztirado.com/og.png" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link
@@ -41,27 +34,36 @@
       type="font/woff2"
       crossorigin
     />
-    <link
-      rel="preload"
-      href="assets/tea-island.png"
-      as="image"
-      fetchpriority="high"
-    />
     <link rel="stylesheet" href="styles.css" />
-    <script src="main.js" defer></script>
+    <script>
+      document.documentElement.classList.add("booting");
+      setTimeout(
+        () => document.documentElement.classList.remove("booting"),
+        6000,
+      );
+    </script>
+    <script type="module" src="main.js"></script>
   </head>
   <body>
-    <a class="skip" href="#content">Skip to content</a>
-    <header class="top">
+    <a class="skip-link" href="#content">Skip to content</a>
+    <div class="world-wrap" aria-hidden="true">
+      <canvas id="world"></canvas>
+      <div class="reading-light"></div>
+    </div>
+    <div class="boot-screen" aria-hidden="true">
+      <span>Diego Sanchez Tirado</span><i></i>
+    </div>
+    <div id="intro" hidden>
+      <span class="intro-signature">Diego Sanchez Tirado</span>
+      <p>A little curiosity goes a long way.</p>
+      <button id="skip-intro" type="button">Skip intro</button>
+    </div>
+    <header class="site-header">
       <a class="brand" href="#home" aria-label="Diego Sanchez Tirado, home"
-        ><svg viewBox="0 0 36 36" aria-hidden="true">
-          <path
-            d="M6 13h21v10a8 8 0 0 1-8 8h-5a8 8 0 0 1-8-8V13Zm21 2h3a5 5 0 0 1 0 10h-4M12 3v5m7-5v5"
-          /></svg
-        ><span>Diego Sanchez Tirado</span></a
+        ><span class="monogram">ds.</span><span>Diego Sanchez Tirado</span></a
       >
-      <nav aria-label="Primary">
-        <a href="#work">Work</a><a href="#about">About</a
+      <nav aria-label="Main navigation">
+        <a href="#about">About</a><a href="#research">Work</a
         ><a href="#contact">Contact</a>
       </nav>
       <a
@@ -72,526 +74,461 @@
         >Resume <span aria-hidden="true">↗</span></a
       >
     </header>
-    <dialog
-      id="entrance"
-      aria-labelledby="entrance-title"
-      aria-describedby="entrance-description"
-    >
-      <div class="entrance-inner">
-        <p class="entrance-note">A small world of things I'm building</p>
-        <h2 id="entrance-title">A fresh<br />perspective.</h2>
-        <p id="entrance-description">
-          Diego Sanchez Tirado<br />Hardware, software &amp; a little curiosity.
-        </p>
-        <button class="button primary" id="enter" type="button">
-          Step inside <span aria-hidden="true">↓</span></button
-        ><button class="quiet-button" id="enter-quiet" type="button">
-          Skip the intro, see the work
-        </button>
-        <p class="entrance-footnote">Sound is off. Take your time.</p>
-      </div>
-    </dialog>
-    <main id="content">
-      <div class="hero-journey">
-        <section class="hero" id="home" aria-labelledby="hero-title">
-          <div class="hero-scene" aria-hidden="true">
-            <img
-              src="assets/tea-island.png"
-              width="1536"
-              height="1024"
-              alt=""
-              fetchpriority="high"
-            />
-            <div class="mist"></div>
-          </div>
-          <div class="hero-copy">
-            <p class="location">
-              <span class="status-dot"></span> Stanford, California
-            </p>
-            <h1 id="hero-title">
-              Diego<br />Sanchez Tirado<span class="period">.</span>
-            </h1>
-            <p class="hero-dek">
-              Hardware, software, and a<br class="desktop-break" />
-              good dose of curiosity.
-            </p>
-            <p class="hero-bio">
-              Electrical engineering at Stanford. Building AI systems at Verdnt
-              Group. Finding better ways to make things work.
-            </p>
-            <div class="hero-links">
-              <a class="button primary" href="#work"
-                >Explore my work <span aria-hidden="true">↓</span></a
-              ><a
-                class="text-link"
-                href="https://github.com/dsanchezt22"
-                target="_blank"
-                rel="noopener noreferrer"
-                >GitHub <span aria-hidden="true">↗</span></a
-              ><a
-                class="text-link"
-                href="https://www.linkedin.com/in/diego-sanchez-tirado"
-                target="_blank"
-                rel="noopener noreferrer"
-                >LinkedIn <span aria-hidden="true">↗</span></a
-              >
-            </div>
-          </div>
-          <p class="hero-chapter" aria-hidden="true">
-            From the lab<br />to the test kitchen.
+    <main id="content" tabindex="-1">
+      <section
+        class="chapter"
+        id="home"
+        aria-labelledby="hero-title"
+        data-label="Hello"
+      >
+        <div class="chapter-copy">
+          <p class="eyebrow">
+            <span class="status-dot"></span> Stanford, California
           </p>
-          <a class="scene-note" href="#verdnt"
-            ><span class="note-line"></span
-            ><span
-              >Currently brewing<br /><strong
-                >AI for the real world</strong
-              ></span
-            ></a
+          <h1 id="hero-title">
+            Diego<br />
+            Sanchez Tirado.
+          </h1>
+          <p class="dek">Ideas into things that work.</p>
+          <p class="body-copy">
+            I'm an electrical engineering student at Stanford. I build hardware,
+            explore computer architecture, and write software.
+          </p>
+          <div class="links">
+            <a
+              href="https://github.com/dsanchezt22"
+              target="_blank"
+              rel="noopener noreferrer"
+              >GitHub ↗</a
+            ><a
+              href="https://www.linkedin.com/in/diego-sanchez-tirado"
+              target="_blank"
+              rel="noopener noreferrer"
+              >LinkedIn ↗</a
+            >
+          </div>
+          <a class="next-link" href="#about"
+            >A little about me <span aria-hidden="true">↓</span></a
           >
-          <div class="hero-bottom">
-            <span>Research meets the test kitchen.</span
-            ><a href="#work"
-              >Scroll to explore <span aria-hidden="true">↓</span></a
-            >
-          </div>
-        </section>
-      </div>
-      <section
-        class="intro-section section-pad"
-        id="work"
-        aria-labelledby="work-title"
-      >
-        <div class="section-heading">
-          <p class="section-label">Selected work</p>
-          <h2 id="work-title">Different ingredients.<br />Same curiosity.</h2>
-        </div>
-        <p class="section-lead">
-          From the systems inside a chip to the tools behind a new drink. These
-          are a few things I've been making.
-        </p>
-        <nav class="chapter-links" aria-label="Work categories">
-          <a href="#verdnt">Applied AI</a
-          ><a href="#research">Research &amp; hardware</a
-          ><a href="#developer">Developer tools</a>
-        </nav>
-      </section>
-      <section
-        class="verdnt-section section-pad"
-        id="verdnt"
-        aria-labelledby="verdnt-title"
-      >
-        <div class="verdnt-journey">
-          <div class="verdnt-main">
-            <div class="verdnt-copy">
-              <p class="section-label">The test kitchen / Verdnt Group</p>
-              <h2 id="verdnt-title">Good ideas.<br />Real-world flavor.</h2>
-              <p>
-                I build AI systems that help businesses turn scattered
-                information into something they can use. At Verdnt Group, that
-                includes the world of food and beverages.
-              </p>
-              <a class="text-link" href="#experience"
-                >More about my work <span aria-hidden="true">↓</span></a
-              >
-            </div>
-            <div
-              class="tea-diagram"
-              role="img"
-              aria-label="FStea turns market signals into trends and product concepts"
-            >
-              <div class="diagram-orbit orbit-one"></div>
-              <div class="diagram-orbit orbit-two"></div>
-              <span class="ingredient ingredient-one">Market signals</span
-              ><span class="ingredient ingredient-two">Consumer trends</span
-              ><span class="ingredient ingredient-three">Product concepts</span>
-              <div class="tea-bottle">
-                <div class="bottle-cap"></div>
-                <div class="bottle-neck"></div>
-                <div class="bottle-body">
-                  <div class="bottle-liquid"></div>
-                  <div class="bottle-label">
-                    <span>Fresh ideas,</span><strong>FStea</strong
-                    ><span>thoughtfully brewed.</span
-                    ><svg viewBox="0 0 90 35" aria-hidden="true">
-                      <path
-                        d="M45 32C18 30 10 17 16 4c19 0 28 11 29 28Zm0 0C43 12 59 1 77 4c-1 18-12 26-32 28Z"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="project-grid">
-          <article class="project">
-            <p class="project-kind">Beverage intelligence</p>
-            <h3>FStea AI</h3>
-            <p>
-              Nine collectors bring together social, marketplace, retail-launch,
-              search, and seasonal signals. The engine turns them into ranked
-              trends, product concepts, and product specifications.
-            </p>
-            <p class="project-tech">
-              Python / AI pipelines / Product development
-            </p>
-            <span class="project-note">Client work at Verdnt Group</span>
-          </article>
-          <article class="project">
-            <p class="project-kind">Hospitality prototypes</p>
-            <h3>A better winery day</h3>
-            <p>
-              Two interactive concepts: guest preparation for Hill Family Estate
-              and a portfolio view for Soda Rock Winery. Explore how useful
-              information can show up at the right moment.
-            </p>
-            <div class="project-links">
-              <a
-                href="https://hill-demo.diegosancheztirado.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Hill Family demo <span aria-hidden="true">↗</span></a
-              ><a
-                href="https://soda-demo.diegosancheztirado.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Soda Rock demo <span aria-hidden="true">↗</span></a
-              >
-            </div>
-            <span class="project-note"
-              >Independent demos using fictional data</span
-            >
-          </article>
-          <article class="project">
-            <p class="project-kind">Food meets software</p>
-            <h3>Plate Scanner</h3>
-            <p>
-              A phone-first tool for estimating what's on a dining-hall plate.
-              My course work adds an MCP server connecting plate photos in
-              Google Drive to a meal log in Google Sheets.
-            </p>
-            <p class="project-tech">Python / Computer vision / MCP</p>
-            <a class="text-link" href="#developer"
-              >See the course work <span aria-hidden="true">↓</span></a
-            >
-          </article>
         </div>
       </section>
       <section
-        class="research-section section-pad"
+        class="chapter"
+        id="about"
+        aria-labelledby="about-title"
+        data-label="About me"
+      >
+        <div class="chapter-copy">
+          <p class="eyebrow">The person behind the projects</p>
+          <h2 id="about-title">
+            Curiosity,<br />
+            made tangible.
+          </h2>
+          <p class="body-copy">
+            I'm happiest following an idea all the way through: understanding a
+            system, building something, and seeing how it behaves in the real
+            world.
+          </p>
+          <p class="body-copy">
+            At Stanford, I'm studying electrical engineering, class of 2029. My
+            interests span computer architecture, robotics, and tools that make
+            everyday work better.
+          </p>
+          <button
+            class="detail-trigger"
+            data-dialog="about-details"
+            type="button"
+          >
+            Experience & education <span aria-hidden="true">↗</span>
+          </button>
+        </div>
+      </section>
+      <section
+        class="chapter"
         id="research"
         aria-labelledby="research-title"
+        data-label="Hardware & research"
       >
-        <div class="research-top">
-          <div>
-            <p class="section-label">Under the surface</p>
-            <h2 id="research-title">Built from<br />the ground up.</h2>
-          </div>
-          <p class="section-lead">
-            I like understanding the ingredients. Sometimes that means a memory
-            architecture. Sometimes it means soldering the board myself.
+        <span class="anchor-alias" id="work"></span>
+        <div class="chapter-copy">
+          <p class="eyebrow">Hardware & research</p>
+          <h2 id="research-title">
+            Under the<br />
+            surface.
+          </h2>
+          <p class="body-copy">
+            What makes a system work? I explore that question through memory
+            architectures for AI inference, custom circuit boards, and things
+            built by hand.
           </p>
-        </div>
-        <div class="research-layout">
-          <article class="memory-project">
-            <div class="memory-visual" aria-hidden="true">
-              <div class="memory-mesh">
-                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-                ><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-              </div>
-              <span class="memory-caption">More paths. New possibilities.</span>
-            </div>
-            <div class="memory-copy">
-              <p class="project-kind">Stanford Robust Systems Group</p>
-              <h3>Rethinking memory<br />for AI inference</h3>
-              <p>
-                With Prof. Subhasish Mitra and Sam Dayo, I model how memory
-                capacity, bandwidth, and network topology shape LLM inference,
-                comparing area-scalable mesh memory with HBM.
-              </p>
-              <p class="project-tech">
-                Computer architecture / Python / Performance modeling
-              </p>
-            </div>
-          </article>
-          <div class="hardware-list">
-            <article>
-              <span class="hardware-symbol" aria-hidden="true">⌨</span>
-              <div>
-                <h3>ErgoTouch</h3>
-                <p>
-                  A custom split keyboard, from a resin-printed case and KiCad
-                  PCB to hand-soldered switches and RP2040 firmware.
-                </p>
-                <span class="project-note">Bowman Brockman Grant</span>
-              </div>
-            </article>
-            <article>
-              <span class="hardware-symbol" aria-hidden="true">↯</span>
-              <div>
-                <h3>A bike, rebuilt</h3>
-                <p>
-                  A mountain-bike conversion with a custom 48 V battery pack and
-                  mid-drive motor. Built, tested, and put to work on my Amazon
-                  commute.
-                </p>
-                <span class="project-note">Independent build / 2026</span>
-              </div>
-            </article>
-            <article>
-              <span class="hardware-symbol" aria-hidden="true">⊕</span>
-              <div>
-                <h3>Logic you can touch</h3>
-                <p>
-                  A gate-level 4-bit adder/subtractor with a two-digit display,
-                  plus a piezoelectric rig that harvests typing force.
-                </p>
-                <span class="project-note"
-                  >Digital logic &amp; energy harvesting</span
-                >
-              </div>
-            </article>
-          </div>
+          <p class="chapter-note">
+            Stanford Robust Systems Group · Independent builds
+          </p>
+          <button
+            class="detail-trigger"
+            data-dialog="research-details"
+            type="button"
+          >
+            Explore the projects <span aria-hidden="true">↗</span>
+          </button>
         </div>
       </section>
       <section
-        class="developer-section section-pad"
+        class="chapter"
         id="developer"
         aria-labelledby="developer-title"
+        data-label="Software & tools"
       >
-        <div class="developer-copy">
-          <p class="section-label">The developer's bench</p>
-          <h2 id="developer-title">Better tools.<br />Better ways to build.</h2>
-          <p>
+        <div class="chapter-copy">
+          <p class="eyebrow">Software & developer tools</p>
+          <h2 id="developer-title">
+            Better ways<br />
+            to build.
+          </h2>
+          <p class="body-copy">
             For Stanford's
             <a
               href="https://themodernsoftware.dev"
               target="_blank"
               rel="noopener noreferrer"
-              >CS146S: The Modern Software Developer</a
-            >, I'm exploring AI-assisted development, including work with CMUX
-            and Pi.
+              >Modern Software Developer course</a
+            >, I'm exploring coding agents, MCP, and how to verify the software
+            people actually use.
           </p>
-          <p>
-            My assignments examine how coding agents work, connect real tools
-            through MCP, and verify software in the browser.
-          </p>
-          <div class="tool-links">
+          <div class="links">
             <a
               href="https://github.com/manaflow-ai/cmux"
               target="_blank"
               rel="noopener noreferrer"
-              ><span>CMUX</span><small>Terminal workspaces</small
-              ><span aria-hidden="true">↗</span></a
+              >CMUX ↗</a
             ><a
               href="https://github.com/earendil-works/pi"
               target="_blank"
               rel="noopener noreferrer"
-              ><span>Pi</span><small>Coding agent toolkit</small
-              ><span aria-hidden="true">↗</span></a
+              >Pi ↗</a
             >
           </div>
-          <p class="project-note">
-            Links above go to the tools. Course submissions are private.
-          </p>
-        </div>
-        <div class="course-notebook">
-          <div class="notebook-top">
-            <span class="notebook-dot"></span><span>Notes from CS146S</span
-            ><span>Fall 2026</span>
-          </div>
-          <ol class="course-list">
-            <li>
-              <span class="course-number">01</span>
-              <div>
-                <h3>Inside the agent loop</h3>
-                <p>
-                  Inspecting a coding-agent session to understand prompts, tool
-                  calls, and context.
-                </p>
-              </div>
-            </li>
-            <li>
-              <span class="course-number">02</span>
-              <div>
-                <h3>From plate to persistent log</h3>
-                <p>
-                  A five-tool MCP server connecting Drive photos, plate
-                  analysis, and a Sheets meal log, with OAuth and a preview
-                  before writing.
-                </p>
-              </div>
-            </li>
-            <li>
-              <span class="course-number">03</span>
-              <div>
-                <h3>Check the thing people use</h3>
-                <p>
-                  A reusable skill for checking FStea AI's published interface,
-                  mobile layouts, languages, and saved results.
-                </p>
-              </div>
-            </li>
-          </ol>
-          <a
-            class="notebook-footer"
-            href="https://themodernsoftware.dev"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Explore the course <span aria-hidden="true">↗</span></a
+          <button
+            class="detail-trigger"
+            data-dialog="developer-details"
+            type="button"
           >
+            Open my course notebook <span aria-hidden="true">↗</span>
+          </button>
         </div>
       </section>
       <section
-        class="about-section section-pad"
-        id="about"
-        aria-labelledby="about-title"
+        class="chapter"
+        id="verdnt"
+        aria-labelledby="verdnt-title"
+        data-label="Applied AI"
       >
-        <div class="about-intro">
-          <p class="section-label">The person behind the projects</p>
-          <h2 id="about-title">Engineer by study.<br />Builder by habit.</h2>
-          <p>
-            I'm Diego, an electrical engineering student at Stanford, class of
-            2029. My interests run from computer architecture and robotics to AI
-            systems that solve everyday problems.
-          </p>
-          <p>
-            I enjoy following an idea all the way through: understanding the
-            system, making something tangible, and seeing how it behaves in the
+        <div class="chapter-copy">
+          <p class="eyebrow">Applied AI / Verdnt Group</p>
+          <h2 id="verdnt-title">
+            Useful in the<br />
             real world.
+          </h2>
+          <p class="body-copy">
+            At Verdnt Group, I build AI systems that turn scattered information
+            into useful tools. My work includes beverage intelligence,
+            hospitality prototypes, and a plate-scanning workflow.
           </p>
-          <a
-            class="text-link"
-            href="Diego-Sanchez-Tirado-Resume.pdf"
-            target="_blank"
-            rel="noopener"
-            >Read my full resume <span aria-hidden="true">↗</span></a
+          <button
+            class="detail-trigger"
+            data-dialog="verdnt-details"
+            type="button"
           >
-        </div>
-        <div class="experience" id="experience">
-          <h3>A few stops along the way</h3>
-          <article>
-            <span>2026 - present</span>
-            <div>
-              <h4>Verdnt Group</h4>
-              <p>
-                Building AI systems for businesses, including FStea's beverage
-                intelligence engine.
-              </p>
-            </div>
-          </article>
-          <article>
-            <span>2026 - present</span>
-            <div>
-              <h4>Stanford Robust Systems Group</h4>
-              <p>
-                Undergraduate research in area-scalable memory for LLM
-                inference.
-              </p>
-            </div>
-          </article>
-          <article>
-            <span>Summer 2026</span>
-            <div>
-              <h4>Amazon Lab126</h4>
-              <p>
-                Hardware Development Engineer Intern and Robotics Apprentice.
-                Engineering knowledge systems, retrieval safeguards, and
-                bimanual robot manipulation.
-              </p>
-            </div>
-          </article>
-          <article>
-            <span>2025</span>
-            <div>
-              <h4>Code Four <small>(YC X25)</small></h4>
-              <p>
-                GTM Team Lead. Built outreach automation and helped onboard 520+
-                officers.
-              </p>
-            </div>
-          </article>
-          <article>
-            <span>2023 - 2025</span>
-            <div>
-              <h4>Duke University</h4>
-              <p>
-                Research across nanomaterials, thin films, and cyber threat
-                intelligence.
-              </p>
-            </div>
-          </article>
-          <div class="education" id="education">
-            <h4>Stanford University</h4>
-            <p>B.S. Electrical Engineering<br />Expected May 2029</p>
-          </div>
+            See what I'm working on <span aria-hidden="true">↗</span>
+          </button>
         </div>
       </section>
       <section
-        class="contact-section section-pad"
+        class="chapter"
         id="contact"
         aria-labelledby="contact-title"
+        data-label="Get in touch"
       >
-        <div class="contact-art" aria-hidden="true">
-          <svg viewBox="0 0 180 130">
-            <path
-              d="M35 40h93v40c0 30-18 39-46 39S35 110 35 80V40Zm93 10h13c30 0 30 43 0 43h-16M61 11c-12 12 12 12 0 24m29-31c-12 12 12 12 0 24M18 125h127"
-            />
-          </svg>
-        </div>
-        <p class="section-label">Always up for a good conversation</p>
-        <h2 id="contact-title">What's brewing?</h2>
-        <p>Have an idea, a question, or something interesting to build?</p>
-        <a class="contact-email" href="mailto:dsanchezt22@gmail.com"
-          >dsanchezt22@gmail.com <span aria-hidden="true">↗</span></a
-        >
-        <div class="contact-links">
-          <a
-            href="https://github.com/dsanchezt22"
-            target="_blank"
-            rel="noopener noreferrer"
-            >GitHub</a
-          ><a
-            href="https://www.linkedin.com/in/diego-sanchez-tirado"
-            target="_blank"
-            rel="noopener noreferrer"
-            >LinkedIn</a
-          ><a
-            href="Diego-Sanchez-Tirado-Resume.pdf"
-            target="_blank"
-            rel="noopener"
-            >Resume PDF</a
+        <div class="chapter-copy">
+          <p class="eyebrow">There's always more to explore</p>
+          <h2 id="contact-title">
+            Let's make<br />
+            something.
+          </h2>
+          <p class="body-copy">
+            An interesting problem, a new idea, or just a good conversation. I'd
+            love to hear from you.
+          </p>
+          <a class="email-link" href="mailto:dsanchezt22@gmail.com"
+            >dsanchezt22@gmail.com ↗</a
           >
+          <div class="links">
+            <a
+              href="https://github.com/dsanchezt22"
+              target="_blank"
+              rel="noopener noreferrer"
+              >GitHub ↗</a
+            ><a
+              href="https://www.linkedin.com/in/diego-sanchez-tirado"
+              target="_blank"
+              rel="noopener noreferrer"
+              >LinkedIn ↗</a
+            ><a
+              href="Diego-Sanchez-Tirado-Resume.pdf"
+              target="_blank"
+              rel="noopener"
+              >Resume ↗</a
+            >
+          </div>
+          <button id="replay" class="quiet-button" type="button" hidden>
+            Replay the introduction
+          </button>
         </div>
       </section>
     </main>
-    <footer class="footer">
-      <a href="#home">Diego Sanchez Tirado</a
-      ><span>Made with curiosity. Served fresh.</span
-      ><button class="quiet-button" id="replay" type="button" hidden>
-        Replay entrance
-      </button>
-    </footer>
-    <div class="experience-controls" hidden>
-      <button
-        id="motion"
-        type="button"
-        aria-pressed="true"
-        aria-label="Turn motion off"
+    <nav class="chapter-nav" aria-label="Explore the site" hidden>
+      <a href="#home" aria-label="Hello"><span>Hello</span></a
+      ><a href="#about" aria-label="About me"><span>About me</span></a
+      ><a href="#research" aria-label="Hardware and research"
+        ><span>Hardware</span></a
+      ><a href="#developer" aria-label="Software and tools"
+        ><span>Software</span></a
+      ><a href="#verdnt" aria-label="Applied AI"><span>Applied AI</span></a
+      ><a href="#contact" aria-label="Get in touch"><span>Contact</span></a>
+    </nav>
+    <div class="journey-footer" hidden>
+      <span id="chapter-label">Hello</span
+      ><span class="scroll-hint"
+        >Scroll to explore <span aria-hidden="true">↓</span></span
       >
-        <span class="motion-icon" aria-hidden="true">≈</span
-        ><span class="control-label">Motion on</span></button
-      ><button
-        id="sound"
-        type="button"
-        aria-pressed="false"
-        aria-label="Turn sound on"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M10 5 5 9H2v6h3l5 4V5Zm5 3c3 3 3 5 0 8m3-11c5 5 5 9 0 14" />
-          <path class="sound-slash" d="m2 2 20 20" /></svg
-        ><span class="control-label">Sound off</span>
-      </button>
+      <div class="controls">
+        <button id="motion" type="button" aria-pressed="true">Motion on</button
+        ><button id="sound" type="button" aria-pressed="false">
+          Sound off
+        </button>
+      </div>
     </div>
+
+    <dialog id="about-details" aria-labelledby="experience-title">
+      <button class="close-dialog" type="button" aria-label="Close experience">
+        Close ×
+      </button>
+      <p class="eyebrow">Experience & education</p>
+      <h2 id="experience-title">
+        A few stops<br />
+        along the way.
+      </h2>
+      <div class="detail-list" id="experience">
+        <article>
+          <small>2026 - present</small>
+          <h3>Verdnt Group</h3>
+          <p>
+            Building AI systems for businesses, including FStea's beverage
+            intelligence engine.
+          </p>
+        </article>
+        <article>
+          <small>2026 - present</small>
+          <h3>Stanford Robust Systems Group</h3>
+          <p>
+            Undergraduate research in area-scalable memory for LLM inference.
+          </p>
+        </article>
+        <article>
+          <small>Summer 2026</small>
+          <h3>Amazon Lab126</h3>
+          <p>
+            Hardware Development Engineer Intern and Robotics Apprentice.
+            Engineering knowledge systems, retrieval safeguards, and bimanual
+            robot manipulation.
+          </p>
+        </article>
+        <article>
+          <small>2025</small>
+          <h3>Code Four (YC X25)</h3>
+          <p>
+            GTM Team Lead. Built outreach automation and helped onboard 520+
+            officers.
+          </p>
+        </article>
+        <article>
+          <small>2023 - 2025</small>
+          <h3>Duke University</h3>
+          <p>
+            Research across nanomaterials, thin films, and cyber threat
+            intelligence.
+          </p>
+        </article>
+        <article>
+          <small>Expected May 2029</small>
+          <h3>Stanford University</h3>
+          <p>B.S. Electrical Engineering</p>
+        </article>
+      </div>
+      <a
+        class="detail-link"
+        href="Diego-Sanchez-Tirado-Resume.pdf"
+        target="_blank"
+        rel="noopener"
+        >Read my full resume ↗</a
+      >
+    </dialog>
+    <dialog id="research-details" aria-labelledby="research-details-title">
+      <button
+        class="close-dialog"
+        type="button"
+        aria-label="Close research projects"
+      >
+        Close ×
+      </button>
+      <p class="eyebrow">Research & independent builds</p>
+      <h2 id="research-details-title">
+        From the model<br />
+        to the workbench.
+      </h2>
+      <div class="detail-list">
+        <article>
+          <small>Stanford Robust Systems Group</small>
+          <h3>Rethinking memory for AI inference</h3>
+          <p>
+            With Prof. Subhasish Mitra and Sam Dayo, I model how memory
+            capacity, bandwidth, and network topology shape LLM inference,
+            comparing area-scalable mesh memory with HBM.
+          </p>
+        </article>
+        <article>
+          <small>Bowman Brockman Grant</small>
+          <h3>ErgoTouch</h3>
+          <p>
+            A custom split keyboard, from a resin-printed case and KiCad PCB to
+            hand-soldered switches and RP2040 firmware.
+          </p>
+        </article>
+        <article>
+          <small>Independent build / 2026</small>
+          <h3>A bike, rebuilt</h3>
+          <p>
+            A mountain-bike conversion with a custom 48 V battery pack and
+            mid-drive motor. Built, tested, and put to work on my Amazon
+            commute.
+          </p>
+        </article>
+        <article>
+          <small>Digital logic & energy harvesting</small>
+          <h3>Logic you can touch</h3>
+          <p>
+            A gate-level 4-bit adder/subtractor with a two-digit display, plus a
+            piezoelectric rig that harvests typing force.
+          </p>
+        </article>
+      </div>
+    </dialog>
+    <dialog id="developer-details" aria-labelledby="developer-details-title">
+      <button
+        class="close-dialog"
+        type="button"
+        aria-label="Close course notebook"
+      >
+        Close ×
+      </button>
+      <p class="eyebrow">CS146S / Fall 2026</p>
+      <h2 id="developer-details-title">
+        Notes from<br />
+        the developer's bench.
+      </h2>
+      <ol class="detail-list course-list">
+        <li>
+          <small>Week 1</small>
+          <h3>Inside the agent loop</h3>
+          <p>
+            Inspecting a coding-agent session to understand prompts, tool calls,
+            and context.
+          </p>
+        </li>
+        <li>
+          <small>Week 2</small>
+          <h3>From plate to persistent log</h3>
+          <p>
+            A five-tool MCP server connecting Drive photos, plate analysis, and
+            a Sheets meal log, with OAuth and a preview before writing.
+          </p>
+        </li>
+        <li>
+          <small>Week 3</small>
+          <h3>Check the thing people use</h3>
+          <p>
+            A reusable skill for checking FStea AI's published interface, mobile
+            layouts, languages, and saved results.
+          </p>
+        </li>
+      </ol>
+      <p class="fine-print">
+        CMUX and Pi links point to the upstream tools. Course submissions are
+        private.
+      </p>
+      <a
+        class="detail-link"
+        href="https://themodernsoftware.dev"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Explore the course ↗</a
+      >
+    </dialog>
+    <dialog id="verdnt-details" aria-labelledby="verdnt-details-title">
+      <button
+        class="close-dialog"
+        type="button"
+        aria-label="Close applied AI projects"
+      >
+        Close ×
+      </button>
+      <p class="eyebrow">Selected work at Verdnt Group</p>
+      <h2 id="verdnt-details-title">
+        Information<br />
+        into action.
+      </h2>
+      <div class="detail-list">
+        <article>
+          <small>Beverage intelligence</small>
+          <h3>FStea AI</h3>
+          <p>
+            Nine collectors bring together social, marketplace, retail-launch,
+            search, and seasonal signals. The engine turns them into ranked
+            trends, product concepts, and product specifications.
+          </p>
+        </article>
+        <article>
+          <small>Hospitality prototypes</small>
+          <h3>A better winery day</h3>
+          <p>
+            Two interactive concepts: guest preparation for Hill Family Estate
+            and a portfolio view for Soda Rock Winery.
+          </p>
+          <div class="links">
+            <a
+              href="https://hill-demo.diegosancheztirado.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Hill Family demo ↗</a
+            ><a
+              href="https://soda-demo.diegosancheztirado.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Soda Rock demo ↗</a
+            >
+          </div>
+          <p class="fine-print">Independent demos using fictional data.</p>
+        </article>
+        <article>
+          <small>Food meets software</small>
+          <h3>Plate Scanner</h3>
+          <p>
+            A phone-first tool for estimating what's on a dining-hall plate. My
+            course work adds an MCP server connecting plate photos in Google
+            Drive to a meal log in Google Sheets.
+          </p>
+        </article>
+      </div>
+    </dialog>
   </body>
 </html>
