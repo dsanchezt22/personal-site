@@ -1,17 +1,5 @@
-# Selected work
+# Selected work and course notebook
 
-## Sub-features
+Work links to #work. Category links reach #verdnt, #research, and #developer. The Verdnt section describes FStea and Plate Scanner and links to the two public winery demos, explicitly labeled fictional independent demos. Research and hardware include memory modeling, ErgoTouch, the bike, and digital logic.
 
-Research, Trus, FStea, Plate Scanner, D.O.S., and hardware project cards.
-
-## How to get to it (user POV)
-
-Choose Work in the primary navigation or Selected work in the hero.
-
-## Driving it with browser and HTTP
-
-Navigate to `#work`; verify the Work heading, six numbered cards, and the Trus and FStea links.
-
-## Gotchas
-
-Entries labeled `TODO(Diego)` are intentional unpublished links, not broken anchors.
+Follow all categories, check readable headings and text, and verify demo destinations. Course work names CS146S, CMUX, and Pi with links to the course and upstream projects, not the private assignment repository. Its three ordered notes summarize actual assignments. Check notebook layout and links at 320 and 390 pixels.

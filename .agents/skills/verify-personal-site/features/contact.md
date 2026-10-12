@@ -1,17 +1,5 @@
 # Contact and resume
 
-## Sub-features
+Contact reaches #contact. GitHub, LinkedIn, and the resume are accessible from the opening and contact section. The email link uses mailto without an intermediate form.
 
-Email, telephone, GitHub profile, and downloadable résumé.
-
-## How to get to it (user POV)
-
-Choose Contact in the primary navigation or the Resume link in the hero.
-
-## Driving it with browser and HTTP
-
-Navigate to `#contact`; verify the contact links. Open `Diego-Sanchez-Tirado-Resume.pdf` and confirm a non-empty PDF response.
-
-## Gotchas
-
-Do not activate `mailto:` or `tel:` during automated verification; that would launch an external communication app.
+Verify destinations and open the PDF. The HTTP check compares the served PDF byte-for-byte to the checked-in current resume. Check the email is unclipped at 320 pixels. Do not activate mailto during automated verification, since it launches an external communication app.

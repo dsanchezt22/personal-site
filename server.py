@@ -2,11 +2,12 @@
 """Loopback static server for the private site preview."""
 
 import mimetypes
+import os
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
-PORT = 8790
+ROOT = Path(__file__).resolve().parent / "dist"
+PORT = int(os.environ.get("PORT", "8790"))
 
 mimetypes.add_type("font/woff2", ".woff2")
 mimetypes.add_type("image/svg+xml", ".svg")
