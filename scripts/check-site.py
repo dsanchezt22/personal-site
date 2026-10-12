@@ -29,6 +29,9 @@ with urlopen(base) as response:
     html = response.read().decode()
 page = Page()
 page.feed(html)
+assert 'From the lab to the test kitchen' not in html, 'Superseded company-focused headline'
+assert 'tea-island' not in html and 'Step inside' not in html, 'Superseded hero or entrance gate'
+assert 'Ideas into things that work.' in html, 'Missing personal headline'
 assert len(page.ids) == len(set(page.ids)), 'Duplicate HTML IDs'
 for anchor in ('about', 'work', 'experience', 'contact', 'verdnt', 'research', 'developer'):
     assert anchor in page.ids, f'Missing section: {anchor}'
@@ -47,4 +50,7 @@ with urlopen(urljoin(base, 'Diego-Sanchez-Tirado-Resume.pdf')) as response:
     assert response.headers.get_content_type() == 'application/pdf'
     assert pdf.startswith(b'%PDF-')
 assert hashlib.sha256(pdf).digest() == hashlib.sha256((root / 'Diego-Sanchez-Tirado-Resume.pdf').read_bytes()).digest(), 'Resume differs from source'
+for asset in [*(root / 'dist').glob('*.js'), root / 'dist' / 'styles.css']:
+    with urlopen(urljoin(base, asset.name)) as response:
+        assert response.read() == asset.read_bytes(), f'Served build differs: {asset.name}'
 print(f'PASS: {len(page.ids)} IDs, all local anchors/assets, public profile/tool links, headers, exact resume bytes.')

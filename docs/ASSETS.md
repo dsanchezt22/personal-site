@@ -1,8 +1,10 @@
 # Artwork and fonts
 
-- assets/tea-island.png: original artwork made with the built-in image generation tool on 2026-10-12. Prompt: a cinematic 3D editorial illustration for an engineering portfolio with a beverage test-kitchen theme; a tea garden island in pale pistachio mist, amber peach tea, mint, mossy hills, a tiny laptop, copper circuit path, and citrus. Wide landscape, empty sky, atmospheric morning light, no text, logos, or people. Palette #e8eee0, #18382b, #ef9565, #e5c578. Original art, not a copy of a website.
+- world.js: original procedural Three.js workspace, glass, ice, notebook, chip array, split keyboard, laptop, graph, and plant. Canvas labels are generated locally. The illustrations are conceptual, not product photography or actual client packaging.
 - fonts/manrope-800.ttf: Google Fonts Manrope, SIL Open Font License in fonts/manrope-OFL.txt.
 - fonts/inter-*.woff2: existing Inter files, license in fonts/OFL.txt.
-- Cup favicon and interface illustrations: project-native SVG and CSS.
+- favicon.svg: project-native personal ds. monogram.
+- og.png and platform icons: existing personal-site sharing assets.
+- assets/tea-island.png: historical generated artwork from the superseded beverage-themed design. It is no longer referenced or shipped by the build.
 
-The bottle is a conceptual illustration, not actual FStea packaging. No Logartis assets or source were copied.
+No Logartis assets or source were copied. Three.js's license is retained in the emitted bundle's linked license file.

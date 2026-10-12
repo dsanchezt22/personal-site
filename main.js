@@ -1,426 +1,288 @@
-(() => {
-  const root = document.documentElement;
-  const entrance = document.querySelector("#entrance");
-  const hero = document.querySelector(".hero");
-  const motionButton = document.querySelector("#motion");
-  const soundButton = document.querySelector("#sound");
-  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-  const finePointer = matchMedia("(pointer: fine)");
-  const wideScene = matchMedia("(min-width: 901px) and (min-height: 700px)");
-  let motionOn = !reducedMotion.matches;
-  let soundOn = false;
-  let audio;
-  let pendingFrame = 0;
-  let closing = false;
-  let scrollScenes = [];
+import { chapterState } from "./journey.js";
 
-  function setMotion() {
-    if (reducedMotion.matches) motionOn = false;
-    root.classList.toggle("motion-off", !motionOn);
-    motionButton.disabled = reducedMotion.matches;
-    motionButton.setAttribute("aria-pressed", String(motionOn));
-    motionButton.setAttribute(
-      "aria-label",
-      `Turn motion ${motionOn ? "off" : "on"}`,
+const root = document.documentElement;
+const chapters = [...document.querySelectorAll(".chapter")];
+const chapterLinks = [...document.querySelectorAll(".chapter-nav a")];
+const motionButton = document.querySelector("#motion");
+const soundButton = document.querySelector("#sound");
+const intro = document.querySelector("#intro");
+const canvas = document.querySelector("#world");
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+const pointer = { x: 0, y: 0 };
+let world,
+  immersive = false,
+  activeIndex = 0,
+  progress = 0,
+  targetProgress = 0;
+let frame = 0,
+  lastTime = 0,
+  introStarted = 0,
+  introPlaying = false;
+let soundOn = false,
+  audio;
+root.classList.add("enhanced");
+
+function requestFrame() {
+  if (!frame && !document.hidden) frame = requestAnimationFrame(paint);
+}
+function scrollProgress() {
+  targetProgress = Math.max(
+    0,
+    Math.min(
+      1,
+      scrollY /
+        Math.max(1, document.documentElement.scrollHeight - innerHeight),
+    ),
+  );
+  if (!immersive) {
+    activeIndex = chapters.findLastIndex(
+      (chapter) => chapter.offsetTop <= scrollY + innerHeight * 0.4,
     );
-    motionButton.querySelector(".control-label").textContent =
-      `Motion ${motionOn ? "on" : "off"}`;
-    if (!motionOn) {
-      root.style.setProperty("--pointer-x", "0px");
-      root.style.setProperty("--pointer-y", "0px");
-    }
-    buildScrollScenes();
+    activeIndex = Math.max(0, activeIndex);
+    document.querySelector("#chapter-label").textContent =
+      chapters[activeIndex].dataset.label;
   }
-
-  // Sound starts only after an explicit click and consists of a short glass chime.
-  async function chime() {
-    if (!soundOn || document.hidden) return;
-    try {
-      const Audio = window.AudioContext || window.webkitAudioContext;
-      if (!Audio) throw new Error("Audio unavailable");
-      audio ||= new Audio();
-      await audio.resume();
-      if (!soundOn || document.hidden) return;
-      [523.25, 783.99, 1046.5].forEach((frequency, index) => {
-        const tone = audio.createOscillator();
-        const gain = audio.createGain();
-        const start = audio.currentTime + index * 0.08;
-        tone.type = "sine";
-        tone.frequency.value = frequency;
-        gain.gain.setValueAtTime(0, start);
-        gain.gain.linearRampToValueAtTime(0.035 / (index + 1), start + 0.008);
-        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.8);
-        tone.connect(gain).connect(audio.destination);
-        tone.start(start);
-        tone.stop(start + 0.85);
-        tone.onended = () => {
-          tone.disconnect();
-          gain.disconnect();
-        };
-      });
-    } catch {
-      soundOn = false;
-      paintSound();
-      soundButton.setAttribute(
-        "aria-label",
-        "Sound unavailable in this browser",
-      );
-      soundButton.querySelector(".control-label").textContent =
-        "Sound unavailable";
-    }
+  requestFrame();
+}
+function paint(now) {
+  frame = 0;
+  const elapsed = Math.min(0.05, (now - lastTime) / 1000 || 0.016);
+  lastTime = now;
+  if (!immersive) return;
+  progress += (targetProgress - progress) * (1 - Math.exp(-elapsed * 12));
+  if (Math.abs(targetProgress - progress) < 0.00003) progress = targetProgress;
+  const state = chapterState(progress, chapters.length);
+  activeIndex = state.index;
+  const mobile = innerWidth <= 800;
+  chapters.forEach((chapter, index) => {
+    const current = index === activeIndex;
+    chapter.classList.toggle("current", current);
+    chapter.inert = !current || introPlaying;
+    chapter.setAttribute("aria-hidden", String(!current || introPlaying));
+    const copy = chapter.querySelector(".chapter-copy");
+    copy.style.opacity = current ? state.opacity : 0;
+    copy.style.transform = `translate3d(${-state.offset * (mobile ? 50 : 110)}px, ${mobile ? 0 : -50}%, 0)`;
+    chapterLinks[index].setAttribute("aria-current", String(current));
+  });
+  document.querySelector("#chapter-label").textContent =
+    chapters[activeIndex].dataset.label;
+  const introTime = introPlaying ? (now - introStarted) / 1000 : 4.6;
+  world.render(progress, introTime, pointer, true);
+  if (introPlaying && introTime >= 4.6) finishIntro();
+  if (introPlaying || Math.abs(targetProgress - progress) > 0.00003)
+    requestFrame();
+}
+function finishIntro() {
+  introPlaying = false;
+  intro.hidden = true;
+  root.classList.remove("intro-active");
+  try {
+    sessionStorage.setItem("portfolio-introduced", "true");
+  } catch {}
+  requestFrame();
+}
+function playIntro() {
+  if (!immersive) return;
+  if (location.hash) history.replaceState(null, "", "#home");
+  window.scrollTo({ top: 0, behavior: "instant" });
+  progress = targetProgress = 0;
+  introPlaying = true;
+  introStarted = performance.now();
+  intro.hidden = false;
+  root.classList.add("intro-active");
+  requestFrame();
+}
+function setImmersive(enabled) {
+  const index = activeIndex;
+  if (introPlaying) finishIntro();
+  immersive = Boolean(enabled && world && !reducedMotion.matches);
+  root.classList.toggle("immersive", immersive);
+  root.classList.toggle("motion-off", !immersive);
+  motionButton.textContent = immersive ? "Motion on" : "Motion off";
+  motionButton.setAttribute("aria-pressed", String(immersive));
+  motionButton.setAttribute(
+    "aria-label",
+    reducedMotion.matches
+      ? "Motion disabled by system preference"
+      : `Turn motion ${immersive ? "off" : "on"}`,
+  );
+  motionButton.disabled = reducedMotion.matches || !world;
+  chapters.forEach((chapter) => {
+    chapter.inert = false;
+    chapter.removeAttribute("aria-hidden");
+    chapter.querySelector(".chapter-copy").removeAttribute("style");
+  });
+  document.querySelector(".journey-footer").hidden = false;
+  document.querySelector(".chapter-nav").hidden = !immersive;
+  document.querySelector("#replay").hidden = !immersive;
+  if (immersive) world.resize();
+  window.scrollTo({ top: chapters[index].offsetTop, behavior: "instant" });
+  scrollProgress();
+  progress = targetProgress;
+}
+function navigate(hash, behavior = "smooth") {
+  let target = document.querySelector(hash);
+  if (!target) return;
+  const dialog = target.closest("dialog");
+  if (dialog) {
+    document.querySelector(`[data-dialog="${dialog.id}"]`).click();
+    return;
   }
-
-  function paintSound() {
-    soundButton.setAttribute("aria-pressed", String(soundOn));
-    soundButton.setAttribute(
-      "aria-label",
-      `Turn sound ${soundOn ? "off" : "on"}`,
-    );
-    soundButton.querySelector(".control-label").textContent =
-      `Sound ${soundOn ? "on" : "off"}`;
-  }
-
-  function leaveEntrance(jumpToWork = false) {
-    if (closing || !entrance.open) return;
-    closing = true;
-    try {
-      sessionStorage.setItem("portfolio-entered", "true");
-    } catch {
-      /* Storage is optional. */
-    }
-    entrance.classList.add("leaving");
-    root.classList.remove("intro-playing");
-    root.classList.add("entered");
-    const finish = () => {
-      entrance.close();
-      entrance.classList.remove("leaving");
-      closing = false;
-      const target = document.querySelector(
-        jumpToWork ? "#work-title" : "#hero-title",
-      );
-      target.setAttribute("tabindex", "-1");
-      target.focus({ preventScroll: true });
-      if (jumpToWork)
-        document.querySelector("#work").scrollIntoView({ behavior: "instant" });
-    };
-    if (motionOn && !jumpToWork) setTimeout(finish, 900);
-    else finish();
-    chime();
-  }
-
-  document
-    .querySelector("#enter")
-    .addEventListener("click", () => leaveEntrance());
-  document
-    .querySelector("#enter-quiet")
-    .addEventListener("click", () => leaveEntrance(true));
-  entrance.addEventListener("cancel", (event) => {
-    event.preventDefault();
-    leaveEntrance();
+  target = target.closest(".chapter");
+  if (!target) return;
+  if (introPlaying) finishIntro();
+  activeIndex = chapters.indexOf(target);
+  window.scrollTo({
+    top: target.offsetTop,
+    behavior: immersive ? behavior : "instant",
   });
-  const replay = document.querySelector("#replay");
-  replay.addEventListener("click", () => {
-    if (closing) return;
-    window.scrollTo({ top: 0, behavior: "instant" });
-    root.classList.add("intro-playing");
-    entrance.showModal();
-  });
-  motionButton.addEventListener("click", () => {
-    motionOn = !motionOn;
-    setMotion();
-  });
-  reducedMotion.addEventListener("change", () => {
-    motionOn = !reducedMotion.matches;
-    setMotion();
-  });
-  soundButton.addEventListener("click", () => {
-    soundOn = !soundOn;
-    paintSound();
-    if (soundOn) chime();
-    else if (audio) audio.suspend().catch(() => {});
-  });
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden && audio) audio.suspend().catch(() => {});
-  });
-
-  // Paused native animations follow scroll position, so reversing scroll reverses the scene.
-  function addScene(selector, motions, pinned = false) {
-    const track = document.querySelector(selector);
-    const animations = motions.map(
-      ([target, keyframes, start = 0, end = 1]) => {
-        const animation = track.querySelector(target).animate(keyframes, {
-          duration: 1000,
-          fill: "both",
-        });
-        animation.pause();
-        return { animation, start, end };
-      },
-    );
-    scrollScenes.push({ track, animations, pinned });
-  }
-
-  function buildScrollScenes() {
-    const anchor = [
-      ...document.querySelectorAll(
-        ".hero, .verdnt-main, #work, #research, #developer, #about, #contact",
-      ),
-    ].find((element) => {
-      const bounds = element.getBoundingClientRect();
-      return bounds.top <= innerHeight / 2 && bounds.bottom > innerHeight / 2;
-    });
-    const anchorTop = anchor?.getBoundingClientRect().top;
-    const keepReadingPosition = () => {
-      if (anchor)
-        window.scrollBy({
-          top: anchor.getBoundingClientRect().top - anchorTop,
-          behavior: "instant",
-        });
-    };
-    scrollScenes.forEach(({ animations }) =>
-      animations.forEach(({ animation }) => animation.cancel()),
-    );
-    scrollScenes = [];
-    root.classList.toggle("scroll-motion", motionOn);
-    if (!motionOn) {
-      keepReadingPosition();
+  scrollProgress();
+}
+for (const link of document.querySelectorAll('a[href^="#"]')) {
+  link.addEventListener("click", (event) => {
+    const hash = link.getAttribute("href");
+    if (hash === "#content") {
+      if (introPlaying) finishIntro();
+      if (immersive) setImmersive(false);
       return;
     }
-
-    addScene(
-      ".hero-journey",
-      [
-        [
-          ".hero-scene",
-          {
-            transform: wideScene.matches
-              ? [
-                  "translate3d(0, 0, 0) scale(1)",
-                  "translate3d(-8%, 6%, 0) scale(1.38)",
-                ]
-              : [
-                  "translate3d(0, -45px, 0) scale(.95)",
-                  "translate3d(0, 85px, 0) scale(1.12)",
-                ],
-          },
-        ],
-        ...(wideScene.matches
-          ? [
-              [
-                ".hero-copy",
-                {
-                  transform: ["translateY(0)", "translateY(-110px)"],
-                  opacity: [1, 0],
-                  pointerEvents: ["auto", "none"],
-                },
-                0.08,
-                0.5,
-              ],
-              [
-                ".hero-chapter",
-                {
-                  transform: ["translateY(90px)", "translateY(0)"],
-                  opacity: [0, 1],
-                },
-                0.45,
-                0.85,
-              ],
-              [
-                ".scene-note",
-                { opacity: [1, 0], visibility: ["visible", "hidden"] },
-                0.1,
-                0.35,
-              ],
-            ]
-          : []),
-      ],
-      wideScene.matches,
-    );
-
-    addScene(
-      ".verdnt-journey",
-      [
-        [
-          ".tea-bottle",
-          {
-            transform: [
-              "translateY(55px) rotate(-24deg) scale(.86)",
-              "translateY(-20px) rotate(14deg) scale(1.16)",
-            ],
-          },
-        ],
-        [
-          ".bottle-liquid",
-          { transform: ["scaleY(.12)", "scaleY(1)"] },
-          0.05,
-          0.85,
-        ],
-        [
-          ".orbit-one",
-          {
-            transform: [
-              "rotate(-35deg) scale(.8)",
-              "rotate(55deg) scale(1.08)",
-            ],
-          },
-        ],
-        [".orbit-two", { transform: ["rotate(30deg)", "rotate(-45deg)"] }],
-        [
-          ".ingredient-one",
-          { transform: ["translate(-45px, 50px)", "translate(15px, -20px)"] },
-        ],
-        [
-          ".ingredient-two",
-          { transform: ["translate(35px, 40px)", "translate(-20px, -30px)"] },
-        ],
-        [
-          ".ingredient-three",
-          { transform: ["translate(-30px, 20px)", "translate(25px, -25px)"] },
-        ],
-      ],
-      wideScene.matches,
-    );
-
-    addScene("#research", [
-      [
-        ".memory-mesh",
-        {
-          transform: [
-            "rotate(-55deg) skew(10deg, 10deg) scale(.68)",
-            "rotate(5deg) skew(10deg, 10deg) scale(1.22)",
-          ],
-        },
-      ],
-      [
-        ".research-top",
-        { transform: ["translateY(75px)", "translateY(0)"], opacity: [0.2, 1] },
-        0,
-        0.35,
-      ],
-      [
-        ".hardware-list",
-        { transform: ["translateY(95px)", "translateY(-15px)"] },
-        0.15,
-        0.8,
-      ],
-    ]);
-    addScene("#developer", [
-      [
-        ".course-notebook",
-        {
-          transform: [
-            "translateY(100px) rotate(-7deg) scale(.92)",
-            "translateY(-20px) rotate(2deg) scale(1)",
-          ],
-        },
-        0,
-        0.75,
-      ],
-      [
-        ".developer-copy",
-        { transform: ["translateY(65px)", "translateY(0)"], opacity: [0.2, 1] },
-        0,
-        0.38,
-      ],
-    ]);
-    addScene("#work", [
-      [
-        ".section-heading",
-        {
-          transform: ["translateX(-60px)", "translateX(0)"],
-          opacity: [0.2, 1],
-        },
-        0,
-        0.45,
-      ],
-    ]);
-    addScene("#about", [
-      [
-        ".about-intro",
-        { transform: ["translateY(70px)", "translateY(0)"], opacity: [0.2, 1] },
-        0,
-        0.4,
-      ],
-    ]);
-    addScene("#contact", [
-      [
-        ".contact-art",
-        { transform: ["rotate(-25deg) scale(.6)", "rotate(0deg) scale(1)"] },
-        0,
-        0.55,
-      ],
-      [
-        "h2",
-        { transform: ["translateY(50px)", "translateY(0)"], opacity: [0.2, 1] },
-        0,
-        0.5,
-      ],
-    ]);
-    keepReadingPosition();
-    paintScroll();
-  }
-
-  function paintScroll() {
-    pendingFrame = 0;
-    if (!motionOn || document.hidden) return;
-    const frames = scrollScenes.map((scene) => {
-      const bounds = scene.track.getBoundingClientRect();
-      const progress = scene.pinned
-        ? -bounds.top / Math.max(1, bounds.height - innerHeight)
-        : (innerHeight - bounds.top) / (innerHeight + bounds.height);
-      return { ...scene, progress };
-    });
-    frames.forEach(({ animations, progress }) => {
-      animations.forEach(({ animation, start, end }) => {
-        animation.currentTime =
-          Math.max(0, Math.min(1, (progress - start) / (end - start))) * 1000;
-      });
-    });
-  }
-
-  function requestScrollFrame() {
-    if (!pendingFrame && motionOn)
-      pendingFrame = requestAnimationFrame(paintScroll);
-  }
-  window.addEventListener("scroll", requestScrollFrame, { passive: true });
-  window.addEventListener("resize", requestScrollFrame);
-  window.addEventListener("pageshow", requestScrollFrame);
-  wideScene.addEventListener("change", buildScrollScenes);
-  document.fonts.ready.then(requestScrollFrame);
-  hero.addEventListener(
-    "pointermove",
-    (event) => {
-      if (!motionOn || !finePointer.matches || entrance.open) return;
-      const bounds = hero.getBoundingClientRect();
-      root.style.setProperty(
-        "--pointer-x",
-        `${(event.clientX / bounds.width - 0.5) * 10}px`,
-      );
-      root.style.setProperty(
-        "--pointer-y",
-        `${(event.clientY / bounds.height - 0.5) * 7}px`,
-      );
-    },
-    { passive: true },
-  );
-  hero.addEventListener("pointerleave", () => {
-    root.style.setProperty("--pointer-x", "0px");
-    root.style.setProperty("--pointer-y", "0px");
+    event.preventDefault();
+    history.pushState(null, "", hash);
+    navigate(hash);
+    chime();
   });
-  document
-    .querySelectorAll('a[href^="#"]')
-    .forEach((link) => link.addEventListener("click", chime));
-  setMotion();
-  paintScroll();
-  document.querySelector(".experience-controls").hidden = false;
-  replay.hidden = false;
-  let entered = false;
+}
+window.addEventListener("popstate", () =>
+  navigate(location.hash || "#home", "instant"),
+);
+document.addEventListener("focusin", (event) => {
+  const chapter = event.target.closest(".chapter");
+  if (immersive && chapter && !introPlaying) {
+    window.scrollTo({ top: chapter.offsetTop, behavior: "instant" });
+    scrollProgress();
+    progress = targetProgress;
+  }
+});
+for (const button of document.querySelectorAll("[data-dialog]")) {
+  button.addEventListener("click", () => {
+    const dialog = document.getElementById(button.dataset.dialog);
+    dialog.showModal();
+    dialog.scrollTop = 0;
+  });
+}
+for (const dialog of document.querySelectorAll("dialog")) {
+  dialog
+    .querySelector(".close-dialog")
+    .addEventListener("click", () => dialog.close());
+}
+async function chime() {
+  if (!soundOn || document.hidden) return;
   try {
-    entered = sessionStorage.getItem("portfolio-entered") === "true";
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    audio ||= new Audio();
+    await audio.resume();
+    if (!soundOn) return;
+    [523.25, 783.99].forEach((frequency, index) => {
+      const tone = audio.createOscillator(),
+        gain = audio.createGain(),
+        start = audio.currentTime + index * 0.07;
+      tone.frequency.value = frequency;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.025, start + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.7);
+      tone.connect(gain).connect(audio.destination);
+      tone.start(start);
+      tone.stop(start + 0.75);
+      tone.onended = () => {
+        tone.disconnect();
+        gain.disconnect();
+      };
+    });
   } catch {
-    /* Storage is optional. */
+    soundOn = false;
+    paintSound();
+    soundButton.textContent = "Sound unavailable";
   }
-  if (!entered && !location.hash && !reducedMotion.matches) {
-    root.classList.add("intro-playing");
-    entrance.showModal();
+}
+function paintSound() {
+  soundButton.textContent = soundOn ? "Sound on" : "Sound off";
+  soundButton.setAttribute("aria-pressed", String(soundOn));
+}
+soundButton.addEventListener("click", () => {
+  soundOn = !soundOn;
+  paintSound();
+  if (soundOn) chime();
+  else audio?.suspend().catch(() => {});
+});
+motionButton.addEventListener("click", () => setImmersive(!immersive));
+reducedMotion.addEventListener("change", () => {
+  if (!world && !reducedMotion.matches) start(false);
+  else setImmersive(!reducedMotion.matches);
+});
+document.querySelector("#skip-intro").addEventListener("click", finishIntro);
+document.querySelector("#replay").addEventListener("click", playIntro);
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && introPlaying) finishIntro();
+});
+window.addEventListener("scroll", scrollProgress, { passive: true });
+window.addEventListener("resize", () => {
+  world?.resize();
+  if (immersive) {
+    window.scrollTo({
+      top: progress * (document.documentElement.scrollHeight - innerHeight),
+      behavior: "instant",
+    });
   }
-})();
+  scrollProgress();
+});
+document.addEventListener(
+  "pointermove",
+  (event) => {
+    if (!immersive || event.pointerType === "touch") return;
+    pointer.x = event.clientX / innerWidth - 0.5;
+    pointer.y = event.clientY / innerHeight - 0.5;
+    requestFrame();
+  },
+  { passive: true },
+);
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+    audio?.suspend().catch(() => {});
+  } else requestFrame();
+});
+canvas.addEventListener("webglcontextlost", (event) => {
+  event.preventDefault();
+  setImmersive(false);
+  motionButton.disabled = true;
+});
+
+async function start(allowIntro = true) {
+  try {
+    if (reducedMotion.matches) {
+      setImmersive(false);
+      return;
+    }
+    const { createWorld } = await import("./world.js");
+    world = createWorld(canvas);
+    setImmersive(true);
+    let introduced = false;
+    try {
+      introduced = sessionStorage.getItem("portfolio-introduced") === "true";
+    } catch {}
+    if (location.hash) {
+      navigate(location.hash, "instant");
+      progress = targetProgress;
+    } else if (allowIntro && !introduced) playIntro();
+    requestFrame();
+  } catch (error) {
+    console.warn("Using the readable portfolio view:", error.message);
+    world?.dispose();
+    world = undefined;
+    setImmersive(false);
+  } finally {
+    root.classList.remove("booting");
+  }
+}
+start();
