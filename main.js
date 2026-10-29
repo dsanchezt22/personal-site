@@ -18,7 +18,7 @@ let frame = 0,
   lastTime = 0,
   introStarted = 0,
   introPlaying = false;
-let lastInteraction = 0;
+let lastInteraction = 0, worldTime = 0;
 let soundOn = false,
   audio;
 root.classList.add("enhanced");
@@ -74,7 +74,8 @@ function paint(now) {
   document.querySelector("#chapter-label").textContent =
     chapters[activeIndex].dataset.label;
   const introTime = introPlaying ? (now - introStarted) / 1000 : INTRO_DURATION;
-  world.render(progress, introTime, pointer, true, now / 1000);
+  worldTime += elapsed;
+  world.render(progress, introTime, pointer, true, worldTime);
   if (introPlaying && introTime >= INTRO_DURATION) finishIntro();
   if (introPlaying || Math.abs(targetProgress - progress) > 0.00003
       || now - lastInteraction < 1500) requestFrame();

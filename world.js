@@ -162,6 +162,8 @@ export function createWorld(canvas) {
     0,
   );
   floor.rotation.x = -Math.PI / 2;
+  floor.material.depthWrite = false;
+  floor.renderOrder = -1;
   cylinder(workbench, 5.7, 0.32, material(0xcbd6e0, 0.75), 0, -0.25, 0);
   cylinder(workbench, 5.64, 0.08, paper, 0, -0.055, 0);
   const edge = mesh(
@@ -497,19 +499,21 @@ export function createWorld(canvas) {
   scene.add(camera);
   const floaters = [];
   const circuitMaterial = material(0x507769, 0.45, 0.25);
-  const traceMaterial = new THREE.LineBasicMaterial({ color: 0x9cb7a9 });
+  const floatingInk = ink.clone(), floatingCopper = copper.clone();
+  for (const mat of [circuitMaterial, floatingInk, floatingCopper]) mat.fog = false;
+  const traceMaterial = new THREE.LineBasicMaterial({ color: 0x9cb7a9, fog: false });
   for (let i = 0; i < 4; i++) {
     const board = new THREE.Group();
     floating.add(board);
     box(board, 0.88, 1.14, 0.045, circuitMaterial);
-    box(board, 0.33, 0.36, 0.08, ink, 0, 0, 0.06, 0.02);
+    box(board, 0.33, 0.36, 0.08, floatingInk, 0, 0, 0.06, 0.02);
     const traces = [];
     for (let pin = 0; pin < 6; pin++) {
       const y = (pin - 2.5) * 0.13;
       for (const sign of [-1, 1]) {
         traces.push(sign * 0.17, y, 0.035, sign * 0.3, y, 0.035,
           sign * 0.3, y, 0.035, sign * 0.38, y + 0.08, 0.035);
-        box(board, 0.09, 0.035, 0.02, copper, sign * 0.2, y, 0.06, 0.006);
+        box(board, 0.09, 0.035, 0.02, floatingCopper, sign * 0.2, y, 0.06, 0.006);
       }
     }
     const geometry = new THREE.BufferGeometry();
@@ -535,7 +539,7 @@ export function createWorld(canvas) {
   });
   for (let i = 0; i < 28; i++) {
     const digit = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: digitMaps[i % 2], transparent: true, opacity: 0.42, depthTest: true,
+      map: digitMaps[i % 2], transparent: true, opacity: 0.42, depthTest: true, fog: false,
     }));
     digit.scale.setScalar(0.26 + (i % 3) * 0.035);
     floating.add(digit);
@@ -547,14 +551,14 @@ export function createWorld(canvas) {
   const webGeometry = new THREE.BufferGeometry();
   webGeometry.setAttribute("position", new THREE.BufferAttribute(webPositions, 3));
   const webMaterial = new THREE.LineBasicMaterial({
-    color: 0x6b8ca7, transparent: true, opacity: 0.16, depthTest: true,
+    color: 0x6b8ca7, transparent: true, opacity: 0.16, depthTest: true, fog: false,
   });
   const web = new THREE.LineSegments(webGeometry, webMaterial);
   web.frustumCulled = false;
   floating.add(web);
   const cursor = new THREE.Vector3();
   const settledPointer = new THREE.Vector2();
-  let previousTime = 0, shadowProgress = -1, shadowIntro = -1;
+  let previousTime = 0, pointerStrength = 0, shadowProgress = -1, shadowIntro = -1;
   let width = 1,
     height = 1;
   function resize() {
@@ -624,9 +628,11 @@ export function createWorld(canvas) {
     previousTime = time;
     settledPointer.lerp(new THREE.Vector2(pointer.active ? pointer.x : 0,
       pointer.active ? pointer.y : 0), 1 - Math.exp(-delta * 9));
-    const viewHeight = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 24;
+    pointerStrength += ((pointer.active ? 1 : 0) - pointerStrength) * (1 - Math.exp(-delta * 9));
+    const fieldDepth = camera.position.distanceTo(target) + 7;
+    const viewHeight = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * fieldDepth;
     const viewWidth = viewHeight * camera.aspect;
-    cursor.set(pointer.x * viewWidth, -pointer.y * viewHeight, -24);
+    cursor.set(settledPointer.x * viewWidth, -settledPointer.y * viewHeight, -fieldDepth);
     floating.position.set(mobile ? 0 : offset * viewWidth,
       mobile ? -offset * viewHeight : 0, 0);
     const floatReveal = smooth(0.35, 0.75, intro);
@@ -639,10 +645,10 @@ export function createWorld(canvas) {
       let y = item.y * viewHeight * 0.5 + Math.cos(time * 0.3 + item.phase) * 0.13;
       const dx = x - cursor.x, dy = y - cursor.y;
       const distance = Math.hypot(dx, dy);
-      const push = pointer.active ? Math.max(0, 1 - distance / 2.6) : 0;
+      const push = pointerStrength * Math.max(0, 1 - distance / 2.6);
       x += dx / Math.max(distance, 0.01) * push * 0.65;
       y += dy / Math.max(distance, 0.01) * push * 0.65;
-      object.position.set(x + settledPointer.x * 0.25, y - settledPointer.y * 0.25, -24);
+      object.position.set(x + settledPointer.x * 0.25, y - settledPointer.y * 0.25, -fieldDepth);
       if (item.board) {
         object.rotation.set(0.2 + settledPointer.y * 0.5,
           Math.sin(time * 0.2 + item.phase) * 0.25 + settledPointer.x * 0.6,
