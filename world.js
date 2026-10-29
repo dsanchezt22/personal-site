@@ -545,7 +545,7 @@ export function createWorld(canvas) {
     floating.add(digit);
     const angle = i * 2.39996;
     floaters.push({ object: digit, x: Math.cos(angle) * (0.4 + (i % 4) * 0.17),
-      y: Math.sin(angle) * (0.5 + (i % 3) * 0.15), phase: i * 0.7 });
+      y: Math.sin(angle) * (0.5 + (i % 3) * 0.15), phase: i * 0.7, size: digit.scale.x });
   }
   const webPositions = new Float32Array(28 * 4 * 6);
   const webGeometry = new THREE.BufferGeometry();
@@ -630,6 +630,7 @@ export function createWorld(canvas) {
       pointer.active ? pointer.y : 0), 1 - Math.exp(-delta * 9));
     pointerStrength += ((pointer.active ? 1 : 0) - pointerStrength) * (1 - Math.exp(-delta * 9));
     const fieldDepth = camera.position.distanceTo(target) + 7;
+    const fieldScale = fieldDepth / 24;
     const viewHeight = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * fieldDepth;
     const viewWidth = viewHeight * camera.aspect;
     cursor.set(settledPointer.x * viewWidth, -settledPointer.y * viewHeight, -fieldDepth);
@@ -653,8 +654,9 @@ export function createWorld(canvas) {
         object.rotation.set(0.2 + settledPointer.y * 0.5,
           Math.sin(time * 0.2 + item.phase) * 0.25 + settledPointer.x * 0.6,
           Math.sin(item.phase) * 0.25);
-        object.scale.setScalar(mobileFloat * floatReveal);
+        object.scale.setScalar(mobileFloat * floatReveal * fieldScale);
       } else {
+        object.scale.setScalar(item.size * fieldScale);
         object.material.opacity = floatReveal * mobileFloat * (0.35 + push * 0.6);
       }
     });
@@ -662,7 +664,7 @@ export function createWorld(canvas) {
     for (let i = 4; i < floaters.length; i++) {
       for (let j = i + 1; j < floaters.length; j++) {
         const a = floaters[i].object.position, b = floaters[j].object.position;
-        if (a.distanceTo(b) > 2 || vertex + 6 > webPositions.length) continue;
+        if (a.distanceTo(b) > 2 * fieldScale || vertex + 6 > webPositions.length) continue;
         a.toArray(webPositions, vertex);
         b.toArray(webPositions, vertex + 3);
         vertex += 6;
