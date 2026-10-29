@@ -110,8 +110,8 @@ function setImmersive(enabled) {
   motionButton.setAttribute(
     "aria-label",
     reducedMotion.matches
-      ? "Motion disabled by system preference"
-      : `Turn motion ${immersive ? "off" : "on"}`,
+      ? "Motion off. Disabled by system preference"
+      : `Motion ${immersive ? "on" : "off"}. Turn motion ${immersive ? "off" : "on"}`,
   );
   motionButton.disabled = reducedMotion.matches || !world;
   chapters.forEach((chapter) => {
