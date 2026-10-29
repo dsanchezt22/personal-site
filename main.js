@@ -1,4 +1,4 @@
-import { chapterState } from "./journey.js";
+import { chapterState, INTRO_DURATION } from "./journey.js";
 
 const root = document.documentElement;
 const chapters = [...document.querySelectorAll(".chapter")];
@@ -8,7 +8,6 @@ const soundButton = document.querySelector("#sound");
 const intro = document.querySelector("#intro");
 const canvas = document.querySelector("#world");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-const INTRO_DURATION = 2.2;
 const pointer = { x: 0, y: 0, active: false };
 let world,
   immersive = false,
@@ -48,6 +47,7 @@ function scrollProgress() {
 }
 function paint(now) {
   frame = 0;
+  if (document.querySelector("dialog[open]")) return;
   if (immersive && !introPlaying && Math.abs(targetProgress - progress) < 0.00003
       && now - lastInteraction > 250 && now - lastTime < 32) {
     requestFrame();
@@ -76,7 +76,8 @@ function paint(now) {
   const introTime = introPlaying ? (now - introStarted) / 1000 : INTRO_DURATION;
   world.render(progress, introTime, pointer, true, now / 1000);
   if (introPlaying && introTime >= INTRO_DURATION) finishIntro();
-  requestFrame();
+  if (introPlaying || Math.abs(targetProgress - progress) > 0.00003
+      || now - lastInteraction < 1500) requestFrame();
 }
 function finishIntro() {
   introPlaying = false;
@@ -177,6 +178,7 @@ for (const button of document.querySelectorAll("[data-dialog]")) {
   });
 }
 for (const dialog of document.querySelectorAll("dialog")) {
+  dialog.addEventListener("close", requestFrame);
   dialog
     .querySelector(".close-dialog")
     .addEventListener("click", () => dialog.close());
@@ -244,7 +246,7 @@ window.addEventListener("resize", () => {
 document.addEventListener(
   "pointermove",
   (event) => {
-    if (!immersive || event.pointerType === "touch") return;
+    if (!immersive || event.pointerType === "touch" || document.querySelector("dialog[open]")) return;
     lastInteraction = performance.now();
     pointer.active = true;
     pointer.x = event.clientX / innerWidth - 0.5;
@@ -253,9 +255,13 @@ document.addEventListener(
   },
   { passive: true },
 );
-document.addEventListener("pointerleave", () => {
+function releasePointer() {
   pointer.active = false;
-});
+  lastInteraction = performance.now();
+  requestFrame();
+}
+document.documentElement.addEventListener("pointerleave", releasePointer);
+window.addEventListener("blur", releasePointer);
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     if (frame) cancelAnimationFrame(frame);

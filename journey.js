@@ -1,3 +1,5 @@
+export const INTRO_DURATION = 2.2;
+
 export function chapterState(progress, count) {
   const position = Math.max(0, Math.min(1, progress)) * (count - 1);
   const index = Math.round(position);

@@ -1,3 +1,4 @@
+import { INTRO_DURATION } from "./journey.js";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
@@ -30,7 +31,7 @@ export function createWorld(canvas) {
     canvas,
     antialias: true,
     alpha: false,
-    powerPreference: "high-performance",
+    powerPreference: "default",
   });
 
   renderer.setClearColor(0xeef2f5);
@@ -516,7 +517,7 @@ export function createWorld(canvas) {
     board.add(new THREE.LineSegments(geometry, traceMaterial));
     board.traverse((object) => { object.castShadow = object.receiveShadow = false; });
     floaters.push({ object: board,
-      x: [-0.8, 0.85, 0.55, -0.65][i], y: [0.58, 0.5, -0.6, -0.65][i],
+      x: [0.35, 0.82, 0.65, -0.85][i], y: [0.65, 0.56, -0.7, 0.7][i],
       phase: i * 1.8, board: true });
   }
   const digitMaps = ["0", "1"].map((digit) => {
@@ -534,7 +535,7 @@ export function createWorld(canvas) {
   });
   for (let i = 0; i < 28; i++) {
     const digit = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: digitMaps[i % 2], transparent: true, opacity: 0.42, depthTest: false,
+      map: digitMaps[i % 2], transparent: true, opacity: 0.42, depthTest: true,
     }));
     digit.scale.setScalar(0.26 + (i % 3) * 0.035);
     floating.add(digit);
@@ -546,7 +547,7 @@ export function createWorld(canvas) {
   const webGeometry = new THREE.BufferGeometry();
   webGeometry.setAttribute("position", new THREE.BufferAttribute(webPositions, 3));
   const webMaterial = new THREE.LineBasicMaterial({
-    color: 0x6b8ca7, transparent: true, opacity: 0.16, depthTest: false,
+    color: 0x6b8ca7, transparent: true, opacity: 0.16, depthTest: true,
   });
   const web = new THREE.LineSegments(webGeometry, webMaterial);
   web.frustumCulled = false;
@@ -568,12 +569,12 @@ export function createWorld(canvas) {
   }
   function render(
     progress,
-    introTime = 2.2,
+    introTime = INTRO_DURATION,
     pointer = { x: 0, y: 0 },
     animate = true,
     time = 0,
   ) {
-    const intro = THREE.MathUtils.clamp(introTime / 2.2, 0, 1);
+    const intro = THREE.MathUtils.clamp(introTime / INTRO_DURATION, 0, 1);
     const pullback = smooth(0.3, 1, intro);
     const story = THREE.MathUtils.clamp(progress, 0, 1);
     const pathPosition = cameraPath.getPoint(story);
@@ -599,17 +600,19 @@ export function createWorld(canvas) {
       height,
     );
     if (mobile) {
-      camera.position.sub(target).multiplyScalar(1.3).add(target);
+      camera.position.sub(target).multiplyScalar(1.6).add(target);
     }
     camera.lookAt(target);
     const seat = smooth(0, 0.85, introTime);
-    processor.position.y = 0.27 + (1 - seat) * 2;
+    processor.position.y = 0.27 + (1 - seat) * 2
+      + Math.max(0, 1 - Math.abs(story - 0.4) * 6) * 0.16;
     processor.rotation.y = (1 - seat) * 0.45;
     nodes.forEach((node, i) => {
       if (node === processor) return;
       node.position.y = 0.27 + (1 - smooth(0.12, 0.95, introTime)) * (0.5 + i * 0.06)
         + Math.max(0, 1 - Math.abs(story - 0.4) * 6) * (0.11 + Math.sin(i * 1.8) * 0.07);
     });
+    signalMaterial.opacity = smooth(0.65, 1, introTime) * 0.7;
     signals.forEach((signal, i) => {
       const phase = ((time * 0.6 + i / signals.length) % 1);
       const angle = Math.floor(i / 2) * Math.PI / 2;
@@ -621,12 +624,14 @@ export function createWorld(canvas) {
     previousTime = time;
     settledPointer.lerp(new THREE.Vector2(pointer.active ? pointer.x : 0,
       pointer.active ? pointer.y : 0), 1 - Math.exp(-delta * 9));
-    const viewHeight = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 18;
+    const viewHeight = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 24;
     const viewWidth = viewHeight * camera.aspect;
-    cursor.set(pointer.x * viewWidth, -pointer.y * viewHeight, -18);
+    cursor.set(pointer.x * viewWidth, -pointer.y * viewHeight, -24);
     floating.position.set(mobile ? 0 : offset * viewWidth,
       mobile ? -offset * viewHeight : 0, 0);
-    floating.visible = intro >= 0.45;
+    const floatReveal = smooth(0.35, 0.75, intro);
+    floating.visible = floatReveal > 0;
+    webMaterial.opacity = 0.16 * floatReveal;
     const mobileFloat = width <= 800 ? 0.6 : 1;
     floaters.forEach((item) => {
       const object = item.object;
@@ -637,14 +642,14 @@ export function createWorld(canvas) {
       const push = pointer.active ? Math.max(0, 1 - distance / 2.6) : 0;
       x += dx / Math.max(distance, 0.01) * push * 0.65;
       y += dy / Math.max(distance, 0.01) * push * 0.65;
-      object.position.set(x + settledPointer.x * 0.25, y - settledPointer.y * 0.25, -18);
+      object.position.set(x + settledPointer.x * 0.25, y - settledPointer.y * 0.25, -24);
       if (item.board) {
         object.rotation.set(0.2 + settledPointer.y * 0.5,
           Math.sin(time * 0.2 + item.phase) * 0.25 + settledPointer.x * 0.6,
           Math.sin(item.phase) * 0.25);
-        object.scale.setScalar(mobileFloat);
+        object.scale.setScalar(mobileFloat * floatReveal);
       } else {
-        object.material.opacity = mobileFloat * (0.35 + push * 0.6);
+        object.material.opacity = floatReveal * mobileFloat * (0.35 + push * 0.6);
       }
     });
     let vertex = 0;

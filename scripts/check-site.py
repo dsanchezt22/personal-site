@@ -32,7 +32,7 @@ page.feed(html)
 assert 'From the lab to the test kitchen' not in html, 'Superseded company-focused headline'
 assert 'tea-island' not in html and 'Step inside' not in html, 'Superseded hero or entrance gate'
 assert 'I design circuits and build software.' in html, 'Missing direct personal headline'
-assert 'Stanford University · Electrical Engineering' in html, 'Missing Stanford introduction'
+assert 'Stanford EE student · Class of 2029' in html, 'Missing Stanford introduction'
 for phrase in ('A little curiosity goes a long way', 'made tangible', 'Ideas into things that work', 'ds.</span>'):
     assert phrase not in html, f'Superseded copy: {phrase}'
 assert '<span class="monogram">dst</span>' in html, 'Missing dst monogram'
