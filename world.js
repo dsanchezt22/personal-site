@@ -1,4 +1,5 @@
-import { INTRO_DURATION } from "./journey.js";
+import { INTRO_DURATION, chipHeight } from "./journey.js";
+import { mergeStaticMeshes } from "./scene-geometry.js";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
@@ -26,7 +27,7 @@ const targetPath = new THREE.CatmullRomCurve3(
 );
 const smooth = (a, b, value) => THREE.MathUtils.smoothstep(value, a, b);
 
-export function createWorld(canvas) {
+export async function createWorld(canvas) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: true,
@@ -70,14 +71,19 @@ export function createWorld(canvas) {
   const fill = new THREE.DirectionalLight(0xc7e4ff, 0.8);
   fill.position.set(8, 6, -7);
   scene.add(fill);
-  const material = (color, roughness = 0.5, metalness = 0.05) =>
-    new THREE.MeshStandardMaterial({ color, roughness, metalness });
+  const materials = new Map(), boxGeometries = new Map();
+  function material(color, roughness = 0.5, metalness = 0.05) {
+    const key = `${color}:${roughness}:${metalness}`;
+    if (!materials.has(key)) materials.set(key,
+      new THREE.MeshStandardMaterial({ color, roughness, metalness }));
+    return materials.get(key);
+  }
   const paper = material(0xe6e6dd, 0.75),
     ink = material(0x243b51, 0.35, 0.2),
     blue = material(0x6c94bf, 0.32, 0.15),
     copper = material(0xbd805f, 0.32, 0.6),
     cream = material(0xf6f1e5),
-    aluminum = material(0xb8c6d2, 0.3, 0.7),
+    aluminum = material(0xb8c6d2, 0.42, 0.7),
     dark = material(0x263945, 0.55);
   const workbench = new THREE.Group();
   scene.add(workbench);
@@ -90,15 +96,13 @@ export function createWorld(canvas) {
     return object;
   }
   function box(parent, w, h, d, mat, x = 0, y = 0, z = 0, r = 0.06) {
-    return mesh(
-      parent,
-      new RoundedBoxGeometry(w, h, d, 2, Math.min(r, w / 3, h / 3, d / 3)),
-      mat,
-      x,
-      y,
-      z,
-    );
+    const radius = Math.min(r, w / 3, h / 3, d / 3);
+    const key = `${w}:${h}:${d}:${radius}`;
+    if (!boxGeometries.has(key)) boxGeometries.set(key,
+      new RoundedBoxGeometry(w, h, d, 2, radius));
+    return mesh(parent, boxGeometries.get(key), mat, x, y, z);
   }
+
   function cylinder(parent, radius, height, mat, x = 0, y = 0, z = 0) {
     return mesh(
       parent,
@@ -481,7 +485,7 @@ export function createWorld(canvas) {
   // The processor assembles onto the same board used in the research chapter.
   const processor = nodes[4];
   const signalMaterial = new THREE.MeshBasicMaterial({
-    color: 0x8c1515, transparent: true, opacity: 0.7,
+    color: 0x527c92, transparent: true, opacity: 0.7,
   });
   const signals = [];
   for (let i = 0; i < 8; i++) {
@@ -498,21 +502,29 @@ export function createWorld(canvas) {
   camera.add(floating);
   scene.add(camera);
   const floaters = [];
+  const boardCount = 10, digitCount = 64;
   const circuitMaterial = material(0x507769, 0.45, 0.25);
   const floatingInk = ink.clone(), floatingCopper = copper.clone();
   for (const mat of [circuitMaterial, floatingInk, floatingCopper]) mat.fog = false;
   const traceMaterial = new THREE.LineBasicMaterial({ color: 0x9cb7a9, fog: false });
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < boardCount; i++) {
     const board = new THREE.Group();
     floating.add(board);
-    box(board, 0.88, 1.14, 0.045, circuitMaterial);
+    box(board, 0.88, 1.14, 0.07, circuitMaterial);
     box(board, 0.33, 0.36, 0.08, floatingInk, 0, 0, 0.06, 0.02);
+    for (const x of [-0.34, 0.34]) {
+      for (const y of [-0.46, 0.46]) {
+        const pad = mesh(board, new THREE.TorusGeometry(0.038, 0.012, 5, 12),
+          floatingCopper, x, y, 0.044);
+        pad.castShadow = false;
+      }
+    }
     const traces = [];
     for (let pin = 0; pin < 6; pin++) {
       const y = (pin - 2.5) * 0.13;
       for (const sign of [-1, 1]) {
-        traces.push(sign * 0.17, y, 0.035, sign * 0.3, y, 0.035,
-          sign * 0.3, y, 0.035, sign * 0.38, y + 0.08, 0.035);
+        traces.push(sign * 0.17, y, 0.044, sign * 0.3, y, 0.044,
+          sign * 0.3, y, 0.044, sign * 0.38, y + 0.08, 0.044);
         box(board, 0.09, 0.035, 0.02, floatingCopper, sign * 0.2, y, 0.06, 0.006);
       }
     }
@@ -520,38 +532,46 @@ export function createWorld(canvas) {
     geometry.setAttribute("position", new THREE.Float32BufferAttribute(traces, 3));
     board.add(new THREE.LineSegments(geometry, traceMaterial));
     board.traverse((object) => { object.castShadow = object.receiveShadow = false; });
+    mergeStaticMeshes(board);
     floaters.push({ object: board,
-      x: [0.35, 0.82, 0.65, -0.85][i], y: [0.65, 0.56, -0.7, 0.7][i],
-      phase: i * 1.8, board: true });
+      x: [0.35, 0.82, 0.65, -0.85, 0.02, 0.9, -0.68, 0.04, -0.82, 0.48][i],
+      y: [0.65, 0.56, -0.7, 0.7, 0.68, -0.12, -0.65, -0.82, 0.1, 0.12][i],
+      phase: i * 1.8, board: true, index: i });
   }
   const digitMaps = ["0", "1"].map((digit) => {
     const surface = document.createElement("canvas");
-    surface.width = surface.height = 128;
+    surface.width = surface.height = 256;
     const ctx = surface.getContext("2d");
     ctx.fillStyle = "#426585";
-    ctx.font = "500 84px monospace";
+    ctx.font = "500 168px monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(digit, 64, 68);
+    ctx.fillText(digit, 128, 136);
     const texture = new THREE.CanvasTexture(surface);
     texture.colorSpace = THREE.SRGBColorSpace;
     return texture;
   });
-  for (let i = 0; i < 28; i++) {
-    const digit = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: digitMaps[i % 2], transparent: true, opacity: 0.42, depthTest: true, fog: false,
-    }));
-    digit.scale.setScalar(0.26 + (i % 3) * 0.035);
-    floating.add(digit);
+  const digitBatches = digitMaps.map((map) => {
+    const batch = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1),
+      new THREE.MeshBasicMaterial({ map, transparent: true, opacity: 0.65,
+        depthWrite: false, fog: false }), digitCount / 2);
+    batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    batch.frustumCulled = false;
+    floating.add(batch);
+    return batch;
+  });
+  for (let i = 0; i < digitCount; i++) {
+    const digit = new THREE.Object3D();
     const angle = i * 2.39996;
     floaters.push({ object: digit, x: Math.cos(angle) * (0.4 + (i % 4) * 0.17),
-      y: Math.sin(angle) * (0.5 + (i % 3) * 0.15), phase: i * 0.7, size: digit.scale.x });
+      y: Math.sin(angle) * (0.5 + (i % 3) * 0.15), phase: i * 0.7,
+      size: 0.29 + (i % 3) * 0.035, batch: digitBatches[i % 2], slot: Math.floor(i / 2), index: i });
   }
-  const webPositions = new Float32Array(28 * 4 * 6);
+  const webPositions = new Float32Array(digitCount * 4 * 6);
   const webGeometry = new THREE.BufferGeometry();
   webGeometry.setAttribute("position", new THREE.BufferAttribute(webPositions, 3));
   const webMaterial = new THREE.LineBasicMaterial({
-    color: 0x6b8ca7, transparent: true, opacity: 0.16, depthTest: true, fog: false,
+    color: 0x6b8ca7, transparent: true, opacity: 0.3, depthTest: true, fog: false,
   });
   const web = new THREE.LineSegments(webGeometry, webMaterial);
   web.frustumCulled = false;
@@ -562,12 +582,14 @@ export function createWorld(canvas) {
   let width = 1,
     height = 1;
   function resize() {
-    width = innerWidth;
-    height = innerHeight;
+    const nextWidth = innerWidth, nextHeight = innerHeight;
     // Native Retina detail, bounded by total pixels on very large displays.
-    renderer.setPixelRatio(Math.min(Math.max(devicePixelRatio || 1, 1.5), 3,
-      Math.sqrt(12000000 / (width * height))));
-    renderer.setSize(width, height, false);
+    const ratio = Math.min(Math.max(devicePixelRatio || 1, 1.5), 3,
+      Math.sqrt(12000000 / (nextWidth * nextHeight)));
+    if (width === nextWidth && height === nextHeight && renderer.getPixelRatio() === ratio) return;
+    width = nextWidth;
+    height = nextHeight;
+    renderer.setDrawingBufferSize(width, height, ratio);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
   }
@@ -579,7 +601,7 @@ export function createWorld(canvas) {
     time = 0,
   ) {
     const intro = THREE.MathUtils.clamp(introTime / INTRO_DURATION, 0, 1);
-    const pullback = smooth(0.3, 1, intro);
+    const pullback = THREE.MathUtils.smootherstep(intro, 0.3, 1);
     const story = THREE.MathUtils.clamp(progress, 0, 1);
     const pathPosition = cameraPath.getPoint(story);
     const lookAt = targetPath.getPoint(story);
@@ -607,14 +629,12 @@ export function createWorld(canvas) {
       camera.position.sub(target).multiplyScalar(1.6).add(target);
     }
     camera.lookAt(target);
-    const seat = smooth(0, 0.85, introTime);
-    processor.position.y = 0.27 + (1 - seat) * 2
-      + Math.max(0, 1 - Math.abs(story - 0.4) * 6) * 0.16;
-    processor.rotation.y = (1 - seat) * 0.45;
+    const seat = smooth(0.1, 0.5, introTime);
+    processor.position.y = chipHeight(introTime);
+    processor.rotation.y = (1 - seat) * 0.18;
     nodes.forEach((node, i) => {
       if (node === processor) return;
-      node.position.y = 0.27 + (1 - smooth(0.12, 0.95, introTime)) * (0.5 + i * 0.06)
-        + Math.max(0, 1 - Math.abs(story - 0.4) * 6) * (0.11 + Math.sin(i * 1.8) * 0.07);
+      node.position.y = chipHeight(introTime - 0.025 * Math.abs(i - 4), 0.65);
     });
     signalMaterial.opacity = smooth(0.65, 1, introTime) * 0.7;
     signals.forEach((signal, i) => {
@@ -638,12 +658,13 @@ export function createWorld(canvas) {
       mobile ? -offset * viewHeight : 0, 0);
     const floatReveal = smooth(0.35, 0.75, intro);
     floating.visible = floatReveal > 0;
-    webMaterial.opacity = 0.16 * floatReveal;
-    const mobileFloat = width <= 800 ? 0.6 : 1;
+    webMaterial.opacity = 0.3 * floatReveal;
+    const mobileFloat = mobile ? 0.78 : 1;
     floaters.forEach((item) => {
       const object = item.object;
-      let x = item.x * viewWidth * 0.5 + Math.sin(time * 0.24 + item.phase) * 0.15;
-      let y = item.y * viewHeight * 0.5 + Math.cos(time * 0.3 + item.phase) * 0.13;
+      object.visible = !mobile || item.index < (item.board ? 6 : 48);
+      let x = item.x * viewWidth * 0.5 + Math.sin(time * 0.3 + item.phase) * 0.23;
+      let y = item.y * viewHeight * 0.5 + Math.cos(time * 0.24 + item.phase) * 0.18;
       const dx = x - cursor.x, dy = y - cursor.y;
       const distance = Math.hypot(dx, dy);
       const push = pointerStrength * Math.max(0, 1 - distance / 2.6);
@@ -652,17 +673,24 @@ export function createWorld(canvas) {
       object.position.set(x + settledPointer.x * 0.25, y - settledPointer.y * 0.25, -fieldDepth);
       if (item.board) {
         object.rotation.set(0.2 + settledPointer.y * 0.5,
-          Math.sin(time * 0.2 + item.phase) * 0.25 + settledPointer.x * 0.6,
+          Math.sin(time * 0.2 + item.phase) * 0.38 + settledPointer.x * 0.6,
           Math.sin(item.phase) * 0.25);
         object.scale.setScalar(mobileFloat * floatReveal * fieldScale);
       } else {
         object.scale.setScalar(item.size * fieldScale);
-        object.material.opacity = floatReveal * mobileFloat * (0.35 + push * 0.6);
+        object.updateMatrix();
+        item.batch.setMatrixAt(item.slot, object.matrix);
       }
     });
+    for (const batch of digitBatches) {
+      batch.count = mobile ? 24 : digitCount / 2;
+      batch.material.opacity = floatReveal * mobileFloat * 0.68;
+      batch.instanceMatrix.needsUpdate = true;
+    }
     let vertex = 0;
-    for (let i = 4; i < floaters.length; i++) {
+    for (let i = boardCount; i < floaters.length; i++) {
       for (let j = i + 1; j < floaters.length; j++) {
+        if (!floaters[i].object.visible || !floaters[j].object.visible) continue;
         const a = floaters[i].object.position, b = floaters[j].object.position;
         if (a.distanceTo(b) > 2 * fieldScale || vertex + 6 > webPositions.length) continue;
         a.toArray(webPositions, vertex);
@@ -679,6 +707,9 @@ export function createWorld(canvas) {
     shadowProgress = story;
     shadowIntro = introTime;
     renderer.render(scene, camera);
+    if (!canvas.dataset.readyMs) canvas.dataset.readyMs = performance.now().toFixed(1);
+    canvas.dataset.drawCalls = renderer.info.render.calls;
+    canvas.dataset.triangles = renderer.info.render.triangles;
     canvas.dataset.progress = story.toFixed(4);
     canvas.dataset.intro = intro < 1 ? "playing" : "complete";
     canvas.dataset.camera = camera.position
@@ -699,9 +730,24 @@ export function createWorld(canvas) {
         });
       }
     });
+    boxGeometries.forEach((geometry) => geometry.dispose());
     environmentMap.dispose();
     renderer.dispose();
   }
+  mergeStaticMeshes(workbench, new Set([...nodes, ...graphNodes, ...signals]));
   resize();
+  let rejectContextLoss;
+  const contextLost = new Promise((_, reject) => {
+    rejectContextLoss = () => reject(new Error("Graphics context lost during shader preparation"));
+  });
+  canvas.addEventListener("webglcontextlost", rejectContextLoss, { once: true });
+  try {
+    await Promise.race([renderer.compileAsync(scene, camera), contextLost]);
+  } catch (error) {
+    dispose();
+    throw error;
+  } finally {
+    canvas.removeEventListener("webglcontextlost", rejectContextLoss);
+  }
   return { render, resize, dispose };
 }

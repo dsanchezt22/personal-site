@@ -808,15 +808,39 @@ html:not(.enhanced) .close-dialog {
 .intro-signature strong {
   display: block;
   margin-top: 5px;
-  color: #8c1515;
-  font-size: 14px;
+  color: var(--muted);
+  font-size: 13px;
 }
 #home .eyebrow {
-  color: #8c1515;
-  font-weight: 600;
-  font-size: 12px;
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 11px;
+  gap: 9px;
 }
-#home .status-dot {
-  background: #8c1515;
-  box-shadow: 0 0 0 4px #8c151512;
+.ee-mark {
+  width: 32px;
+  height: 16px;
+  flex: 0 0 32px;
+  color: #6b8b9e;
+  stroke: currentColor;
+  stroke-width: 1.15;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.intro-revealed .site-header,
+.intro-revealed main,
+.intro-revealed .journey-footer,
+.intro-revealed .chapter-nav {
+  animation: show-interface 160ms ease-out both;
+}
+@keyframes show-interface {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.booting .site-header,
+.booting main,
+.booting .journey-footer,
+.booting .chapter-nav {
+  visibility: hidden;
 }
