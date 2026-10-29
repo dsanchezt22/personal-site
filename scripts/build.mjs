@@ -15,6 +15,8 @@ const assets = [
   "Diego-Sanchez-Tirado-Resume.pdf",
   "favicon.svg",
   "favicon.ico",
+  "dst-tab.ico",
+  "dst-tab.png",
   "favicon-dark.svg",
   "favicon-32.png",
   "apple-touch-icon.png",
