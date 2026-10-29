@@ -1,4 +1,4 @@
-import { chapterState } from "./journey.js";
+import { chapterState, INTRO_DURATION } from "./journey.js";
 
 const root = document.documentElement;
 const chapters = [...document.querySelectorAll(".chapter")];
@@ -8,7 +8,7 @@ const soundButton = document.querySelector("#sound");
 const intro = document.querySelector("#intro");
 const canvas = document.querySelector("#world");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-const pointer = { x: 0, y: 0 };
+const pointer = { x: 0, y: 0, active: false };
 let world,
   immersive = false,
   activeIndex = 0,
@@ -18,6 +18,7 @@ let frame = 0,
   lastTime = 0,
   introStarted = 0,
   introPlaying = false;
+let lastInteraction = 0, worldTime = 0;
 let soundOn = false,
   audio;
 root.classList.add("enhanced");
@@ -46,6 +47,12 @@ function scrollProgress() {
 }
 function paint(now) {
   frame = 0;
+  if (document.querySelector("dialog[open]")) return;
+  if (immersive && !introPlaying && Math.abs(targetProgress - progress) < 0.00003
+      && now - lastInteraction > 250 && now - lastTime < 32) {
+    requestFrame();
+    return;
+  }
   const elapsed = Math.min(0.05, (now - lastTime) / 1000 || 0.016);
   lastTime = now;
   if (!immersive) return;
@@ -66,11 +73,12 @@ function paint(now) {
   });
   document.querySelector("#chapter-label").textContent =
     chapters[activeIndex].dataset.label;
-  const introTime = introPlaying ? (now - introStarted) / 1000 : 4.6;
-  world.render(progress, introTime, pointer, true);
-  if (introPlaying && introTime >= 4.6) finishIntro();
-  if (introPlaying || Math.abs(targetProgress - progress) > 0.00003)
-    requestFrame();
+  const introTime = introPlaying ? (now - introStarted) / 1000 : INTRO_DURATION;
+  worldTime += elapsed;
+  world.render(progress, introTime, pointer, true, worldTime);
+  if (introPlaying && introTime >= INTRO_DURATION) finishIntro();
+  if (introPlaying || Math.abs(targetProgress - progress) > 0.00003
+      || now - lastInteraction < 1500) requestFrame();
 }
 function finishIntro() {
   introPlaying = false;
@@ -103,8 +111,8 @@ function setImmersive(enabled) {
   motionButton.setAttribute(
     "aria-label",
     reducedMotion.matches
-      ? "Motion disabled by system preference"
-      : `Turn motion ${immersive ? "off" : "on"}`,
+      ? "Motion off. Disabled by system preference"
+      : `Motion ${immersive ? "on" : "off"}. Turn motion ${immersive ? "off" : "on"}`,
   );
   motionButton.disabled = reducedMotion.matches || !world;
   chapters.forEach((chapter) => {
@@ -171,6 +179,7 @@ for (const button of document.querySelectorAll("[data-dialog]")) {
   });
 }
 for (const dialog of document.querySelectorAll("dialog")) {
+  dialog.addEventListener("close", requestFrame);
   dialog
     .querySelector(".close-dialog")
     .addEventListener("click", () => dialog.close());
@@ -238,13 +247,22 @@ window.addEventListener("resize", () => {
 document.addEventListener(
   "pointermove",
   (event) => {
-    if (!immersive || event.pointerType === "touch") return;
+    if (!immersive || event.pointerType === "touch" || document.querySelector("dialog[open]")) return;
+    lastInteraction = performance.now();
+    pointer.active = true;
     pointer.x = event.clientX / innerWidth - 0.5;
     pointer.y = event.clientY / innerHeight - 0.5;
     requestFrame();
   },
   { passive: true },
 );
+function releasePointer() {
+  pointer.active = false;
+  lastInteraction = performance.now();
+  requestFrame();
+}
+document.documentElement.addEventListener("pointerleave", releasePointer);
+window.addEventListener("blur", releasePointer);
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     if (frame) cancelAnimationFrame(frame);

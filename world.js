@@ -1,3 +1,4 @@
+import { INTRO_DURATION } from "./journey.js";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
@@ -30,11 +31,12 @@ export function createWorld(canvas) {
     canvas,
     antialias: true,
     alpha: false,
-    powerPreference: "low-power",
+    powerPreference: "default",
   });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.7));
+
   renderer.setClearColor(0xeef2f5);
   renderer.shadowMap.enabled = true;
+  renderer.shadowMap.autoUpdate = false;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -127,16 +129,16 @@ export function createWorld(canvas) {
     background = "#f1f2ee",
   ) {
     const surface = document.createElement("canvas");
-    surface.width = 768;
-    surface.height = 256;
+    surface.width = 1536;
+    surface.height = 512;
     const ctx = surface.getContext("2d");
     ctx.fillStyle = background;
-    ctx.fillRect(0, 0, 768, 256);
+    ctx.fillRect(0, 0, 1536, 512);
     ctx.fillStyle = color;
-    ctx.font = "600 57px Arial";
+    ctx.font = "600 114px Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(text, 384, 135);
+    ctx.fillText(text, 768, 270, 1400);
     const texture = new THREE.CanvasTexture(surface);
     texture.colorSpace = THREE.SRGBColorSpace;
     const plane = mesh(
@@ -160,6 +162,8 @@ export function createWorld(canvas) {
     0,
   );
   floor.rotation.x = -Math.PI / 2;
+  floor.material.depthWrite = false;
+  floor.renderOrder = -1;
   cylinder(workbench, 5.7, 0.32, material(0xcbd6e0, 0.75), 0, -0.25, 0);
   cylinder(workbench, 5.64, 0.08, paper, 0, -0.055, 0);
   const edge = mesh(
@@ -219,7 +223,7 @@ export function createWorld(canvas) {
   );
   label(
     notebook,
-    "ideas / sketches / questions",
+    "STANFORD EE",
     1.55,
     0.32,
     -0.05,
@@ -388,14 +392,14 @@ export function createWorld(canvas) {
     c.fill();
   });
   const code = [
-    "$ build something useful",
+    "$ build && test",
     "",
-    "inspect → understand → make",
+    "model → build → measure",
     "",
     "  hardware      research",
-    "  software      curiosity",
+    "  software      circuits",
     "",
-    "✓ tested in the real world",
+    "✓ build complete",
   ];
   code.forEach((text, i) => {
     c.fillStyle = i === 0 ? "#c1deec" : i === 7 ? "#9bc1a3" : "#91aabe";
@@ -439,7 +443,7 @@ export function createWorld(canvas) {
   });
   label(
     intelligence,
-    "signals → insight",
+    "AI / APPLICATIONS",
     1.55,
     0.26,
     0,
@@ -474,171 +478,117 @@ export function createWorld(canvas) {
     leaf.rotation.set(Math.sin(angle) * 0.5, angle, Math.cos(angle) * 0.5);
   }
 
-  const glass = new THREE.Group();
-  glass.position.set(0.25, 0.02, 2.3);
-  scene.add(glass);
-  const glassMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xa4cadc,
-    roughness: 0.06,
-    metalness: 0,
-    transmission: 0.9,
-    thickness: 0.08,
-    ior: 1.45,
-    transparent: true,
-    opacity: 0.85,
-    side: THREE.DoubleSide,
-    depthWrite: false,
+  // The processor assembles onto the same board used in the research chapter.
+  const processor = nodes[4];
+  const signalMaterial = new THREE.MeshBasicMaterial({
+    color: 0x8c1515, transparent: true, opacity: 0.7,
   });
-  const vessel = mesh(
-    glass,
-    new THREE.CylinderGeometry(0.72, 0.59, 2.25, 64, 1, true),
-    glassMaterial,
-    0,
-    1.16,
-    0,
-  );
-  vessel.castShadow = false;
-  const rim = mesh(
-    glass,
-    new THREE.TorusGeometry(0.72, 0.028, 8, 64),
-    new THREE.MeshPhysicalMaterial({
-      color: 0xf4fbff,
-      roughness: 0.08,
-      metalness: 0.25,
-      transparent: true,
-      opacity: 0.8,
-    }),
-    0,
-    2.29,
-    0,
-  );
-  rim.rotation.x = Math.PI / 2;
-  rim.castShadow = false;
-  cylinder(
-    glass,
-    0.6,
-    0.12,
-    new THREE.MeshPhysicalMaterial({
-      color: 0xd4e6ee,
-      roughness: 0.1,
-      transparent: true,
-      opacity: 0.7,
-    }),
-    0,
-    0.06,
-    0,
-  );
-  const water = mesh(
-    glass,
-    new THREE.CylinderGeometry(0.654, 0.6, 1.46, 64),
-    new THREE.MeshPhysicalMaterial({
-      color: 0x62adc9,
-      roughness: 0.13,
-      transmission: 0.3,
-      transparent: true,
-      opacity: 0.68,
-      ior: 1.333,
-      depthWrite: false,
-    }),
-    0,
-    0.83,
-    0,
-  );
-  water.castShadow = false;
-  const surface = mesh(
-    glass,
-    new THREE.CircleGeometry(0.655, 64),
-    new THREE.MeshPhysicalMaterial({
-      color: 0xb9e3ef,
-      roughness: 0.15,
-      metalness: 0.15,
-      transparent: true,
-      opacity: 0.55,
-      side: THREE.DoubleSide,
-    }),
-    0,
-    1.56,
-    0,
-  );
-  surface.rotation.x = -Math.PI / 2;
-  surface.castShadow = false;
-  const iceMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xc5e2f3,
-    roughness: 0.22,
-    metalness: 0.06,
-    transmission: 0.25,
-    transparent: true,
-    opacity: 0.94,
-    thickness: 0.25,
-  });
-  const icePositions = [
-    [-0.23, 1.5, 0.15],
-    [0.25, 1.68, 0.05],
-    [0.02, 1.9, -0.25],
-  ];
-  const ice = icePositions.map((position, i) => {
-    const cube = box(glass, 0.6, 0.61, 0.58, iceMaterial, ...position, 0.085);
-    cube.rotation.set(0.25 + i * 0.25, 0.4 + i * 0.9, 0.25 - i * 0.2);
-    return cube;
-  });
-  const ripples = ice.map(() => {
-    const ripple = mesh(
-      glass,
-      new THREE.TorusGeometry(0.28, 0.014, 5, 48),
-      new THREE.MeshBasicMaterial({
-        color: 0xf0fbff,
-        transparent: true,
-        opacity: 0,
-        depthWrite: false,
-      }),
-      0,
-      1.575,
-      0,
-    );
-    ripple.rotation.x = Math.PI / 2;
-    ripple.castShadow = false;
-    return ripple;
-  });
-  const droplets = [];
-  for (let i = 0; i < 12; i++) {
-    const drop = mesh(
-      glass,
-      new THREE.SphereGeometry(0.032, 8, 6),
-      iceMaterial,
-      0,
-      1.6,
-      0,
-    );
-    drop.visible = false;
-    drop.castShadow = false;
-    droplets.push(drop);
+  const signals = [];
+  for (let i = 0; i < 8; i++) {
+    const signal = mesh(hardware, new THREE.SphereGeometry(0.035, 8, 6),
+      signalMaterial, 0, 0.21, 0);
+    signal.castShadow = false;
+    signals.push(signal);
   }
+  label(hardware, "STANFORD EE", 1.5, 0.25, 0, 0.194, 1.04,
+    "#e8efe9", "#507769");
+
+  // Camera-relative layers keep the floating circuits in view along the scroll path.
+  const floating = new THREE.Group();
+  camera.add(floating);
+  scene.add(camera);
+  const floaters = [];
+  const circuitMaterial = material(0x507769, 0.45, 0.25);
+  const floatingInk = ink.clone(), floatingCopper = copper.clone();
+  for (const mat of [circuitMaterial, floatingInk, floatingCopper]) mat.fog = false;
+  const traceMaterial = new THREE.LineBasicMaterial({ color: 0x9cb7a9, fog: false });
+  for (let i = 0; i < 4; i++) {
+    const board = new THREE.Group();
+    floating.add(board);
+    box(board, 0.88, 1.14, 0.045, circuitMaterial);
+    box(board, 0.33, 0.36, 0.08, floatingInk, 0, 0, 0.06, 0.02);
+    const traces = [];
+    for (let pin = 0; pin < 6; pin++) {
+      const y = (pin - 2.5) * 0.13;
+      for (const sign of [-1, 1]) {
+        traces.push(sign * 0.17, y, 0.035, sign * 0.3, y, 0.035,
+          sign * 0.3, y, 0.035, sign * 0.38, y + 0.08, 0.035);
+        box(board, 0.09, 0.035, 0.02, floatingCopper, sign * 0.2, y, 0.06, 0.006);
+      }
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(traces, 3));
+    board.add(new THREE.LineSegments(geometry, traceMaterial));
+    board.traverse((object) => { object.castShadow = object.receiveShadow = false; });
+    floaters.push({ object: board,
+      x: [0.35, 0.82, 0.65, -0.85][i], y: [0.65, 0.56, -0.7, 0.7][i],
+      phase: i * 1.8, board: true });
+  }
+  const digitMaps = ["0", "1"].map((digit) => {
+    const surface = document.createElement("canvas");
+    surface.width = surface.height = 128;
+    const ctx = surface.getContext("2d");
+    ctx.fillStyle = "#426585";
+    ctx.font = "500 84px monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(digit, 64, 68);
+    const texture = new THREE.CanvasTexture(surface);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
+  });
+  for (let i = 0; i < 28; i++) {
+    const digit = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: digitMaps[i % 2], transparent: true, opacity: 0.42, depthTest: true, fog: false,
+    }));
+    digit.scale.setScalar(0.26 + (i % 3) * 0.035);
+    floating.add(digit);
+    const angle = i * 2.39996;
+    floaters.push({ object: digit, x: Math.cos(angle) * (0.4 + (i % 4) * 0.17),
+      y: Math.sin(angle) * (0.5 + (i % 3) * 0.15), phase: i * 0.7, size: digit.scale.x });
+  }
+  const webPositions = new Float32Array(28 * 4 * 6);
+  const webGeometry = new THREE.BufferGeometry();
+  webGeometry.setAttribute("position", new THREE.BufferAttribute(webPositions, 3));
+  const webMaterial = new THREE.LineBasicMaterial({
+    color: 0x6b8ca7, transparent: true, opacity: 0.16, depthTest: true, fog: false,
+  });
+  const web = new THREE.LineSegments(webGeometry, webMaterial);
+  web.frustumCulled = false;
+  floating.add(web);
+  const cursor = new THREE.Vector3();
+  const settledPointer = new THREE.Vector2();
+  let previousTime = 0, pointerStrength = 0, shadowProgress = -1, shadowIntro = -1;
   let width = 1,
     height = 1;
   function resize() {
     width = innerWidth;
     height = innerHeight;
+    // Native Retina detail, bounded by total pixels on very large displays.
+    renderer.setPixelRatio(Math.min(Math.max(devicePixelRatio || 1, 1.5), 3,
+      Math.sqrt(12000000 / (width * height))));
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
   }
   function render(
     progress,
-    introTime = 4.6,
+    introTime = INTRO_DURATION,
     pointer = { x: 0, y: 0 },
     animate = true,
+    time = 0,
   ) {
-    const intro = THREE.MathUtils.clamp(introTime / 4.6, 0, 1);
-    const pullback = smooth(0.45, 1, intro);
+    const intro = THREE.MathUtils.clamp(introTime / INTRO_DURATION, 0, 1);
+    const pullback = smooth(0.3, 1, intro);
     const story = THREE.MathUtils.clamp(progress, 0, 1);
     const pathPosition = cameraPath.getPoint(story);
     const lookAt = targetPath.getPoint(story);
     camera.position.lerpVectors(
-      new THREE.Vector3(0.25, 3.6, 8),
+      new THREE.Vector3(-1.4, 3.8, 1.5),
       pathPosition,
       pullback,
     );
-    const target = new THREE.Vector3(0.25, 1.25, 2.3).lerp(lookAt, pullback);
+    const target = new THREE.Vector3(-1.95, 0.3, -2.65).lerp(lookAt, pullback);
     if (animate) {
       camera.position.x += pointer.x * 0.18 * pullback;
       camera.position.y += pointer.y * 0.12 * pullback;
@@ -654,53 +604,80 @@ export function createWorld(canvas) {
       height,
     );
     if (mobile) {
-      camera.position.sub(target).multiplyScalar(1.3).add(target);
+      camera.position.sub(target).multiplyScalar(1.6).add(target);
     }
     camera.lookAt(target);
-    const reveal = smooth(0.42, 0.9, intro);
-    workbench.scale.setScalar(Math.max(0.001, reveal));
-    workbench.position.set(0.25 * (1 - reveal), 0, 2.3 * (1 - reveal));
-    workbench.visible = reveal > 0;
-    ice.forEach((cube, i) => {
-      const local = introTime - (0.3 + i * 0.4);
-      const fall = THREE.MathUtils.clamp(local / 0.72, 0, 1);
-      const settled = icePositions[i][1];
-      const bob =
-        local > 0.72
-          ? Math.sin((local - 0.72) * 9) * Math.exp(-(local - 0.72) * 3) * 0.12
-          : 0;
-      cube.position.y = 6.1 + (settled - 6.1) * fall * fall + bob;
-      cube.rotation.z = 0.25 - i * 0.2 + (1 - fall) * 1.8;
-      cube.visible = local >= 0;
-      const ringTime = local - 0.69;
-      const active = ringTime > 0 && ringTime < 1.2;
-      ripples[i].visible = active;
-      if (active) {
-        ripples[i].scale.setScalar(0.3 + ringTime * 1.6);
-        ripples[i].material.opacity = (1 - ringTime / 1.2) * 0.65;
-      }
-    });
-    const splashTime = introTime - 1.45;
-    droplets.forEach((drop, i) => {
-      drop.visible = splashTime > 0 && splashTime < 0.9;
-      if (drop.visible) {
-        const angle = (i / 12) * Math.PI * 2;
-        drop.position.set(
-          Math.cos(angle) * splashTime * 0.75,
-          1.6 + 2.8 * splashTime - 3.8 * splashTime * splashTime,
-          Math.sin(angle) * splashTime * 0.75,
-        );
-      }
-    });
+    const seat = smooth(0, 0.85, introTime);
+    processor.position.y = 0.27 + (1 - seat) * 2
+      + Math.max(0, 1 - Math.abs(story - 0.4) * 6) * 0.16;
+    processor.rotation.y = (1 - seat) * 0.45;
     nodes.forEach((node, i) => {
-      node.position.y =
-        0.27 +
-        Math.max(0, 1 - Math.abs(story - 0.4) * 6) *
-          (0.11 + Math.sin(i * 1.8) * 0.07);
+      if (node === processor) return;
+      node.position.y = 0.27 + (1 - smooth(0.12, 0.95, introTime)) * (0.5 + i * 0.06)
+        + Math.max(0, 1 - Math.abs(story - 0.4) * 6) * (0.11 + Math.sin(i * 1.8) * 0.07);
     });
+    signalMaterial.opacity = smooth(0.65, 1, introTime) * 0.7;
+    signals.forEach((signal, i) => {
+      const phase = ((time * 0.6 + i / signals.length) % 1);
+      const angle = Math.floor(i / 2) * Math.PI / 2;
+      signal.position.set(Math.cos(angle) * phase * 1.2, 0.21,
+        Math.sin(angle) * phase * 1.05);
+      signal.visible = introTime > 0.65;
+    });
+    const delta = Math.min(0.05, Math.max(0, time - previousTime));
+    previousTime = time;
+    settledPointer.lerp(new THREE.Vector2(pointer.active ? pointer.x : 0,
+      pointer.active ? pointer.y : 0), 1 - Math.exp(-delta * 9));
+    pointerStrength += ((pointer.active ? 1 : 0) - pointerStrength) * (1 - Math.exp(-delta * 9));
+    const fieldDepth = camera.position.distanceTo(target) + 7;
+    const fieldScale = fieldDepth / 24;
+    const viewHeight = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * fieldDepth;
+    const viewWidth = viewHeight * camera.aspect;
+    cursor.set(settledPointer.x * viewWidth, -settledPointer.y * viewHeight, -fieldDepth);
+    floating.position.set(mobile ? 0 : offset * viewWidth,
+      mobile ? -offset * viewHeight : 0, 0);
+    const floatReveal = smooth(0.35, 0.75, intro);
+    floating.visible = floatReveal > 0;
+    webMaterial.opacity = 0.16 * floatReveal;
+    const mobileFloat = width <= 800 ? 0.6 : 1;
+    floaters.forEach((item) => {
+      const object = item.object;
+      let x = item.x * viewWidth * 0.5 + Math.sin(time * 0.24 + item.phase) * 0.15;
+      let y = item.y * viewHeight * 0.5 + Math.cos(time * 0.3 + item.phase) * 0.13;
+      const dx = x - cursor.x, dy = y - cursor.y;
+      const distance = Math.hypot(dx, dy);
+      const push = pointerStrength * Math.max(0, 1 - distance / 2.6);
+      x += dx / Math.max(distance, 0.01) * push * 0.65;
+      y += dy / Math.max(distance, 0.01) * push * 0.65;
+      object.position.set(x + settledPointer.x * 0.25, y - settledPointer.y * 0.25, -fieldDepth);
+      if (item.board) {
+        object.rotation.set(0.2 + settledPointer.y * 0.5,
+          Math.sin(time * 0.2 + item.phase) * 0.25 + settledPointer.x * 0.6,
+          Math.sin(item.phase) * 0.25);
+        object.scale.setScalar(mobileFloat * floatReveal * fieldScale);
+      } else {
+        object.scale.setScalar(item.size * fieldScale);
+        object.material.opacity = floatReveal * mobileFloat * (0.35 + push * 0.6);
+      }
+    });
+    let vertex = 0;
+    for (let i = 4; i < floaters.length; i++) {
+      for (let j = i + 1; j < floaters.length; j++) {
+        const a = floaters[i].object.position, b = floaters[j].object.position;
+        if (a.distanceTo(b) > 2 * fieldScale || vertex + 6 > webPositions.length) continue;
+        a.toArray(webPositions, vertex);
+        b.toArray(webPositions, vertex + 3);
+        vertex += 6;
+      }
+    }
+    webGeometry.setDrawRange(0, vertex / 3);
+    webGeometry.attributes.position.needsUpdate = true;
     graphNodes.forEach((node, i) => {
       node.rotation.y = story * 2 + i;
     });
+    renderer.shadowMap.needsUpdate = story !== shadowProgress || introTime !== shadowIntro;
+    shadowProgress = story;
+    shadowIntro = introTime;
     renderer.render(scene, camera);
     canvas.dataset.progress = story.toFixed(4);
     canvas.dataset.intro = intro < 1 ? "playing" : "complete";

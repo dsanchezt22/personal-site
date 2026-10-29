@@ -31,7 +31,11 @@ page = Page()
 page.feed(html)
 assert 'From the lab to the test kitchen' not in html, 'Superseded company-focused headline'
 assert 'tea-island' not in html and 'Step inside' not in html, 'Superseded hero or entrance gate'
-assert 'Ideas into things that work.' in html, 'Missing personal headline'
+assert 'I design circuits and build software.' in html, 'Missing direct personal headline'
+assert 'Stanford EE student · Class of 2029' in html, 'Missing Stanford introduction'
+for phrase in ('A little curiosity goes a long way', 'made tangible', 'Ideas into things that work', 'ds.</span>'):
+    assert phrase not in html, f'Superseded copy: {phrase}'
+assert '<span class="monogram">dst</span>' in html, 'Missing dst monogram'
 assert len(page.ids) == len(set(page.ids)), 'Duplicate HTML IDs'
 for anchor in ('about', 'work', 'experience', 'contact', 'verdnt', 'research', 'developer'):
     assert anchor in page.ids, f'Missing section: {anchor}'
