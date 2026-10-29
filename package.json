@@ -5,7 +5,7 @@
     "build": "node scripts/build.mjs",
     "deploy": "npm run build && wrangler deploy",
     "deploy:check": "npm run build && wrangler deploy --dry-run",
-    "verify": "npm run build && node --check main.js && node --check world.js && node scripts/check-journey.mjs && bash scripts/verify-site.sh"
+    "verify": "npm run build && node --check main.js && node --check world.js && node scripts/check-journey.mjs && node scripts/check-geometry.mjs && bash scripts/verify-site.sh"
   },
   "devDependencies": {
     "esbuild": "0.28.2",

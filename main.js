@@ -19,6 +19,7 @@ let frame = 0,
   introStarted = 0,
   introPlaying = false;
 let lastInteraction = 0, worldTime = 0;
+let paintedProgress = -1, paintedIntro = null, starting = false;
 let soundOn = false,
   audio;
 root.classList.add("enhanced");
@@ -61,29 +62,33 @@ function paint(now) {
   const state = chapterState(progress, chapters.length);
   activeIndex = state.index;
   const mobile = innerWidth <= 800;
-  chapters.forEach((chapter, index) => {
-    const current = index === activeIndex;
-    chapter.classList.toggle("current", current);
-    chapter.inert = !current || introPlaying;
-    chapter.setAttribute("aria-hidden", String(!current || introPlaying));
-    const copy = chapter.querySelector(".chapter-copy");
-    copy.style.opacity = current ? state.opacity : 0;
-    copy.style.transform = `translate3d(${-state.offset * (mobile ? 50 : 110)}px, ${mobile ? 0 : -50}%, 0)`;
-    chapterLinks[index].setAttribute("aria-current", String(current));
-  });
-  document.querySelector("#chapter-label").textContent =
-    chapters[activeIndex].dataset.label;
+  if (progress !== paintedProgress || introPlaying !== paintedIntro) {
+    chapters.forEach((chapter, index) => {
+      const current = index === activeIndex;
+      chapter.classList.toggle("current", current);
+      chapter.inert = !current || introPlaying;
+      chapter.setAttribute("aria-hidden", String(!current || introPlaying));
+      const copy = chapter.querySelector(".chapter-copy");
+      copy.style.opacity = current ? state.opacity : 0;
+      copy.style.transform = `translate3d(${-state.offset * (mobile ? 50 : 110)}px, ${mobile ? 0 : -50}%, 0)`;
+      chapterLinks[index].setAttribute("aria-current", String(current));
+    });
+    document.querySelector("#chapter-label").textContent =
+      chapters[activeIndex].dataset.label;
+    paintedProgress = progress;
+    paintedIntro = introPlaying;
+  }
   const introTime = introPlaying ? (now - introStarted) / 1000 : INTRO_DURATION;
   worldTime += elapsed;
   world.render(progress, introTime, pointer, true, worldTime);
   if (introPlaying && introTime >= INTRO_DURATION) finishIntro();
-  if (introPlaying || Math.abs(targetProgress - progress) > 0.00003
-      || now - lastInteraction < 1500) requestFrame();
+  requestFrame();
 }
 function finishIntro() {
   introPlaying = false;
   intro.hidden = true;
   root.classList.remove("intro-active");
+  root.classList.add("intro-revealed");
   try {
     sessionStorage.setItem("portfolio-introduced", "true");
   } catch {}
@@ -94,6 +99,7 @@ function playIntro() {
   if (location.hash) history.replaceState(null, "", "#home");
   window.scrollTo({ top: 0, behavior: "instant" });
   progress = targetProgress = 0;
+  root.classList.remove("intro-revealed");
   introPlaying = true;
   introStarted = performance.now();
   intro.hidden = false;
@@ -102,6 +108,7 @@ function playIntro() {
 }
 function setImmersive(enabled) {
   const index = activeIndex;
+  paintedProgress = -1;
   if (introPlaying) finishIntro();
   immersive = Boolean(enabled && world && !reducedMotion.matches);
   root.classList.toggle("immersive", immersive);
@@ -235,6 +242,7 @@ document.addEventListener("keydown", (event) => {
 });
 window.addEventListener("scroll", scrollProgress, { passive: true });
 window.addEventListener("resize", () => {
+  paintedProgress = -1;
   world?.resize();
   if (immersive) {
     window.scrollTo({
@@ -277,13 +285,15 @@ canvas.addEventListener("webglcontextlost", (event) => {
 });
 
 async function start(allowIntro = true) {
+  if (starting) return;
+  starting = true;
   try {
     if (reducedMotion.matches) {
       setImmersive(false);
       return;
     }
     const { createWorld } = await import("./world.js");
-    world = createWorld(canvas);
+    world = await createWorld(canvas);
     setImmersive(true);
     let introduced = false;
     try {
@@ -300,6 +310,7 @@ async function start(allowIntro = true) {
     world = undefined;
     setImmersive(false);
   } finally {
+    starting = false;
     root.classList.remove("booting");
   }
 }
