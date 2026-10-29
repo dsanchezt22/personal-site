@@ -837,3 +837,10 @@ html:not(.enhanced) .close-dialog {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+.booting .site-header,
+.booting main,
+.booting .journey-footer,
+.booting .chapter-nav {
+  visibility: hidden;
+}
