@@ -23,8 +23,8 @@ const dst = (ox, oy, x) => {
 const textWidth = 3.1;
 
 // One icon. `size` is the pixel grid it is drawn on, `pins` per side, `long` their length,
-// `line` the outline weight. Small sizes are plain and pixel-snapped; `sketch` adds the
-// hand wobble, pencil shading and a side face, which only read at 48px and up.
+// `line` the outline weight. Small sizes are plain and pixel-snapped; `sketch` adds
+// pencil shading and a side face, which only read at 48px and up.
 function chip({ size, pins, long, wide, line, sketch = false, tone = light, tile = 0 }) {
   reseed(29);
   const edge = tile + long; // the body's outer edge
@@ -50,19 +50,15 @@ function chip({ size, pins, long, wide, line, sketch = false, tone = light, tile
     ? `<path ${pen(tone.hair)} stroke-width="${f(size * 0.011)}" d="${hatch([[b + s - line, b + s * 0.42], [b + s - line, b + s - line], [b + s * 0.42, b + s - line]], -58, size * 0.045, 0.4)}"/>` +
       `<circle cx="${f(b + line * 2.3)}" cy="${f(b + line * 2.3)}" r="${f(line * 0.7)}" fill="${tone.paper}" stroke="${tone.ink}" stroke-width="${f(line * 0.4)}"/>`
     : "";
-  const wobble = sketch
-    ? `<filter id="w" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="${f(2.6 / size)}" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="${f(size * 0.028)}" xChannelSelector="R" yChannelSelector="G"/></filter>`
-    : "";
   return (
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">${wobble}` +
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">` +
     (tile ? `<rect width="${size}" height="${size}" fill="${tone.paper}"/>` : "") +
-    `<g${sketch ? ' filter="url(#w)"' : ""}>` +
     `<path fill="${tone.pin}" stroke="${tone.ink}" stroke-width="${f(line * (sketch ? 0.6 : 1))}" stroke-linejoin="round" d="${legs}"/>` +
     face +
     `<rect x="${f(b)}" y="${f(b)}" width="${f(s)}" height="${f(s)}" rx="${f(sketch ? line : line / 2)}" fill="${tone.body}" stroke="${tone.ink}" stroke-width="${line}"/>` +
     shade +
     `<path ${pen()} stroke-width="${f(x * 0.3)}" d="${letters}"/>` +
-    `</g></svg>`
+    `</svg>`
   );
 }
 
