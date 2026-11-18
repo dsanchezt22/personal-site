@@ -114,6 +114,7 @@ function energise() {
     pads.children[i].classList.toggle("lit", on);
   });
 }
+route();
 new ResizeObserver(route).observe(circuit);
 addEventListener("scroll", energise, { passive: true });
 
@@ -148,7 +149,7 @@ board.addEventListener("pointerdown", (event) => {
   card.style.zIndex = ++top;
 });
 
-board.addEventListener("pointermove", (event) => {
+addEventListener("pointermove", (event) => {
   if (!drag) return;
   const { card, box } = drag;
   if (!drag.moved && Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) < 5) return;
@@ -172,8 +173,8 @@ function endDrag() {
   suppressClick = drag.moved;
   drag = null;
 }
-board.addEventListener("pointerup", endDrag);
-board.addEventListener("pointercancel", endDrag);
+addEventListener("pointerup", endDrag);
+addEventListener("pointercancel", endDrag);
 
 for (const button of board.querySelectorAll("[data-dialog]")) {
   button.addEventListener("click", (event) => {
