@@ -17,12 +17,12 @@
   font-display: swap;
 }
 :root {
-  --paper: #ffffff;
-  --ink: #111111;
-  --muted: #5c5c5c;
-  --line: #9a9a9a;
-  --faint: #d6d6d6;
-  --accent: #426fa7;
+  --paper: #fdfcf8;
+  --ink: #141414;
+  --muted: #595959;
+  --line: #8a8a8a;
+  --faint: #d8d6d0;
+  --accent: #3f6ea8;
   color-scheme: light;
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
@@ -32,7 +32,9 @@
 }
 body {
   margin: 0;
-  background: var(--paper);
+  /* paper grain */
+  background: var(--paper)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .2 0 0 0 -.075'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E");
   color: var(--ink);
   font: 400 16px/1.6 Inter, Arial, sans-serif;
 }
@@ -68,6 +70,9 @@ svg {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+.defs {
+  position: absolute;
+}
 .skip-link {
   position: fixed;
   top: -70px;
@@ -80,6 +85,30 @@ svg {
 .skip-link:focus {
   top: 12px;
 }
+/* Hand-drawn frame: a doubled border nudged by the same wobble as the drawings. */
+.monogram,
+.socials a,
+.card button {
+  position: relative;
+}
+.monogram::before,
+.socials a::before,
+.card button::before,
+dialog::before,
+.close-dialog::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1.6px solid var(--ink);
+  filter: url(#ink-ui);
+  pointer-events: none;
+}
+.card button::before,
+dialog::before {
+  border-width: 2.2px;
+  outline: 1.2px solid var(--ink);
+  outline-offset: -7px;
+}
 
 /* Header */
 .site-header {
@@ -90,8 +119,9 @@ svg {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px max(16px, calc((100vw - 1120px) / 2));
-  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  height: 70px;
+  padding: 0 max(16px, calc((100vw - 1120px) / 2));
+  background: var(--paper);
   border-bottom: 1px solid var(--faint);
 }
 .brand {
@@ -103,9 +133,8 @@ svg {
   white-space: nowrap;
 }
 .monogram {
-  border: 1.5px solid var(--ink);
-  padding: 0 6px;
-  font: 800 14px/1.5 Manrope, Inter, sans-serif;
+  padding: 0 7px;
+  font: 800 14px/1.6 Manrope, Inter, sans-serif;
 }
 nav {
   display: flex;
@@ -119,37 +148,144 @@ nav a:hover {
   color: var(--ink);
 }
 
-/* Hero */
+/* Hero: the board fills the section; the copy sits in the board's empty area.
+   --u is one unit of the drawing's 1280x800 box, so copy and drawing scale together. */
 .hero {
+  --u: max(calc(100vw / 1280), calc(max(640px, 100svh - 70px) / 800));
   position: relative;
-  min-height: calc(100svh - 70px);
-  display: flex;
-  align-items: center;
-  padding: 48px max(16px, calc((100vw - 1120px) / 2));
+  height: max(640px, calc(100svh - 70px));
   overflow: hidden;
+  background: var(--paper);
 }
-.board-art {
+.hero-art svg {
   position: absolute;
-  right: max(-40px, calc((100vw - 1240px) / 2));
-  top: 50%;
-  width: min(640px, 60vw);
-  transform: translateY(-50%);
-  color: var(--line);
-  stroke-width: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
-.board-art .trace {
-  stroke: var(--faint);
-  stroke-width: 6;
-}
-.board-art .label {
-  fill: none;
-  stroke: var(--line);
+.pcb {
+  --pl: #848484;
+  stroke: var(--pl);
   stroke-width: 1.2;
-  font: 800 34px Manrope, Inter, sans-serif;
+}
+.pcb .co {
+  stroke-width: 5.6;
+}
+.pcb .po {
+  fill: var(--pl);
+  stroke-width: 2.6;
+}
+.pcb .ci {
+  stroke: var(--paper);
+  stroke-width: 3;
+}
+.pcb .pi,
+.pcb .vh,
+.pcb .dot {
+  fill: var(--paper);
+}
+.pcb .pi {
+  stroke: none;
+}
+.pcb .sk {
+  stroke: #c4c2bd;
+  stroke-width: 1;
+}
+.pcb .sk2 {
+  stroke-width: 1.4;
+}
+.pcb .ld {
+  fill: #fbfaf7;
+  stroke-width: 0.9;
+}
+.pcb .sf {
+  fill: #d3d1cc;
+}
+.pcb .bf {
+  fill: #f1f0ec;
+  stroke-width: 1.9;
+}
+.pcb .tm {
+  fill: #fff;
+}
+.pcb .lit {
+  fill: #a9a7a2;
+}
+.pcb .h {
+  stroke: #c9c7c2;
+  stroke-width: 0.8;
+}
+.pcb .f {
+  stroke-width: 0.9;
+}
+.pcb .i {
+  stroke-width: 1.6;
+}
+.pcb .silk {
+  font-family: Manrope, Inter, sans-serif;
+  font-weight: 800;
+  fill: #eeede9;
+  stroke-width: 1.3;
+}
+.pcb .mk {
+  font: 600 9px Inter, Arial, sans-serif;
+  letter-spacing: 0.1em;
+  text-anchor: middle;
+  fill: var(--pl);
+  stroke: none;
+}
+.pcb .pulse circle {
+  fill: var(--accent);
+  stroke: none;
+}
+/* Colour follows the pointer: the wash layer shows only inside a soft spot. */
+.pcb-wash {
+  mix-blend-mode: multiply;
+  stroke: none;
+  -webkit-mask-image: radial-gradient(circle calc(250 * var(--u)) at var(--mx, 76%) var(--my, 30%), #000 35%, transparent);
+  mask-image: radial-gradient(circle calc(250 * var(--u)) at var(--mx, 76%) var(--my, 30%), #000 35%, transparent);
+}
+.wboard {
+  fill: #e2f1e7;
+}
+.wcu {
+  stroke: #f1d9a3;
+  stroke-width: 3;
+}
+.wcupad {
+  fill: #f1d9a3;
+}
+.wl {
+  fill: #d9cdf0;
+}
+.wb {
+  fill: #cdd9ec;
+}
+.ws {
+  fill: #c0dcf3;
+}
+.wp {
+  fill: #f6cfb2;
+}
+.wg {
+  fill: #dddcd8;
+}
+.wr {
+  fill: #f2b6b6;
+}
+.wm {
+  fill: #c8e6d4;
+}
+.wy {
+  fill: #f4e3a6;
 }
 .hero-copy {
-  position: relative;
-  max-width: 560px;
+  position: absolute;
+  left: clamp(16px, 4vw, calc(48 * var(--u)));
+  top: 50%;
+  width: min(calc(450 * var(--u)), calc(100vw - 32px));
+  transform: translateY(-50%);
+  container-type: inline-size;
 }
 .eyebrow,
 small {
@@ -159,48 +295,82 @@ small {
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+.eyebrow {
+  font-size: max(13px, calc(11.5 * var(--u)));
+}
 h1 {
-  margin: 12px 0 8px;
-  font: 800 clamp(40px, 7vw, 72px) / 1.02 Manrope, Inter, sans-serif;
+  margin: 10px 0 8px;
+  font: 800 min(calc(60 * var(--u)), 11vw) / 1.02 Manrope, Inter, sans-serif;
   letter-spacing: -0.02em;
   text-transform: lowercase;
 }
 .dek {
-  font-size: 19px;
+  font-size: max(16px, calc(17 * var(--u)));
   color: var(--muted);
 }
 .socials {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 28px;
+  gap: 8px 6px;
+  margin-top: 24px;
 }
 .socials a {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border: 1.5px solid var(--ink);
+  gap: 0.45em;
+  min-height: 3.1em;
+  padding: 0 0.75em;
   background: var(--paper);
   text-decoration: none;
-  font-size: 14px;
+  font-size: max(13px, calc(12 * var(--u)));
 }
 .socials a:hover {
-  border-color: var(--accent);
   color: var(--accent);
 }
-.socials svg {
-  width: 18px;
-  height: 18px;
+.socials a:hover::before {
+  border-color: var(--accent);
+}
+/* When the five labelled links would wrap, they fall back to icons. */
+@container (max-width: 445px) {
+  .socials span {
+    display: none;
+  }
+  .socials a {
+    width: 44px;
+    min-height: 44px;
+    justify-content: center;
+    padding: 0;
+  }
+}
+.icon {
+  width: 1.5em;
+  height: 1.5em;
+  stroke-width: 1.4;
+  filter: url(#ink-ui);
+}
+.icon .h {
+  stroke-width: 0.6;
 }
 
 /* Sections */
 .section {
-  padding: 88px max(16px, calc((100vw - 1120px) / 2));
-  border-top: 1px solid var(--faint);
+  padding: 40px max(16px, calc((100vw - 1120px) / 2)) 96px;
+}
+.rule {
+  display: block;
+  width: 100%;
+  height: 32px;
+  margin-bottom: 48px;
+  color: var(--line);
+  stroke-width: 1.2;
+  filter: url(#ink-ui);
+}
+/* rotated cards and their shadows may poke past the board's edge */
+#work {
+  overflow-x: clip;
 }
 .section-head {
-  margin-bottom: 40px;
+  margin-bottom: 36px;
 }
 h2 {
   font: 800 clamp(32px, 5vw, 44px) / 1.1 Manrope, Inter, sans-serif;
@@ -218,6 +388,12 @@ h3 {
   font-size: 17px;
   font-weight: 600;
 }
+.strip {
+  margin-bottom: 48px;
+}
+.strip .art {
+  aspect-ratio: 1120 / 222;
+}
 .about-grid {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
@@ -227,34 +403,62 @@ h3 {
   margin-top: 16px;
 }
 .timeline {
-  border-left: 1.5px solid var(--ink);
-}
-.timeline li {
   position: relative;
-  padding: 0 0 22px 22px;
 }
-.timeline li::before {
+/* the thread the timeline marks hang on */
+.timeline::before {
   content: "";
   position: absolute;
-  left: -6px;
-  top: 6px;
-  width: 9px;
-  height: 9px;
-  border: 1.5px solid var(--ink);
+  left: 22px;
+  top: 24px;
+  bottom: 48px;
+  border-left: 1.4px dashed var(--line);
+  filter: url(#ink-ui);
+}
+.timeline li {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  gap: 18px;
+  padding-bottom: 22px;
+}
+.timeline .art {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  padding: 4px;
+  border: 1.4px solid var(--ink);
   border-radius: 50%;
   background: var(--paper);
+  filter: url(#ink-ui);
 }
-.timeline p {
+.timeline p,
+.steps p {
   color: var(--muted);
+}
+.steps {
+  border-left: 1.5px solid var(--ink);
+}
+.steps li {
+  padding: 0 0 16px 18px;
 }
 
 /* Project board */
 .board {
   position: relative;
-  height: 1120px;
-  border: 1.5px dashed var(--line);
-  background-image: radial-gradient(var(--faint) 1px, transparent 1px);
+  width: min(1360px, calc(100vw - 32px));
+  height: clamp(820px, 90vw, 1210px);
+  margin-left: 50%;
+  transform: translateX(-50%);
+  background-image: radial-gradient(var(--faint) 1.1px, transparent 1.2px);
   background-size: 22px 22px;
+}
+.board::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1.4px dashed var(--line);
+  filter: url(#ink-ui);
+  pointer-events: none;
 }
 .card {
   position: absolute;
@@ -265,28 +469,54 @@ h3 {
   touch-action: none;
   user-select: none;
 }
+/* a strip of tape holds each card to the board */
+.card::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -11px;
+  left: calc(50% - 38px);
+  width: 76px;
+  height: 22px;
+  background: rgb(244 227 166 / 0.82);
+  border-inline: 1px dashed rgb(0 0 0 / 0.22);
+  transform: rotate(calc(var(--r) * -2.5));
+  filter: url(#ink-ui);
+  pointer-events: none;
+}
+/* pencil-hatched shadow */
+.card::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 9px -8px -8px 9px;
+  background: repeating-linear-gradient(125deg, rgb(0 0 0 / 0.55) 0 0.7px, transparent 0.7px 4.5px);
+  filter: url(#ink-ui);
+  transition: inset 0.2s;
+}
 .card button {
   display: block;
   width: 100%;
-  padding: 0 0 16px;
-  border: 2px solid var(--ink);
-  outline: 1.5px solid #555;
-  outline-offset: -6px;
+  padding: 9px 9px 20px;
+  border: 0;
   background: var(--paper);
   text-align: left;
   cursor: grab;
 }
-.card button > * {
+.card button > :not(svg) {
   display: block;
-  padding: 0 18px;
+  padding: 0 12px;
 }
-.card svg {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  padding: 18px 18px 10px;
-  border-bottom: 1.5px solid var(--ink);
-  margin-bottom: 12px;
+.card small {
+  margin-top: 12px;
+}
+/* ruled line under the drawing */
+.card small::before {
+  content: "";
+  display: block;
+  margin: -12px -12px 12px;
+  border-top: 1.5px solid var(--ink);
+  filter: url(#ink-ui);
 }
 .card strong {
   font-weight: 600;
@@ -296,19 +526,36 @@ h3 {
   font-size: 14px;
   line-height: 1.5;
 }
-.card button:hover,
-.card button:focus-visible {
+.card .wash {
+  opacity: 0.62;
+  transition: opacity 0.35s;
+}
+.card button:hover .wash,
+.card button:focus-visible .wash,
+.card.dragging .wash {
+  opacity: 1;
+}
+.card button:hover::before,
+.card button:focus-visible::before {
   border-color: var(--accent);
 }
 .card.dragging {
-  transform: rotate(0deg) scale(1.02);
+  transform: rotate(0deg) scale(1.03);
+}
+.card.dragging::after {
+  inset: 16px -16px -16px 16px;
 }
 .card.dragging button {
   cursor: grabbing;
-  box-shadow: 6px 6px 0 var(--faint);
 }
 
 /* Contact */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
 .email-link {
   font: 800 clamp(22px, 4vw, 34px) / 1.2 Manrope, Inter, sans-serif;
   overflow-wrap: anywhere;
@@ -322,91 +569,357 @@ h3 {
 
 /* Detail dialogs */
 dialog {
-  width: min(560px, calc(100vw - 32px));
-  max-height: calc(100svh - 32px);
-  padding: 28px;
-  border: 2px solid var(--ink);
-  outline: 1.5px solid var(--ink);
-  outline-offset: -6px;
+  width: min(760px, calc(100vw - 32px));
+  padding: 0;
+  border: 0;
   color: var(--ink);
   background: var(--paper);
+  overflow: visible;
 }
 dialog::backdrop {
-  background: rgb(255 255 255 / 0.75);
+  background: rgb(253 252 248 / 0.82);
 }
-dialog h2 {
-  margin: 4px 0 2px;
+.sheet {
+  max-height: calc(100svh - 50px);
+  margin-block: 9px;
+  overflow: auto;
+  padding: 0 9px 20px;
+}
+.sheet > :not(svg) {
+  margin-inline: 22px;
+}
+.sheet > .art {
+  border-bottom: 1.5px solid var(--ink);
+  margin-bottom: 20px;
+}
+.sheet h2 {
+  margin-top: 4px;
+  margin-bottom: 2px;
   font-size: clamp(26px, 5vw, 34px);
   text-transform: none;
 }
-dialog .meta {
+.sheet .meta {
   margin-bottom: 16px;
   color: var(--muted);
 }
-dialog p + p,
-dialog .timeline,
-dialog .text-links {
+.sheet p + p,
+.sheet .steps,
+.sheet .text-links {
   margin-top: 16px;
 }
 .close-dialog {
-  float: right;
-  border: 1.5px solid var(--ink);
+  position: absolute;
+  z-index: 3;
+  top: 18px;
+  right: 18px;
+  border: 0;
   background: var(--paper);
-  padding: 4px 10px;
+  padding: 4px 12px;
 }
 .fine-print {
   color: var(--muted);
   font-size: 13px;
 }
 
+/* Drawings: ink strokes under a hand-wobble filter, colour washes multiplied on top. */
+.art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.art .ink {
+  filter: url(#ink);
+}
+.art path {
+  stroke-width: 1.4;
+}
+.art .p {
+  fill: var(--paper);
+}
+.art .f {
+  stroke-width: 0.85;
+}
+.art .h {
+  stroke-width: 0.55;
+  stroke: #4a4a4a;
+}
+.art .b {
+  stroke-width: 2.1;
+}
+.art .dash {
+  stroke-width: 2.4;
+  stroke-dasharray: 1.5 3;
+}
+.art .dash2 {
+  stroke-width: 0.9;
+  stroke-dasharray: 3.5 2.5;
+}
+.art .dots {
+  stroke-width: 2.2;
+  stroke-dasharray: 0 8;
+}
+.art .perf {
+  stroke: var(--paper);
+  stroke-width: 3;
+  stroke-dasharray: 0 4.6;
+}
+.art .solid {
+  fill: var(--ink);
+}
+.art .wo {
+  stroke-width: 3.8;
+}
+.art .wi {
+  stroke: var(--paper);
+  stroke-width: 2;
+}
+.art .t {
+  font: 600 10px Inter, Arial, sans-serif;
+  fill: var(--ink);
+  stroke: none;
+}
+.art .mid {
+  text-anchor: middle;
+}
+.art .s {
+  font-size: 7px;
+}
+.art .stamp {
+  font: 800 11px Manrope, Inter, sans-serif;
+}
+.art .wash {
+  mix-blend-mode: multiply;
+}
+.art .wash path {
+  stroke: none;
+  transform: translate(1.2px, 1.2px);
+}
+.art .wash .sr,
+.art .wash .sb,
+.art .wash .sy,
+.art .wash .sm,
+.art .wash .kx {
+  fill: none;
+  stroke-width: 2;
+  transform: none;
+}
+.art .wash .sr {
+  stroke: #ef9d9d;
+}
+.art .wash .sb {
+  stroke: #9dbbe6;
+}
+.art .wash .sy {
+  stroke: #ecd27a;
+}
+.art .wash .sm {
+  stroke: #9fd6b6;
+}
+.art .wash .kx {
+  stroke: #fff;
+  stroke-width: 2.6;
+}
+.art .wx {
+  fill: #fff;
+}
+.art .wsh {
+  fill: rgb(0 0 0 / 0.09);
+}
+.art .live path,
+.art .live circle {
+  stroke: none;
+}
+.art .hop,
+.art .flow {
+  fill: var(--accent);
+  opacity: 0;
+}
+.art .tap {
+  fill: var(--ink);
+  opacity: 0;
+}
+.art .live .spin {
+  stroke: var(--ink);
+  stroke-width: 0.7;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.art .lit {
+  fill: #cf4a4a;
+}
+.art .lit.two {
+  opacity: 0;
+}
+.art .blink {
+  fill: var(--ink);
+}
+.art .live .scan {
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  opacity: 0;
+}
+
+/* Motion: things come in as they scroll into view, and each drawing has one
+   small movement of its own while its card is hovered. */
+@keyframes hop {
+  15%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy));
+  }
+}
+@keyframes tap {
+  0% {
+    opacity: 0.3;
+  }
+  30% {
+    opacity: 0;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes off-half {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes on-half {
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes scan {
+  from {
+    opacity: 0.9;
+  }
+  to {
+    opacity: 0.9;
+    transform: translateY(188px);
+  }
+}
+@keyframes flow {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal {
+    opacity: 0;
+    translate: 0 18px;
+  }
+  .js .reveal.in {
+    opacity: 1;
+    translate: none;
+    transition: opacity 0.6s, translate 0.6s;
+  }
+  .js .reveal:not(.in) .wash {
+    opacity: 0;
+  }
+  .reveal .wash {
+    transition: opacity 0.7s 0.35s;
+  }
+  .art .blink {
+    animation: off-half 1.1s steps(1) infinite;
+  }
+  .card button:hover .hop {
+    animation: hop 1.1s ease-in-out infinite;
+  }
+  .card button:hover .tap {
+    animation: tap 1.2s steps(1) infinite;
+    animation-delay: calc(var(--i) * 0.3s);
+  }
+  .card button:hover .spin {
+    animation: spin 2.4s linear infinite;
+  }
+  .card button:hover .spin.slow {
+    animation-duration: 16s;
+  }
+  .card button:hover .lit.one {
+    animation: off-half 1.8s steps(1) infinite;
+  }
+  .card button:hover .lit.two {
+    animation: on-half 1.8s steps(1) infinite;
+  }
+  .card button:hover .scan {
+    animation: scan 1.7s ease-in-out infinite alternate;
+  }
+  .card button:hover .flow {
+    animation: flow 1.6s linear infinite;
+    animation-delay: calc(var(--i) * 0.45s);
+  }
+}
+
 /* Phone: the board becomes a plain list. */
 @media (max-width: 759px) {
-  .site-header {
-    flex-wrap: wrap;
-    padding-block: 12px;
-  }
-  nav {
-    gap: 16px;
-  }
-  .hero {
-    min-height: auto;
-    padding-top: 56px;
-    padding-bottom: 64px;
-  }
-  .board-art {
-    width: 520px;
-    right: -260px;
-    top: 0;
-    transform: none;
-    opacity: 0.55;
-  }
-  .about-grid {
+  .about-grid,
+  .contact-grid {
     grid-template-columns: 1fr;
     gap: 32px;
   }
   .section {
-    padding-block: 64px;
+    padding-bottom: 64px;
+  }
+  .rule {
+    margin-bottom: 32px;
+  }
+  .strip .art {
+    aspect-ratio: auto;
+    height: 180px;
   }
   .drag-hint {
     display: none;
   }
   .board {
+    width: auto;
     height: auto;
+    margin-left: 0;
+    transform: none;
     display: grid;
-    gap: 20px;
-    border: 0;
+    gap: 36px;
     background: none;
   }
+  .board::before {
+    display: none;
+  }
   .card {
-    position: static;
+    position: relative;
+    left: auto;
+    top: auto;
     width: auto;
     transform: none;
+    touch-action: auto;
+  }
+  .card::after {
+    inset: 7px -6px -6px 7px;
   }
   .card button {
     cursor: pointer;
   }
-  .card svg {
-    aspect-ratio: 5 / 2;
+  .card .wash {
+    opacity: 0.9;
+  }
+}
+@media (max-width: 519px) {
+  .brand span + span {
+    display: none;
+  }
+  nav {
+    gap: 16px;
   }
 }
 @media (max-width: 1000px) and (min-width: 760px) {
@@ -420,5 +933,11 @@ dialog .text-links {
 @media (prefers-reduced-motion: reduce) {
   :root {
     scroll-behavior: auto;
+  }
+  .pcb .pulse {
+    display: none;
+  }
+  * {
+    transition: none !important;
   }
 }

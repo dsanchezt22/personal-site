@@ -36,6 +36,8 @@ assert 'Stanford EE student · Class of 2029' in html, 'Missing Stanford introdu
 for phrase in ('A little curiosity goes a long way', 'made tangible', 'Ideas into things that work', 'ds.</span>'):
     assert phrase not in html, f'Superseded copy: {phrase}'
 assert '<span class="monogram">dst</span>' in html, 'Missing dst monogram'
+assert '<!--art:' not in html, 'A drawing placeholder was not filled by the build'
+assert html.count('class="art art-') >= 16 and 'class="pcb"' in html, 'Missing drawings'
 assert len(page.ids) == len(set(page.ids)), 'Duplicate HTML IDs'
 for anchor in ('about', 'work', 'experience', 'contact', 'verdnt', 'research', 'developer'):
     assert anchor in page.ids, f'Missing section: {anchor}'
@@ -46,7 +48,7 @@ for url in set(page.urls):
         with urlopen(urljoin(base, url)) as response:
             assert response.status == 200, url
             assert response.read(), f'Empty asset: {url}'
-for url in ('https://github.com/dsanchezt22', 'https://www.linkedin.com/in/diego-sanchez-tirado', 'https://github.com/manaflow-ai/cmux', 'https://github.com/earendil-works/pi'):
+for url in ('https://github.com/dsanchezt22', 'https://x.com/hnsmsquidwrd', 'https://www.linkedin.com/in/diego-sanchez-tirado', 'https://github.com/manaflow-ai/cmux', 'https://github.com/earendil-works/pi'):
     assert url in page.urls, f'Missing public link: {url}'
 for social in ('mailto:dsanchezt22@gmail.com', 'Diego-Sanchez-Tirado-Resume.pdf'):
     assert social in page.urls, f'Missing social link: {social}'

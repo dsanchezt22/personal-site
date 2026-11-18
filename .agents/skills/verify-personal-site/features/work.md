@@ -1,6 +1,6 @@
 # Project board
 
-At 760px and wider, #work is a dotted board of tilted double-bordered cards (one line drawing, one-word category, title, one-line description). Cards drag with mouse or touch inside the board; a drag is not a click and opens nothing. A plain click opens that project's native dialog. Below 760px the board is a plain stacked list with no dragging, so touch scrolling is never trapped.
+At 760px and wider, #work is a dotted board of tilted, taped, double-bordered cards (one detailed ink-and-wash drawing, one-word category, title, one-line description). Hovering or focusing a card deepens its colour and runs one small movement in its drawing (packets hop on the memory mesh, keys press, wheels turn, the display changes reading, the cursor blinks, dots flow to the cup, the sun's rays turn, a scan line sweeps). Cards drag with mouse or touch inside the board; a drag is not a click and opens nothing. A plain click opens that project's native dialog, which shows the same drawing at full size above the text. Below 760px the board is a plain stacked list with no dragging, so touch scrolling is never trapped.
 
 Cards: Memory for AI inference (Research, #research), ErgoTouch, A bike rebuilt, Logic you can touch (Hardware), Course notebook (Software, #developer), FStea AI (AI, #verdnt), A better winery day, Plate Scanner (AI). The course dialog names CS146S, CMUX, and Pi with three ordered week notes, never the private assignment repository. The winery dialog links both public demos and labels them fictional independent demos.
 
