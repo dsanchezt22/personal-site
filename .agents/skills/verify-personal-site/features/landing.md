@@ -4,6 +4,6 @@ An off-white paper page. The hero is a full-bleed, hand-wobbled line drawing of 
 
 The board is grey ink; a soft spot of colour follows the pointer across it, and a few blue pulses travel along traces. With reduced motion the pulses are hidden and nothing else animates.
 
-The sticky header links to #about (background), #work (projects), and #contact. Section titles are single lowercase words with one objective description line beneath, not slogans; each section opens with a rule drawn from schematic symbols. Skip to content focuses main. Without JavaScript all section content is readable; project details live in dialogs and need JavaScript.
+The sticky header links to #about (background), #work (projects), #hobbies, and #contact; at 320px all four still fit on one row beside the monogram. Section titles are single lowercase words with one objective description line beneath, not slogans; each section opens with a rule drawn from schematic symbols. Skip to content focuses main. Without JavaScript all section content is readable; project details live in dialogs and need JavaScript.
 
 Check 1440x900, 1024x768, 390x844, and 320x568: document width equals viewport width, the hero copy stays inside the board's empty area (no part or trace under the text), and console errors are absent.

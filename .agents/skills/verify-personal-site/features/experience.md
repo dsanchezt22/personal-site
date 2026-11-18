@@ -1,6 +1,6 @@
 # Background
 
-#about ("background") opens with a wide drawing of a sandstone arcade, tower, and palms, then the short biography (two columns on desktop), then the experience circuit (#experience): six component boards for Verdnt, Stanford research, Amazon Lab126, Code Four, Duke, and Stanford education (#education). Compare role names and dates against the supplied resume.
+#about ("background") opens with a wide drawing of a sandstone arcade, tower, and palms, then the short biography, then the experience circuit (#experience): six component boards for Verdnt, Stanford research, Amazon Lab126, Code Four, Duke, and Stanford education (#education). The Robust Systems Group entry is past ("2026 · through summer") and the biography says he researched there through summer 2026. Compare the other role names and dates against the supplied resume.
 
 Each board is a native `<details>`: its summary shows a small drawn mark, the dates, the name, an LED, and a slide switch; opening it unfolds a detailed drawing and the description. At 760px and wider the boards alternate left and right of a copper trace; below that they stack to the right of it.
 

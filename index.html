@@ -6,7 +6,7 @@
     <title>Diego Sanchez Tirado</title>
     <meta
       name="description"
-      content="Diego Sanchez Tirado. Electrical engineering at Stanford. Building circuits, researching memory systems, and developing software."
+      content="Diego Sanchez Tirado. Electrical engineering at Stanford. Circuits, memory-systems research, and software."
     />
     <meta name="theme-color" content="#ffffff" />
     <link rel="canonical" href="https://diegosancheztirado.com/" />
@@ -40,7 +40,7 @@
       >
       <nav aria-label="Main navigation">
         <a href="#about">background</a><a href="#work">projects</a
-        ><a href="#contact">contact</a>
+        ><a href="#hobbies">hobbies</a><a href="#contact">contact</a>
       </nav>
     </header>
     <main id="content" tabindex="-1">
@@ -90,14 +90,10 @@
         <div class="bio">
             <p>
               I'm a Stanford undergraduate studying electrical engineering, class
-              of 2029. I research memory systems for AI inference with Stanford’s
-              Robust Systems Group, design custom circuit boards, and develop
-              software. I test what I build on real hardware and in working
-              applications.
-            </p>
-            <p>
-              My interests span computer architecture, robotics, and tools that
-              make everyday work better.
+              of 2029. I design custom circuit boards and develop software, and
+              through summer 2026 I researched memory systems for AI inference
+              with Stanford’s Robust Systems Group. I test what I build on real
+              hardware and in working applications.
             </p>
           </div>
         <div class="circuit">
@@ -120,7 +116,7 @@
               <details open>
                 <summary>
                   <!--art:mark-memory-->
-                  <small>2026 – present</small>
+                  <small>2026 · through summer</small>
                   <h3>Stanford Robust Systems Group</h3>
                   <i class="led"></i>
                 </summary>
@@ -208,7 +204,15 @@
               <span>Modeling how memory capacity, bandwidth, and topology shape LLM inference.</span>
             </button>
           </li>
-          <li class="card reveal" style="--x: 36%; --y: 1%; --r: 1.5deg">
+          <li class="card reveal" id="piezo" style="--x: 36%; --y: 1%; --r: 1.5deg">
+            <button type="button" data-dialog="piezo-details">
+              <!--art:piezo-->
+              <small>Research</small>
+              <strong>Typing-force energy harvester</strong>
+              <span>A piezoelectric rig testing whether the force of typing can be harvested as usable energy.</span>
+            </button>
+          </li>
+          <li class="card reveal" style="--x: 70%; --y: 4%; --r: -1deg">
             <button type="button" data-dialog="ergotouch-details">
               <!--art:ergotouch-->
               <small>Hardware</small>
@@ -216,7 +220,7 @@
               <span>A custom split keyboard: resin case, KiCad PCB, and RP2040 firmware.</span>
             </button>
           </li>
-          <li class="card reveal" style="--x: 70%; --y: 4%; --r: -1deg">
+          <li class="card reveal" id="ebike" style="--x: 4%; --y: 35%; --r: 1deg">
             <button type="button" data-dialog="bike-details">
               <!--art:bike-->
               <small>Hardware</small>
@@ -224,23 +228,39 @@
               <span>A mountain bike converted with a custom 48 V battery and mid-drive motor.</span>
             </button>
           </li>
-          <li class="card reveal" style="--x: 6%; --y: 35%; --r: 1deg">
+          <li class="card reveal" style="--x: 38%; --y: 33%; --r: -1.5deg">
             <button type="button" data-dialog="logic-details">
               <!--art:logic-->
               <small>Hardware</small>
               <strong>Logic you can touch</strong>
-              <span>A gate-level 4-bit adder/subtractor and a piezoelectric energy-harvesting rig.</span>
+              <span>A gate-level 4-bit adder/subtractor with a two-digit display.</span>
             </button>
           </li>
-          <li class="card reveal" id="developer" style="--x: 40%; --y: 33%; --r: -1.5deg">
+          <li class="card reveal" id="rmx" style="--x: 71%; --y: 36%; --r: 2deg">
+            <button type="button" data-dialog="rmx-details">
+              <!--art:rmx-->
+              <small>Hardware</small>
+              <strong>RMX-1000-style effects box</strong>
+              <span>A DIY DJ effects box: pads and knobs that apply real-time effects to music. In progress.</span>
+            </button>
+          </li>
+          <li class="card reveal" id="developer" style="--x: 2%; --y: 67%; --r: -1.5deg">
             <button type="button" data-dialog="developer-details">
-              <!--art:developer-->
+              <!--art:opensource-->
               <small>Software</small>
-              <strong>Course notebook</strong>
-              <span>CS146S: coding agents, MCP servers, and verifying software people use.</span>
+              <strong>Open-source contributions</strong>
+              <span>Contributor to cmux and Pi.</span>
             </button>
           </li>
-          <li class="card reveal" id="verdnt" style="--x: 72%; --y: 37%; --r: 2deg">
+          <li class="card reveal" id="realization" style="--x: 36%; --y: 68%; --r: 1deg">
+            <button type="button" data-dialog="realization-details">
+              <!--art:realization-->
+              <small>AI</small>
+              <strong>Realization Engine</strong>
+              <span>Turns a property listing's photos into a 3D model you can walk through and furnish.</span>
+            </button>
+          </li>
+          <li class="card reveal" id="verdnt" style="--x: 70%; --y: 66%; --r: -2deg">
             <button type="button" data-dialog="fstea-details">
               <!--art:fstea-->
               <small>AI</small>
@@ -248,21 +268,55 @@
               <span>Beverage intelligence: nine signal collectors feed ranked trends and product concepts.</span>
             </button>
           </li>
-          <li class="card reveal" style="--x: 14%; --y: 67%; --r: -2deg">
-            <button type="button" data-dialog="winery-details">
-              <!--art:winery-->
-              <small>AI</small>
-              <strong>A better winery day</strong>
-              <span>Two interactive hospitality prototypes, published as public demos.</span>
-            </button>
+        </ul>
+      </section>
+
+      <section class="section" id="hobbies" aria-labelledby="hobbies-title">
+        <!--art:rule-d-->
+        <header class="section-head">
+          <h2 id="hobbies-title">hobbies</h2>
+          <p>Soccer, hiking, consumer electronics, AI agents, and music.</p>
+        </header>
+        <p class="lead">
+          My interests span computer architecture, robotics, and tools that make
+          everyday work better.
+        </p>
+        <ul class="hobbies">
+          <li class="hobby reveal" style="--r: -1.2deg">
+            <!--art:hobby-soccer-->
+            <h3>soccer</h3>
+            <p>I follow Bayern Munich and Chivas.</p>
           </li>
-          <li class="card reveal" style="--x: 50%; --y: 67%; --r: 1deg">
-            <button type="button" data-dialog="plate-details">
-              <!--art:plate-->
-              <small>AI</small>
-              <strong>Plate Scanner</strong>
-              <span>A phone-first tool for estimating what's on a dining-hall plate.</span>
-            </button>
+          <li class="hobby reveal" style="--r: 0.9deg">
+            <!--art:hobby-hiking-->
+            <h3>hiking</h3>
+            <p>I love hiking. I summited Mt. Cloudripper, the hardest scramble I have ever done.</p>
+          </li>
+          <li class="hobby reveal" style="--r: -0.7deg">
+            <!--art:hobby-electronics-->
+            <h3>electronics</h3>
+            <p>
+              I love consumer electronics. I play around with headphone EQ on a
+              Qudelix 5K, and my favorite headphones are the Sennheiser IE600. I
+              also built <a href="#ebike">the e-bike</a> I rode to Amazon every day.
+            </p>
+          </li>
+          <li class="hobby reveal" style="--r: 1deg">
+            <!--art:hobby-agents-->
+            <h3>agents</h3>
+            <p>
+              I love AI systems and personal agents. I have tinkered heavily with
+              Hermes and I'm an avid Grok bot user.
+            </p>
+          </li>
+          <li class="hobby reveal" style="--r: -0.9deg">
+            <!--art:hobby-music-->
+            <h3>music</h3>
+            <p>
+              I love music and I like to DJ; my favorite artists are Overmono and
+              Latin Mafia. I'm building an
+              <a href="#rmx">RMX-1000-style effects box</a>.
+            </p>
           </li>
         </ul>
       </section>
@@ -293,11 +347,37 @@
       <div class="sheet">
       <small>Research</small>
       <h2 id="memory-title">Memory for AI inference</h2>
-      <p class="meta">Stanford Robust Systems Group</p>
+      <p class="meta">Stanford Robust Systems Group · through summer 2026</p>
       <p>
-        With Prof. Subhasish Mitra and Sam Dayo, I model how memory capacity,
+        With Prof. Subhasish Mitra and Sam Dayo, I modeled how memory capacity,
         bandwidth, and network topology shape LLM inference, comparing
         area-scalable mesh memory with HBM.
+      </p>
+      </div>
+    </dialog>
+    <dialog id="piezo-details" aria-labelledby="piezo-title">
+      <button class="close-dialog" type="button">Close</button>
+      <div class="sheet">
+      <small>Research</small>
+      <h2 id="piezo-title">Typing-force energy harvester</h2>
+      <p class="meta">NC Science &amp; Engineering Fair · 2024 · North Carolina School of Science and Mathematics</p>
+      <p>
+        Can the force of typing on a mechanical keyboard switch be harvested as
+        usable energy? The rig: a piezo disc under an MX black switch on a force
+        plate, a four-diode bridge rectifier charging a 470 µF capacitor, and a
+        rocker switch that dumps the stored charge into a red LED.
+      </p>
+      <p>
+        I swept press force (2.5 ± 1 N) and disc diameter (10 and 41 mm) over
+        360 actuations, about a minute of typing, logging force and voltage with
+        Vernier probes in Logger Pro. A press of about 3 N produced a spike of
+        about 6 V on the 41 mm disc. Voltage rose with force and with disc size;
+        at low force the 41 mm disc reached about 2 V and the 10 mm disc never did.
+      </p>
+      <p>
+        Conclusion: intermediate-to-large piezos under normal typing force
+        capture usable energy, a low-cost, battery-free idea for low-resource
+        settings.
       </p>
       </div>
     </dialog>
@@ -330,35 +410,73 @@
       <div class="sheet">
       <small>Hardware</small>
       <h2 id="logic-title">Logic you can touch</h2>
-      <p class="meta">Digital logic &amp; energy harvesting</p>
+      <p class="meta">Digital logic</p>
       <p>
-        A gate-level 4-bit adder/subtractor with a two-digit display, plus a
-        piezoelectric rig that harvests typing force.
+        A gate-level 4-bit adder/subtractor with a two-digit display.
       </p>
+      </div>
+    </dialog>
+    <dialog id="rmx-details" aria-labelledby="rmx-title">
+      <button class="close-dialog" type="button">Close</button>
+      <div class="sheet">
+      <small>Hardware</small>
+      <h2 id="rmx-title">RMX-1000-style effects box</h2>
+      <p class="meta">Stanford EE 102A final project · with Anthony Yang and Daniel Tauhert · in progress</p>
+      <p>
+        A DIY version of the Pioneer RMX-1000: a small box with a button pad and
+        knobs that takes music in and applies effects in real time. Echo and
+        delay, reverb, filter sweeps (low-, high-, and band-pass, plus a
+        bass/mid/treble isolator), pitch changes, and build-ups before a drop.
+      </p>
+      <p>
+        Signal chain: music in → ADC → a microcontroller running the effects
+        from the pad and knobs → DAC → speakers. Each effect is prototyped first
+        in Python and MATLAB (echo as an LTI system, h[n] = δ[n] + a·δ[n−D];
+        reverb as convolution with a room impulse response; FFTs and
+        spectrograms), then moved to hardware: an ESP32, a Raspberry Pi, or an
+        audio board in a project-box enclosure, laser-cut if time allows.
+      </p>
+      <p>Status: being built now.</p>
       </div>
     </dialog>
     <dialog id="developer-details" aria-labelledby="developer-details-title">
       <button class="close-dialog" type="button">Close</button>
       <div class="sheet">
       <small>Software</small>
-      <h2 id="developer-details-title">Course notebook</h2>
-      <p class="meta">CS146S · Fall 2026</p>
+      <h2 id="developer-details-title">Open-source contributions</h2>
+      <p class="meta">cmux · Pi</p>
       <p>
-        For Stanford's
-        <a href="https://themodernsoftware.dev" target="_blank" rel="noopener noreferrer">Modern Software Developer course</a>,
-        I'm exploring coding agents, MCP, and how to verify the software people
-        actually use.
+        I contribute to cmux and to Pi. Two of my cmux pull requests are open.
       </p>
-      <ol class="steps">
-        <li><small>Week 1</small><h3>Inside the agent loop</h3><p>Inspecting a coding-agent session to understand prompts, tool calls, and context.</p></li>
-        <li><small>Week 2</small><h3>From plate to persistent log</h3><p>A five-tool MCP server connecting Drive photos, plate analysis, and a Sheets meal log, with OAuth and a preview before writing.</p></li>
-        <li><small>Week 3</small><h3>Check the thing people use</h3><p>A reusable skill for checking FStea AI's published interface, mobile layouts, languages, and saved results.</p></li>
-      </ol>
       <ul class="text-links">
-        <li><a href="https://github.com/manaflow-ai/cmux" target="_blank" rel="noopener noreferrer">CMUX ↗</a></li>
+        <li><a href="https://github.com/manaflow-ai/cmux/pull/45837" target="_blank" rel="noopener noreferrer">cmux #45837 ↗</a></li>
+        <li><a href="https://github.com/manaflow-ai/cmux/pull/42241" target="_blank" rel="noopener noreferrer">cmux #42241 ↗</a></li>
+        <li><a href="https://github.com/manaflow-ai/cmux" target="_blank" rel="noopener noreferrer">cmux ↗</a></li>
         <li><a href="https://github.com/earendil-works/pi" target="_blank" rel="noopener noreferrer">Pi ↗</a></li>
       </ul>
-      <p class="fine-print">CMUX and Pi links point to the upstream tools. Course submissions are private.</p>
+      </div>
+    </dialog>
+    <dialog id="realization-details" aria-labelledby="realization-title">
+      <button class="close-dialog" type="button">Close</button>
+      <div class="sheet">
+      <small>AI</small>
+      <h2 id="realization-title">Realization Engine</h2>
+      <p class="meta">Spatial Realization · Stanford CS146S</p>
+      <p>
+        Realization Engine turns a property listing's photos into an
+        explorable, editable 3D model. You can view it as a dollhouse, walk
+        through it, or see the floor plan, and furnish it by describing a piece
+        ("a 2.1 m navy sofa against the wall"). Pieces are placed at real size
+        and checked for clearance and fit: doors unblocked, tight passages,
+        refused placements.
+      </p>
+      <p>
+        Room sizes are inferred from the photos, and the app says so: the model
+        is an estimate, not a survey.
+      </p>
+      <ul class="text-links">
+        <li><a href="https://realization.verdntgroup.com/" target="_blank" rel="noopener noreferrer">Open Realization Engine ↗</a></li>
+      </ul>
       </div>
     </dialog>
     <dialog id="fstea-details" aria-labelledby="fstea-title">
@@ -371,36 +489,6 @@
         Nine collectors bring together social, marketplace, retail-launch,
         search, and seasonal signals. The engine turns them into ranked trends,
         product concepts, and product specifications.
-      </p>
-      </div>
-    </dialog>
-    <dialog id="winery-details" aria-labelledby="winery-title">
-      <button class="close-dialog" type="button">Close</button>
-      <div class="sheet">
-      <small>AI</small>
-      <h2 id="winery-title">A better winery day</h2>
-      <p class="meta">Verdnt Group · Hospitality prototypes</p>
-      <p>
-        Two interactive concepts: guest preparation for Hill Family Estate and a
-        portfolio view for Soda Rock Winery.
-      </p>
-      <ul class="text-links">
-        <li><a href="https://hill-demo.diegosancheztirado.com" target="_blank" rel="noopener noreferrer">Hill Family demo ↗</a></li>
-        <li><a href="https://soda-demo.diegosancheztirado.com" target="_blank" rel="noopener noreferrer">Soda Rock demo ↗</a></li>
-      </ul>
-      <p class="fine-print">Independent demos using fictional data.</p>
-      </div>
-    </dialog>
-    <dialog id="plate-details" aria-labelledby="plate-title">
-      <button class="close-dialog" type="button">Close</button>
-      <div class="sheet">
-      <small>AI</small>
-      <h2 id="plate-title">Plate Scanner</h2>
-      <p class="meta">Verdnt Group · Food meets software</p>
-      <p>
-        A phone-first tool for estimating what's on a dining-hall plate. My
-        course work adds an MCP server connecting plate photos in Google Drive
-        to a meal log in Google Sheets.
       </p>
       </div>
     </dialog>

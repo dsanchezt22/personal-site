@@ -95,6 +95,7 @@ svg {
 .socials a::before,
 .card button::before,
 .stop::before,
+.hobby::before,
 dialog::before,
 .close-dialog::before {
   content: "";
@@ -106,6 +107,7 @@ dialog::before,
 }
 .card button::before,
 .stop::before,
+.hobby::before,
 dialog::before {
   border-width: 2.2px;
   outline: 1.2px solid var(--ink);
@@ -397,11 +399,7 @@ h3 {
   aspect-ratio: 1120 / 222;
 }
 .bio {
-  columns: 2;
-  column-gap: 56px;
-}
-.bio p {
-  break-inside: avoid;
+  max-width: 720px;
 }
 
 /* Experience circuit: a trace runs down past six component boards. The trace and
@@ -607,16 +605,6 @@ h3 {
 .live .stop:not(.on) .inside {
   opacity: 0;
 }
-.steps p {
-  color: var(--muted);
-}
-.steps {
-  border-left: 1.5px solid var(--ink);
-}
-.steps li {
-  padding: 0 0 16px 18px;
-}
-
 /* Project board */
 .board {
   position: relative;
@@ -722,6 +710,83 @@ h3 {
 }
 .card.dragging button {
   cursor: grabbing;
+}
+
+/* Hobbies: five taped drawings, each with one movement of its own on hover or tap */
+.lead {
+  max-width: 640px;
+  margin-bottom: 44px;
+  font-size: 19px;
+}
+.hobbies {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 44px 34px;
+  align-items: start;
+}
+.hobby {
+  position: relative;
+  grid-column: span 2;
+  padding: 9px 9px 20px;
+  background: var(--paper);
+  rotate: var(--r);
+  transition: rotate 0.25s;
+}
+.hobby:nth-child(n + 4) {
+  grid-column: span 3;
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  align-content: center;
+  padding-bottom: 9px;
+}
+.hobby:nth-child(n + 4) .art {
+  grid-row: 1 / span 2;
+}
+.hobby:nth-child(n + 4) h3 {
+  align-self: end;
+}
+.hobby::after {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: calc(50% - 38px);
+  width: 76px;
+  height: 22px;
+  background: rgb(244 227 166 / 0.82);
+  border-inline: 1px dashed rgb(0 0 0 / 0.22);
+  rotate: calc(var(--r) * -3);
+  filter: url(#ink-ui);
+  pointer-events: none;
+}
+.hobby h3 {
+  margin-top: 12px;
+  padding: 0 12px;
+  font: 800 22px/1.2 Manrope, Inter, sans-serif;
+}
+.hobby p {
+  padding: 4px 12px 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+.hobby .wash {
+  opacity: 0.7;
+  transition: opacity 0.35s;
+}
+.hobby:hover,
+.hobby:focus-within {
+  rotate: 0deg;
+}
+.hobby:hover .wash,
+.hobby:focus-within .wash {
+  opacity: 1;
+}
+.hobby:hover::before,
+.hobby:focus-within::before {
+  border-color: var(--accent);
+}
+/* a card reached from a hobby link stops clear of the header */
+.card {
+  scroll-margin-top: 110px;
 }
 
 /* Contact */
@@ -859,6 +924,18 @@ dialog::backdrop {
 .art .s {
   font-size: 7px;
 }
+.art .xs {
+  font-size: 5.6px;
+}
+.art .pi {
+  font: 800 34px Manrope, Inter, sans-serif;
+}
+.art .live .ray {
+  fill: none;
+  stroke: #cf4a4a;
+  stroke-width: 1.5;
+  opacity: 0;
+}
 .art .big {
   font: 800 13px Manrope, Inter, sans-serif;
 }
@@ -909,9 +986,30 @@ dialog::backdrop {
 .art .wsh {
   fill: rgb(0 0 0 / 0.09);
 }
-.art .live path,
-.art .live circle {
+.art .live > path,
+.art .live > circle {
   stroke: none;
+}
+.art .bob,
+.art .wink {
+  fill: var(--ink);
+}
+.art .live .pole {
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.art .live .flag {
+  fill: #f2b6b6;
+  stroke: var(--ink);
+  stroke-width: 1.2;
+}
+.art .wave {
+  transform-box: fill-box;
+  transform-origin: left bottom;
+}
+.art .kick {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 .art .hop,
 .art .flow {
@@ -1018,6 +1116,32 @@ dialog::backdrop {
     rotate: 8deg;
   }
 }
+@keyframes wink {
+  88%,
+  96% {
+    opacity: 0;
+  }
+}
+@keyframes kick {
+  to {
+    transform: translate(var(--dx), var(--dy)) scale(0.8) rotate(-220deg);
+  }
+}
+@keyframes bob {
+  50% {
+    transform: translateY(-7px);
+  }
+}
+@keyframes across {
+  from {
+    opacity: 0.9;
+    transform: translateX(-136px);
+  }
+  to {
+    opacity: 0.9;
+    transform: translateX(136px);
+  }
+}
 @keyframes scan {
   from {
     opacity: 0.9;
@@ -1060,15 +1184,47 @@ dialog::backdrop {
   .art .blink {
     animation: off-half 1.1s steps(1) infinite;
   }
-  .card button:hover .hop,
-  .stop:hover .hop,
-  .stop:focus-within .hop {
+  .art .wink {
+    animation: wink 3.4s infinite;
+  }
+  :is(.card button, .stop, .hobby):is(:hover, :focus-within) .hop {
     animation: hop 1.1s ease-in-out infinite;
   }
-  .stop:hover .arc,
-  .stop:focus-within .arc {
+  :is(.card button, .stop, .hobby):is(:hover, :focus-within) :is(.tap, .arc, .ray) {
     animation: tap 1.2s steps(1) infinite;
     animation-delay: calc(var(--i) * 0.3s);
+  }
+  :is(.card button, .stop, .hobby):is(:hover, :focus-within) .spin {
+    animation: spin 2.4s linear infinite;
+  }
+  :is(.card button, .stop, .hobby):is(:hover, :focus-within) .spin.slow {
+    animation-duration: 16s;
+  }
+  :is(.card button, .stop, .hobby):is(:hover, :focus-within) .lit.one {
+    animation: off-half 1.8s steps(1) infinite;
+  }
+  :is(.card button, .stop, .hobby):is(:hover, :focus-within) .lit.two {
+    animation: on-half 1.8s steps(1) infinite;
+  }
+  :is(.card button, .stop, .hobby):is(:hover, :focus-within) .scan {
+    animation: scan 1.7s ease-in-out infinite alternate;
+  }
+  :is(.card button, .stop, .hobby):is(:hover, :focus-within) .scan.across {
+    animation: across 2.6s linear infinite;
+  }
+  :is(.card button, .stop, .hobby):is(:hover, :focus-within) .flow {
+    animation: flow 1.6s linear infinite;
+    animation-delay: calc(var(--i) * 0.45s);
+  }
+  :is(.card button, .stop, .hobby):is(:hover, :focus-within) .kick {
+    animation: kick 1s cubic-bezier(0.3, 0.6, 0.4, 1) infinite alternate;
+  }
+  :is(.card button, .stop, .hobby):is(:hover, :focus-within) .wave {
+    animation: wiggle 0.9s infinite;
+  }
+  :is(.card button, .stop, .hobby):is(:hover, :focus-within) .bob {
+    animation: bob 1.2s ease-in-out infinite;
+    animation-delay: calc(var(--i) * -0.17s);
   }
   .live .stop.on {
     animation: arrive 0.6s;
@@ -1106,29 +1262,6 @@ dialog::backdrop {
   .stop details[open]::details-content {
     block-size: auto;
   }
-  .card button:hover .tap {
-    animation: tap 1.2s steps(1) infinite;
-    animation-delay: calc(var(--i) * 0.3s);
-  }
-  .card button:hover .spin {
-    animation: spin 2.4s linear infinite;
-  }
-  .card button:hover .spin.slow {
-    animation-duration: 16s;
-  }
-  .card button:hover .lit.one {
-    animation: off-half 1.8s steps(1) infinite;
-  }
-  .card button:hover .lit.two {
-    animation: on-half 1.8s steps(1) infinite;
-  }
-  .card button:hover .scan {
-    animation: scan 1.7s ease-in-out infinite alternate;
-  }
-  .card button:hover .flow {
-    animation: flow 1.6s linear infinite;
-    animation-delay: calc(var(--i) * 0.45s);
-  }
 }
 
 /* Phone: the board becomes a plain list. */
@@ -1136,17 +1269,28 @@ dialog::backdrop {
   .inside {
     grid-template-columns: 1fr;
   }
+  .hobby {
+    grid-column: span 3;
+  }
+  .hobby:nth-child(n + 4) {
+    display: block;
+    padding-bottom: 20px;
+  }
+  .hobby:last-child {
+    grid-column: 2 / span 4;
+  }
 }
 @media (max-width: 759px) {
   .contact-grid {
     grid-template-columns: 1fr;
     gap: 32px;
   }
-  .bio {
-    columns: 1;
+  .hobbies {
+    gap: 36px;
   }
-  .bio p + p {
-    margin-top: 16px;
+  .hobby,
+  .hobby:last-child {
+    grid-column: 1 / -1;
   }
   .timeline {
     grid-template-columns: 1fr;
@@ -1207,7 +1351,18 @@ dialog::backdrop {
     display: none;
   }
   nav {
-    gap: 16px;
+    gap: 12px;
+    font-size: 15px;
+  }
+}
+@media (max-width: 359px) {
+  .site-header {
+    gap: 10px;
+    padding-inline: 12px;
+  }
+  nav {
+    gap: 8px;
+    font-size: 13px;
   }
 }
 @media (max-width: 1000px) and (min-width: 760px) {

@@ -293,8 +293,8 @@ function bike() {
   return svg("bike", W, H, s.done() + `<g class="live">${live}</g>`);
 }
 
-// Logic you can touch: the adder on a breadboard, its two-digit display, and a
-// piezo disc under a keycap.
+// Logic you can touch: the adder on a breadboard, its two-digit display, and the
+// same sum worked by hand.
 function logic() {
   reseed(61);
   const s = sheet();
@@ -405,20 +405,23 @@ function logic() {
   const reading = (a, b, cls) =>
     `<path class="lit ${cls}" d="${[a, b].map((n, i) => [...glyph[n]].map((k) => poly(digits[i][k], true)).join("")).join("")}"/>`;
   const live = reading(1, 5, "one") + reading(0, 8, "two");
-  // piezo disc under a keycap: typing force in, charge out
-  s.hair(hatch(ellPts(418, 236, 44, 7, 16), 4, 2, 0.3));
-  s.shape(ell(416, 222, 34, 13), "b");
-  s.wash("wy", ell(416, 222, 34, 13));
-  s.ink(ell(416, 221, 23, 8.6));
-  s.hair(hatch(ellPts(416, 221, 23, 8.6, 20), 30, 2.4, 0.3));
-  s.fine(ell(416, 222, 30, 11));
-  wire(438, 226, 330, 216, -16, "sr");
-  wire(444, 220, 330, 224, -24, "sb");
-  const K = iso(416, 172, 0.8);
-  box(s, K, -14, -14, 0, 28, 28, 6, { tint: "ws" });
-  box(s, K, -10, -10, 6, 20, 20, 8, { tint: "ws" });
-  s.fine(line(380, 176, 380, 196) + poly([[376, 191], [380, 197], [384, 191]]) + line(452, 176, 452, 196) + poly([[448, 191], [452, 197], [456, 191]]));
-  s.fine(curve([[372, 212], [366, 206], [366, 198]]) + curve([[362, 216], [354, 208], [354, 196]]) + curve([[460, 212], [466, 206], [466, 198]]) + curve([[470, 216], [478, 208], [478, 196]]));
+  // the sum worked out by hand on a scrap of paper
+  const N = xf(366, 162, -4);
+  const np = (a) => a.map(([x, y]) => N(x, y));
+  s.hair(hatch(np(rectPts(4, 5, 100, 92)), 35, 2.4, 0.3));
+  s.shape(poly(np(rr(0, 0, 100, 92, 2)), true), "b");
+  s.wash("wx", poly(np(rr(0, 0, 100, 92, 2)), true));
+  [["0111", 22], ["1000", 40], ["1111", 66]].forEach(([bits, y], k) => {
+    [...bits].forEach((bit, i) => {
+      const [tx, ty] = N(40 + i * 13, y);
+      s.raw(text(tx, ty, bit, "t mid", ` transform="rotate(-4 ${f(tx)} ${f(ty)})"`));
+    });
+    if (k === 1) s.ink(line(...N(14, y - 6), ...N(22, y - 6)) + line(...N(18, y - 10), ...N(18, y - 2)) + line(...N(12, y + 8), ...N(88, y + 8)));
+  });
+  s.fine(scribble(14, 82, 60, N));
+  s.shape(poly(tube(N(70, 96), N(122, 74), 6), true));
+  s.wash("wy", poly(tube(N(70, 96), N(122, 74), 6), true));
+  s.shape(poly([N(70, 93), N(60, 100), N(71, 99)], true), "f");
   return svg("logic", W, H, s.done() + `<g class="live">${live}</g>`);
 }
 

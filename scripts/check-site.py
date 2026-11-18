@@ -37,10 +37,14 @@ for phrase in ('A little curiosity goes a long way', 'made tangible', 'Ideas int
     assert phrase not in html, f'Superseded copy: {phrase}'
 assert '<span class="monogram">dst</span>' in html, 'Missing dst monogram'
 assert '<!--art:' not in html, 'A drawing placeholder was not filled by the build'
-assert html.count('class="art art-') >= 22 and 'class="pcb"' in html, 'Missing drawings'
+assert html.count('class="art art-') >= 28 and 'class="pcb"' in html, 'Missing drawings'
 assert html.count('<li class="stop"') == 6 and html.count('<details open>') == 6, 'Experience circuit needs six stops, open without JavaScript'
 assert len(page.ids) == len(set(page.ids)), 'Duplicate HTML IDs'
-for anchor in ('about', 'work', 'experience', 'contact', 'verdnt', 'research', 'developer'):
+for gone in ('hill-demo', 'soda-demo', 'Plate Scanner', 'Course notebook', 'winery'):
+    assert gone not in html, f'Removed project still present: {gone}'
+assert html.count('<li class="card') == 9 and html.count('<dialog id=') == 9, 'Project board needs nine cards, each with a dialog'
+assert html.count('<li class="hobby') == 5, 'Hobbies section needs five hobbies'
+for anchor in ('about', 'work', 'experience', 'hobbies', 'contact', 'verdnt', 'research', 'developer', 'ebike', 'rmx'):
     assert anchor in page.ids, f'Missing section: {anchor}'
 for url in set(page.urls):
     if url.startswith('#'):
@@ -49,7 +53,7 @@ for url in set(page.urls):
         with urlopen(urljoin(base, url)) as response:
             assert response.status == 200, url
             assert response.read(), f'Empty asset: {url}'
-for url in ('https://github.com/dsanchezt22', 'https://x.com/hnsmsquidwrd', 'https://www.linkedin.com/in/diego-sanchez-tirado', 'https://github.com/manaflow-ai/cmux', 'https://github.com/earendil-works/pi'):
+for url in ('https://github.com/dsanchezt22', 'https://x.com/hnsmsquidwrd', 'https://www.linkedin.com/in/diego-sanchez-tirado', 'https://github.com/manaflow-ai/cmux', 'https://github.com/manaflow-ai/cmux/pull/45837', 'https://github.com/manaflow-ai/cmux/pull/42241', 'https://github.com/earendil-works/pi', 'https://realization.verdntgroup.com/'):
     assert url in page.urls, f'Missing public link: {url}'
 for social in ('mailto:dsanchezt22@gmail.com', 'Diego-Sanchez-Tirado-Resume.pdf'):
     assert social in page.urls, f'Missing social link: {social}'

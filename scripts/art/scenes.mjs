@@ -315,6 +315,7 @@ export const scenes = {
   "rule-a": rule(3),
   "rule-b": rule(7),
   "rule-c": rule(12),
+  "rule-d": rule(19),
   ...Object.fromEntries(Object.keys(marks).map((k) => [`mark-${k}`, mark(k)])),
   ...Object.fromEntries(Object.entries(social).map(([k, v]) => [`icon-${k}`, `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${v}</svg>`])),
 };
