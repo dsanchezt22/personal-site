@@ -432,7 +432,10 @@ h3 {
   aspect-ratio: 1120 / 222;
 }
 .bio {
-  max-width: 720px;
+  max-width: 600px;
+  margin-inline: auto;
+  text-align: center;
+  text-wrap: balance;
 }
 
 /* Experience circuit: a trace runs down past six component boards. The trace and
