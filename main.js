@@ -1,317 +1,180 @@
-import { chapterState, INTRO_DURATION } from "./journey.js";
-
-const root = document.documentElement;
-const chapters = [...document.querySelectorAll(".chapter")];
-const chapterLinks = [...document.querySelectorAll(".chapter-nav a")];
-const motionButton = document.querySelector("#motion");
-const soundButton = document.querySelector("#sound");
-const intro = document.querySelector("#intro");
-const canvas = document.querySelector("#world");
-const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-const pointer = { x: 0, y: 0, active: false };
-let world,
-  immersive = false,
-  activeIndex = 0,
-  progress = 0,
-  targetProgress = 0;
-let frame = 0,
-  lastTime = 0,
-  introStarted = 0,
-  introPlaying = false;
-let lastInteraction = 0, worldTime = 0;
-let paintedProgress = -1, paintedIntro = null, starting = false;
-let soundOn = false,
-  audio;
-root.classList.add("enhanced");
-
-function requestFrame() {
-  if (!frame && !document.hidden) frame = requestAnimationFrame(paint);
-}
-function scrollProgress() {
-  targetProgress = Math.max(
-    0,
-    Math.min(
-      1,
-      scrollY /
-        Math.max(1, document.documentElement.scrollHeight - innerHeight),
-    ),
-  );
-  if (!immersive) {
-    activeIndex = chapters.findLastIndex(
-      (chapter) => chapter.offsetTop <= scrollY + innerHeight * 0.4,
-    );
-    activeIndex = Math.max(0, activeIndex);
-    document.querySelector("#chapter-label").textContent =
-      chapters[activeIndex].dataset.label;
-  }
-  requestFrame();
-}
-function paint(now) {
-  frame = 0;
-  if (document.querySelector("dialog[open]")) return;
-  if (immersive && !introPlaying && Math.abs(targetProgress - progress) < 0.00003
-      && now - lastInteraction > 250 && now - lastTime < 32) {
-    requestFrame();
-    return;
-  }
-  const elapsed = Math.min(0.05, (now - lastTime) / 1000 || 0.016);
-  lastTime = now;
-  if (!immersive) return;
-  progress += (targetProgress - progress) * (1 - Math.exp(-elapsed * 12));
-  if (Math.abs(targetProgress - progress) < 0.00003) progress = targetProgress;
-  const state = chapterState(progress, chapters.length);
-  activeIndex = state.index;
-  const mobile = innerWidth <= 800;
-  if (progress !== paintedProgress || introPlaying !== paintedIntro) {
-    chapters.forEach((chapter, index) => {
-      const current = index === activeIndex;
-      chapter.classList.toggle("current", current);
-      chapter.inert = !current || introPlaying;
-      chapter.setAttribute("aria-hidden", String(!current || introPlaying));
-      const copy = chapter.querySelector(".chapter-copy");
-      copy.style.opacity = current ? state.opacity : 0;
-      copy.style.transform = `translate3d(${-state.offset * (mobile ? 50 : 110)}px, ${mobile ? 0 : -50}%, 0)`;
-      chapterLinks[index].setAttribute("aria-current", String(current));
-    });
-    document.querySelector("#chapter-label").textContent =
-      chapters[activeIndex].dataset.label;
-    paintedProgress = progress;
-    paintedIntro = introPlaying;
-  }
-  const introTime = introPlaying ? (now - introStarted) / 1000 : INTRO_DURATION;
-  worldTime += elapsed;
-  world.render(progress, introTime, pointer, true, worldTime);
-  if (introPlaying && introTime >= INTRO_DURATION) finishIntro();
-  requestFrame();
-}
-function finishIntro() {
-  introPlaying = false;
-  intro.hidden = true;
-  root.classList.remove("intro-active");
-  root.classList.add("intro-revealed");
-  try {
-    sessionStorage.setItem("portfolio-introduced", "true");
-  } catch {}
-  requestFrame();
-}
-function playIntro() {
-  if (!immersive) return;
-  if (location.hash) history.replaceState(null, "", "#home");
-  window.scrollTo({ top: 0, behavior: "instant" });
-  progress = targetProgress = 0;
-  root.classList.remove("intro-revealed");
-  introPlaying = true;
-  introStarted = performance.now();
-  intro.hidden = false;
-  root.classList.add("intro-active");
-  requestFrame();
-}
-function setImmersive(enabled) {
-  const index = activeIndex;
-  paintedProgress = -1;
-  if (introPlaying) finishIntro();
-  immersive = Boolean(enabled && world && !reducedMotion.matches);
-  root.classList.toggle("immersive", immersive);
-  root.classList.toggle("motion-off", !immersive);
-  motionButton.textContent = immersive ? "Motion on" : "Motion off";
-  motionButton.setAttribute("aria-pressed", String(immersive));
-  motionButton.setAttribute(
-    "aria-label",
-    reducedMotion.matches
-      ? "Motion off. Disabled by system preference"
-      : `Motion ${immersive ? "on" : "off"}. Turn motion ${immersive ? "off" : "on"}`,
-  );
-  motionButton.disabled = reducedMotion.matches || !world;
-  chapters.forEach((chapter) => {
-    chapter.inert = false;
-    chapter.removeAttribute("aria-hidden");
-    chapter.querySelector(".chapter-copy").removeAttribute("style");
-  });
-  document.querySelector(".journey-footer").hidden = false;
-  document.querySelector(".chapter-nav").hidden = !immersive;
-  document.querySelector("#replay").hidden = !immersive;
-  if (immersive) world.resize();
-  window.scrollTo({ top: chapters[index].offsetTop, behavior: "instant" });
-  scrollProgress();
-  progress = targetProgress;
-}
-function navigate(hash, behavior = "smooth") {
-  let target = document.querySelector(hash);
-  if (!target) return;
-  const dialog = target.closest("dialog");
-  if (dialog) {
-    document.querySelector(`[data-dialog="${dialog.id}"]`).click();
-    return;
-  }
-  target = target.closest(".chapter");
-  if (!target) return;
-  if (introPlaying) finishIntro();
-  activeIndex = chapters.indexOf(target);
-  window.scrollTo({
-    top: target.offsetTop,
-    behavior: immersive ? behavior : "instant",
-  });
-  scrollProgress();
-}
-for (const link of document.querySelectorAll('a[href^="#"]')) {
-  link.addEventListener("click", (event) => {
-    const hash = link.getAttribute("href");
-    if (hash === "#content") {
-      if (introPlaying) finishIntro();
-      if (immersive) setImmersive(false);
-      return;
+// Reveal styles only apply once this class is set, so the page reads fine without JavaScript.
+document.documentElement.classList.add("js");
+const seen = new IntersectionObserver(
+  (entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      entry.target.classList.add("in");
+      seen.unobserve(entry.target);
     }
-    event.preventDefault();
-    history.pushState(null, "", hash);
-    navigate(hash);
-    chime();
-  });
-}
-window.addEventListener("popstate", () =>
-  navigate(location.hash || "#home", "instant"),
-);
-document.addEventListener("focusin", (event) => {
-  const chapter = event.target.closest(".chapter");
-  if (immersive && chapter && !introPlaying) {
-    window.scrollTo({ top: chapter.offsetTop, behavior: "instant" });
-    scrollProgress();
-    progress = targetProgress;
-  }
-});
-for (const button of document.querySelectorAll("[data-dialog]")) {
-  button.addEventListener("click", () => {
-    const dialog = document.getElementById(button.dataset.dialog);
-    dialog.showModal();
-    dialog.scrollTop = 0;
-  });
-}
-for (const dialog of document.querySelectorAll("dialog")) {
-  dialog.addEventListener("close", requestFrame);
-  dialog
-    .querySelector(".close-dialog")
-    .addEventListener("click", () => dialog.close());
-}
-async function chime() {
-  if (!soundOn || document.hidden) return;
-  try {
-    const Audio = window.AudioContext || window.webkitAudioContext;
-    audio ||= new Audio();
-    await audio.resume();
-    if (!soundOn) return;
-    [523.25, 783.99].forEach((frequency, index) => {
-      const tone = audio.createOscillator(),
-        gain = audio.createGain(),
-        start = audio.currentTime + index * 0.07;
-      tone.frequency.value = frequency;
-      gain.gain.setValueAtTime(0, start);
-      gain.gain.linearRampToValueAtTime(0.025, start + 0.008);
-      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.7);
-      tone.connect(gain).connect(audio.destination);
-      tone.start(start);
-      tone.stop(start + 0.75);
-      tone.onended = () => {
-        tone.disconnect();
-        gain.disconnect();
-      };
-    });
-  } catch {
-    soundOn = false;
-    paintSound();
-    soundButton.textContent = "Sound unavailable";
-  }
-}
-function paintSound() {
-  soundButton.textContent = soundOn ? "Sound on" : "Sound off";
-  soundButton.setAttribute("aria-pressed", String(soundOn));
-}
-soundButton.addEventListener("click", () => {
-  soundOn = !soundOn;
-  paintSound();
-  if (soundOn) chime();
-  else audio?.suspend().catch(() => {});
-});
-motionButton.addEventListener("click", () => setImmersive(!immersive));
-reducedMotion.addEventListener("change", () => {
-  if (!world && !reducedMotion.matches) start(false);
-  else setImmersive(!reducedMotion.matches);
-});
-document.querySelector("#skip-intro").addEventListener("click", finishIntro);
-document.querySelector("#replay").addEventListener("click", playIntro);
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && introPlaying) finishIntro();
-});
-window.addEventListener("scroll", scrollProgress, { passive: true });
-window.addEventListener("resize", () => {
-  paintedProgress = -1;
-  world?.resize();
-  if (immersive) {
-    window.scrollTo({
-      top: progress * (document.documentElement.scrollHeight - innerHeight),
-      behavior: "instant",
-    });
-  }
-  scrollProgress();
-});
-document.addEventListener(
-  "pointermove",
-  (event) => {
-    if (!immersive || event.pointerType === "touch" || document.querySelector("dialog[open]")) return;
-    lastInteraction = performance.now();
-    pointer.active = true;
-    pointer.x = event.clientX / innerWidth - 0.5;
-    pointer.y = event.clientY / innerHeight - 0.5;
-    requestFrame();
   },
-  { passive: true },
+  { rootMargin: "0px 0px -8% 0px" },
 );
-function releasePointer() {
-  pointer.active = false;
-  lastInteraction = performance.now();
-  requestFrame();
-}
-document.documentElement.addEventListener("pointerleave", releasePointer);
-window.addEventListener("blur", releasePointer);
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    if (frame) cancelAnimationFrame(frame);
-    frame = 0;
-    audio?.suspend().catch(() => {});
-  } else requestFrame();
-});
-canvas.addEventListener("webglcontextlost", (event) => {
-  event.preventDefault();
-  setImmersive(false);
-  motionButton.disabled = true;
+for (const item of document.querySelectorAll(".reveal")) seen.observe(item);
+
+// The hero board is coloured only around the pointer.
+const hero = document.querySelector(".hero");
+hero.addEventListener("pointermove", (event) => {
+  const box = hero.getBoundingClientRect();
+  hero.style.setProperty("--mx", `${event.clientX - box.left}px`);
+  hero.style.setProperty("--my", `${event.clientY - box.top}px`);
 });
 
-async function start(allowIntro = true) {
-  if (starting) return;
-  starting = true;
-  try {
-    if (reducedMotion.matches) {
-      setImmersive(false);
-      return;
-    }
-    const { createWorld } = await import("./world.js");
-    world = await createWorld(canvas);
-    setImmersive(true);
-    let introduced = false;
-    try {
-      introduced = sessionStorage.getItem("portfolio-introduced") === "true";
-    } catch {}
-    if (location.hash) {
-      navigate(location.hash, "instant");
-      progress = targetProgress;
-    } else if (allowIntro && !introduced) playIntro();
-    requestFrame();
-  } catch (error) {
-    console.warn("Using the readable portfolio view:", error.message);
-    world?.dispose();
-    world = undefined;
-    setImmersive(false);
-  } finally {
-    starting = false;
-    root.classList.remove("booting");
+// Experience circuit: a trace runs past every stop. Scrolling energises it from the
+// top, and each stop switches on, showing what is inside, when the signal reaches it.
+// With reduced motion the whole trace is live and every stop is on.
+const circuit = document.querySelector(".circuit");
+const stops = [...circuit.querySelectorAll(".stop")];
+const animate = matchMedia("(prefers-reduced-motion: no-preference)").matches;
+const wire = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+wire.setAttribute("class", "wire");
+wire.setAttribute("aria-hidden", "true");
+wire.innerHTML = '<path class="co"/><path class="ci"/><path class="hot"/><g></g><circle class="halo" r="11"/><circle class="spark" r="4.5"/>';
+circuit.prepend(wire);
+circuit.classList.add("wired");
+const [copper, core, hot, pads, halo, spark] = wire.children;
+let bus = [];
+let taps = [];
+if (animate) circuit.classList.add("live");
+
+// Lay the trace out from where the stops actually are.
+function route() {
+  const box = circuit.getBoundingClientRect();
+  const phone = innerWidth < 760;
+  const mid = phone ? 12 : box.width / 2;
+  taps = stops.map((stop) => {
+    const r = stop.getBoundingClientRect();
+    const side = r.right - box.left < mid ? -1 : 1;
+    return {
+      y: r.top - box.top + 37,
+      x: mid + (phone ? 0 : side * 12),
+      end: side < 0 ? r.right - box.left + 9 : r.left - box.left - 9,
+    };
+  });
+  bus = [[mid, 0]];
+  for (const tap of taps) {
+    const [x, y] = bus.at(-1);
+    const jog = Math.abs(tap.x - x);
+    if (jog && tap.y - 26 - jog > y) bus.push([x, tap.y - 26 - jog], [tap.x, tap.y - 26]);
+    bus.push([tap.x, tap.y]);
   }
+  const [endX, endY] = bus.at(-1);
+  bus.push([endX, endY + 46]);
+  const line = "M" + bus.map((point) => point.join(" ")).join("L");
+  const stubs = taps.map((tap) => `M${tap.x} ${tap.y}H${tap.end}`);
+  copper.setAttribute("d", line + stubs.join(""));
+  core.setAttribute("d", line + stubs.join(""));
+  hot.setAttribute("d", line);
+  pads.innerHTML =
+    stubs.map((d, i) => `<path class="stub${stops[i].classList.contains("on") ? " lit" : ""}" pathLength="1" d="${d}"/>`).join("") +
+    taps.map((tap) => `<circle class="pad" cx="${tap.x}" cy="${tap.y}" r="5"/><circle class="pad" cx="${tap.end}" cy="${tap.y}" r="4"/>`).join("") +
+    `<circle class="pad" cx="${mid}" cy="0" r="6"/><path class="gnd" d="M${endX - 11} ${endY + 46}h22M${endX - 7} ${endY + 51}h14M${endX - 3} ${endY + 56}h6"/>`;
+  energise();
 }
-start();
+
+function energise() {
+  const end = bus.at(-1)[1];
+  const reach = animate ? Math.min(Math.max(innerHeight * 0.62 - circuit.getBoundingClientRect().top, 0), end) : end;
+  let done = 0;
+  let total = 0;
+  let tip = bus[0];
+  for (let i = 1; i < bus.length; i++) {
+    const [ax, ay] = bus[i - 1];
+    const [bx, by] = bus[i];
+    const length = Math.hypot(bx - ax, by - ay);
+    total += length;
+    if (reach >= by) {
+      done += length;
+      tip = bus[i];
+    } else if (reach > ay) {
+      const part = (reach - ay) / (by - ay);
+      done += length * part;
+      tip = [ax + (bx - ax) * part, reach];
+    }
+  }
+  hot.style.strokeDasharray = `${done} ${total}`;
+  for (const dot of [halo, spark]) {
+    dot.setAttribute("cx", tip[0]);
+    dot.setAttribute("cy", tip[1]);
+    dot.style.display = animate && reach > 0 && reach < end ? "" : "none";
+  }
+  stops.forEach((stop, i) => {
+    const on = reach >= taps[i].y;
+    stop.classList.toggle("on", on);
+    pads.children[i].classList.toggle("lit", on);
+  });
+}
+route();
+new ResizeObserver(route).observe(circuit);
+addEventListener("scroll", energise, { passive: true });
+
+for (const dialog of document.querySelectorAll("dialog")) {
+  dialog.querySelector(".close-dialog").addEventListener("click", () => dialog.close());
+  // Clicking the backdrop closes the dialog.
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+}
+
+const board = document.querySelector(".board");
+const canDrag = matchMedia("(min-width: 760px)");
+let drag = null;
+let top = 10;
+let suppressClick = false;
+
+board.addEventListener("pointerdown", (event) => {
+  const card = event.target.closest(".card");
+  if (!card || !canDrag.matches || event.button !== 0 || (drag && drag.id !== event.pointerId)) return;
+  const box = board.getBoundingClientRect();
+  suppressClick = false;
+  drag = {
+    id: event.pointerId,
+    card,
+    box,
+    dx: event.clientX - box.left - card.offsetLeft,
+    dy: event.clientY - box.top - card.offsetTop,
+    startX: event.clientX,
+    startY: event.clientY,
+    moved: false,
+  };
+  card.style.zIndex = ++top;
+});
+
+addEventListener("pointermove", (event) => {
+  if (drag?.id !== event.pointerId) return;
+  const { card, box } = drag;
+  if (!drag.moved && Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) < 5) return;
+  if (!drag.moved) {
+    // Capture only once dragging starts; earlier capture retargets a plain click away from the button.
+    card.setPointerCapture(event.pointerId);
+    card.classList.add("dragging");
+    drag.moved = true;
+  }
+  const x = Math.min(Math.max(event.clientX - box.left - drag.dx, 0), box.width - card.offsetWidth);
+  const y = Math.min(Math.max(event.clientY - box.top - drag.dy, 0), box.height - card.offsetHeight);
+  // Percentages keep the arrangement when the window is resized.
+  card.style.setProperty("--x", `${(x / box.width) * 100}%`);
+  card.style.setProperty("--y", `${(y / box.height) * 100}%`);
+});
+
+function endDrag(event) {
+  if (drag?.id !== event.pointerId) return;
+  drag.card.classList.remove("dragging");
+  // A drag is not a click: ignore the click that follows pointerup.
+  suppressClick = drag.moved;
+  drag = null;
+}
+addEventListener("pointerup", endDrag);
+addEventListener("pointercancel", endDrag);
+
+for (const button of board.querySelectorAll("[data-dialog]")) {
+  button.addEventListener("click", (event) => {
+    const afterDrag = suppressClick && event.detail; // keyboard clicks have detail 0
+    suppressClick = false;
+    if (afterDrag) return;
+    const dialog = document.getElementById(button.dataset.dialog);
+    // The detail view opens with the card's drawing at full size.
+    if (!dialog.querySelector(".art")) dialog.querySelector(".sheet").prepend(button.querySelector(".art").cloneNode(true));
+    dialog.showModal();
+  });
+}

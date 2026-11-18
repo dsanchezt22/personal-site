@@ -1,7 +1,8 @@
-import { copyFile, cp, mkdir, rm } from "node:fs/promises";
+import { copyFile, cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { build } from "esbuild";
+import { art } from "./art/index.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const dist = path.join(root, "dist");
@@ -10,7 +11,6 @@ await mkdir(dist, { recursive: true });
 
 // Publish only the website; source notes and preview configuration stay private.
 const assets = [
-  "index.html",
   "styles.css",
   "Diego-Sanchez-Tirado-Resume.pdf",
   "favicon.svg",
@@ -25,6 +25,15 @@ const assets = [
 for (const asset of assets) {
   await copyFile(path.join(root, asset), path.join(dist, asset));
 }
+// The drawings are generated; index.html only marks where each one goes.
+const html = (await readFile(path.join(root, "index.html"), "utf8")).replace(
+  /<!--art:([\w-]+)-->/g,
+  (_, name) => {
+    if (!(name in art)) throw new Error(`No drawing named ${name}`);
+    return art[name];
+  },
+);
+await writeFile(path.join(dist, "index.html"), html);
 await cp(path.join(root, "fonts"), path.join(dist, "fonts"), {
   recursive: true,
 });
@@ -40,5 +49,5 @@ await build({
 });
 await copyFile(path.join(root, "deploy/_headers"), path.join(dist, "_headers"));
 console.log(
-  `Built ${assets.length} website files plus bundled JavaScript, fonts, and headers in dist/`,
+  `Built index.html with its drawings, ${assets.length} other files, bundled JavaScript, fonts, and headers in dist/`,
 );

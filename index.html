@@ -6,9 +6,9 @@
     <title>Diego Sanchez Tirado</title>
     <meta
       name="description"
-      content="Diego Sanchez Tirado. Electrical engineering at Stanford. Building circuits, researching memory systems, and developing software."
+      content="Diego Sanchez Tirado. Electrical engineering at Stanford. Circuits, memory-systems research, and software."
     />
-    <meta name="theme-color" content="#eef2f5" />
+    <meta name="theme-color" content="#ffffff" />
     <link rel="canonical" href="https://diegosancheztirado.com/" />
     <meta property="og:title" content="Diego Sanchez Tirado" />
     <meta
@@ -23,512 +23,473 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=dst-20261028-2" />
     <link
       rel="preload"
-      href="fonts/manrope-800.ttf"
-      as="font"
-      type="font/ttf"
-      crossorigin
-    />
-    <link
-      rel="preload"
       href="fonts/inter-latin-400-normal.woff2"
       as="font"
       type="font/woff2"
       crossorigin
     />
     <link rel="stylesheet" href="styles.css" />
-    <script>
-      document.documentElement.classList.add("booting");
-      setTimeout(
-        () => document.documentElement.classList.remove("booting"),
-        6000,
-      );
-    </script>
     <script type="module" src="main.js"></script>
   </head>
   <body>
+    <!--art:defs-->
     <a class="skip-link" href="#content">Skip to content</a>
-    <div class="world-wrap" aria-hidden="true">
-      <canvas id="world"></canvas>
-      <div class="reading-light"></div>
-    </div>
-    <div class="boot-screen" aria-hidden="true">
-      <span>Diego Sanchez Tirado · Stanford EE student</span><i></i>
-    </div>
-    <div id="intro" hidden>
-      <span class="intro-signature">Diego Sanchez Tirado<br /><strong>Stanford Electrical Engineering student</strong></span>
-      <button id="skip-intro" type="button">Skip intro</button>
-    </div>
     <header class="site-header">
       <a class="brand" href="#home"
         ><span class="monogram">dst</span><span>Diego Sanchez Tirado</span></a
       >
       <nav aria-label="Main navigation">
-        <a href="#about">About</a><a href="#research">Work</a
-        ><a href="#contact">Contact</a>
+        <a href="#about">background</a><a href="#work">projects</a
+        ><a href="#hobbies">hobbies</a><a href="#contact">contact</a>
       </nav>
-      <a
-        class="resume-link"
-        href="Diego-Sanchez-Tirado-Resume.pdf"
-        target="_blank"
-        rel="noopener"
-        >Resume <span aria-hidden="true">↗</span></a
-      >
     </header>
     <main id="content" tabindex="-1">
-      <section
-        class="chapter"
-        id="home"
-        aria-labelledby="hero-title"
-        data-label="Hello"
-      >
-        <div class="chapter-copy">
-          <p class="eyebrow">
-            <svg class="ee-mark" viewBox="0 0 44 20" aria-hidden="true" fill="none">
-              <path d="M2 10h8l3-6 4 12 4-12 4 12 3-6h14" />
-              <circle cx="2" cy="10" r="1.5" /><circle cx="42" cy="10" r="1.5" />
-            </svg> Stanford EE student · Class of 2029
-          </p>
-          <h1 id="hero-title">
-            Diego<br />
-            Sanchez Tirado.
-          </h1>
+      <section class="hero" id="home" aria-labelledby="hero-title">
+        <div class="hero-art"><!--art:hero--></div>
+        <div class="hero-copy">
+          <p class="eyebrow">Stanford EE student · Class of 2029</p>
+          <h1 id="hero-title">Diego Sanchez Tirado</h1>
           <p class="dek">I design circuits and build software.</p>
-          <p class="body-copy">
-            I'm a Stanford undergraduate, class of 2029. I research memory systems
-            for AI inference and build hardware and software.
-          </p>
-          <div class="links">
-            <a
-              href="https://github.com/dsanchezt22"
-              target="_blank"
-              rel="noopener noreferrer"
-              >GitHub ↗</a
-            ><a
-              href="https://www.linkedin.com/in/diego-sanchez-tirado"
-              target="_blank"
-              rel="noopener noreferrer"
-              >LinkedIn ↗</a
-            >
+          <ul class="socials" aria-label="Profiles and contact">
+            <li>
+              <a href="https://github.com/dsanchezt22" target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+                ><!--art:icon-github--><span>GitHub</span></a
+              >
+            </li>
+            <li>
+              <a href="https://x.com/hnsmsquidwrd" target="_blank" rel="noopener noreferrer" aria-label="X"
+                ><!--art:icon-x--><span>X</span></a
+              >
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/diego-sanchez-tirado" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+                ><!--art:icon-linkedin--><span>LinkedIn</span></a
+              >
+            </li>
+            <li>
+              <a href="mailto:dsanchezt22@gmail.com" aria-label="Email"
+                ><!--art:icon-email--><span>Email</span></a
+              >
+            </li>
+            <li>
+              <a href="Diego-Sanchez-Tirado-Resume.pdf" target="_blank" rel="noopener" aria-label="Resume"
+                ><!--art:icon-resume--><span>Resume</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="about" aria-labelledby="about-title">
+        <!--art:rule-a-->
+        <header class="section-head">
+          <h2 id="about-title">background</h2>
+          <p>Education, research, and work experience.</p>
+        </header>
+        <div class="strip reveal"><!--art:campus--></div>
+        <div class="bio">
+            <p>
+              I'm a Stanford undergraduate studying electrical engineering, class
+              of 2029. I design custom circuit boards and develop software, and
+              through summer 2026 I researched memory systems for AI inference
+              with Stanford’s Robust Systems Group. I test what I build on real
+              hardware and in working applications.
+            </p>
           </div>
-          <a class="next-link" href="#about"
-            >About my work <span aria-hidden="true">↓</span></a
-          >
+        <div class="circuit">
+          <ol class="timeline" id="experience">
+            <li class="stop">
+              <details open>
+                <summary>
+                  <!--art:mark-verdnt-->
+                  <small>2026 – present</small>
+                  <h3>Verdnt Group</h3>
+                  <i class="led"></i>
+                </summary>
+                <div class="inside">
+                  <!--art:stop-verdnt-->
+                  <p>Building AI systems for businesses, including FStea's beverage intelligence engine.</p>
+                </div>
+              </details>
+            </li>
+            <li class="stop">
+              <details open>
+                <summary>
+                  <!--art:mark-memory-->
+                  <small>2026 · through summer</small>
+                  <h3>Stanford Robust Systems Group</h3>
+                  <i class="led"></i>
+                </summary>
+                <div class="inside">
+                  <!--art:stop-memory-->
+                  <p>Undergraduate research in area-scalable memory for LLM inference.</p>
+                </div>
+              </details>
+            </li>
+            <li class="stop">
+              <details open>
+                <summary>
+                  <!--art:mark-robot-->
+                  <small>Summer 2026</small>
+                  <h3>Amazon Lab126</h3>
+                  <i class="led"></i>
+                </summary>
+                <div class="inside">
+                  <!--art:stop-robot-->
+                  <p>Hardware Development Engineer Intern and Robotics Apprentice. Engineering knowledge systems, retrieval safeguards, and bimanual robot manipulation.</p>
+                </div>
+              </details>
+            </li>
+            <li class="stop">
+              <details open>
+                <summary>
+                  <!--art:mark-badge-->
+                  <small>2025</small>
+                  <h3>Code Four (YC X25)</h3>
+                  <i class="led"></i>
+                </summary>
+                <div class="inside">
+                  <!--art:stop-badge-->
+                  <p>GTM Team Lead. Built outreach automation and helped onboard 520+ officers.</p>
+                </div>
+              </details>
+            </li>
+            <li class="stop">
+              <details open>
+                <summary>
+                  <!--art:mark-films-->
+                  <small>2023 – 2025</small>
+                  <h3>Duke University</h3>
+                  <i class="led"></i>
+                </summary>
+                <div class="inside">
+                  <!--art:stop-films-->
+                  <p>Research across nanomaterials, thin films, and cyber threat intelligence.</p>
+                </div>
+              </details>
+            </li>
+            <li class="stop" id="education">
+              <details open>
+                <summary>
+                  <!--art:mark-cap-->
+                  <small>Expected May 2029</small>
+                  <h3>Stanford University</h3>
+                  <i class="led"></i>
+                </summary>
+                <div class="inside">
+                  <!--art:stop-cap-->
+                  <p>B.S. Electrical Engineering</p>
+                </div>
+              </details>
+            </li>
+          </ol>
         </div>
       </section>
-      <section
-        class="chapter"
-        id="about"
-        aria-labelledby="about-title"
-        data-label="About me"
-      >
-        <div class="chapter-copy">
-          <p class="eyebrow">Stanford EE · Class of 2029</p>
-          <h2 id="about-title">
-            Design, build,<br />
-            test, repeat.
-          </h2>
-          <p class="body-copy">
-            I design custom circuit boards, model computer architectures, and
-            develop software. I test what I build on real hardware and in
-            working applications.
+
+      <section class="section" id="work" aria-labelledby="work-title">
+        <!--art:rule-b-->
+        <header class="section-head">
+          <h2 id="work-title">projects</h2>
+          <p>
+            Research, hardware, software, and applied AI work.
+            <span class="drag-hint">Drag the cards around; select one for details.</span>
           </p>
-          <p class="body-copy">
-            At Stanford, I'm studying electrical engineering, class of 2029. My
-            interests span computer architecture, robotics, and tools that make
-            everyday work better.
-          </p>
-          <button
-            class="detail-trigger"
-            data-dialog="about-details"
-            type="button"
-          >
-            Experience & education <span aria-hidden="true">↗</span>
-          </button>
-        </div>
+        </header>
+        <ul class="board" aria-label="Projects">
+          <li class="card reveal" id="research" style="--x: 2%; --y: 2%; --r: -2deg">
+            <button type="button" data-dialog="memory-details">
+              <!--art:memory-->
+              <small>Research</small>
+              <strong>Memory for AI inference</strong>
+              <span>Modeling how memory capacity, bandwidth, and topology shape LLM inference.</span>
+            </button>
+          </li>
+          <li class="card reveal" id="piezo" style="--x: 36%; --y: 1%; --r: 1.5deg">
+            <button type="button" data-dialog="piezo-details">
+              <!--art:piezo-->
+              <small>Research</small>
+              <strong>Typing-force energy harvester</strong>
+              <span>A piezoelectric rig testing whether the force of typing can be harvested as usable energy.</span>
+            </button>
+          </li>
+          <li class="card reveal" style="--x: 70%; --y: 4%; --r: -1deg">
+            <button type="button" data-dialog="ergotouch-details">
+              <!--art:ergotouch-->
+              <small>Hardware</small>
+              <strong>ErgoTouch</strong>
+              <span>A custom split keyboard: resin case, KiCad PCB, and RP2040 firmware.</span>
+            </button>
+          </li>
+          <li class="card reveal" id="ebike" style="--x: 4%; --y: 35%; --r: 1deg">
+            <button type="button" data-dialog="bike-details">
+              <!--art:bike-->
+              <small>Hardware</small>
+              <strong>A bike, rebuilt</strong>
+              <span>A mountain bike converted with a custom 48 V battery and mid-drive motor.</span>
+            </button>
+          </li>
+          <li class="card reveal" style="--x: 38%; --y: 33%; --r: -1.5deg">
+            <button type="button" data-dialog="logic-details">
+              <!--art:logic-->
+              <small>Hardware</small>
+              <strong>Logic you can touch</strong>
+              <span>A gate-level 4-bit adder/subtractor with a two-digit display.</span>
+            </button>
+          </li>
+          <li class="card reveal" id="rmx" style="--x: 71%; --y: 36%; --r: 2deg">
+            <button type="button" data-dialog="rmx-details">
+              <!--art:rmx-->
+              <small>Hardware</small>
+              <strong>RMX-1000-style effects box</strong>
+              <span>A DIY DJ effects box: pads and knobs that apply real-time effects to music. In progress.</span>
+            </button>
+          </li>
+          <li class="card reveal" id="developer" style="--x: 2%; --y: 67%; --r: -1.5deg">
+            <button type="button" data-dialog="developer-details">
+              <!--art:opensource-->
+              <small>Software</small>
+              <strong>Open-source contributions</strong>
+              <span>Contributor to cmux and Pi.</span>
+            </button>
+          </li>
+          <li class="card reveal" id="realization" style="--x: 36%; --y: 68%; --r: 1deg">
+            <button type="button" data-dialog="realization-details">
+              <!--art:realization-->
+              <small>AI</small>
+              <strong>Realization Engine</strong>
+              <span>Turns a property listing's photos into a 3D model you can walk through and furnish.</span>
+            </button>
+          </li>
+          <li class="card reveal" id="verdnt" style="--x: 70%; --y: 66%; --r: -2deg">
+            <button type="button" data-dialog="fstea-details">
+              <!--art:fstea-->
+              <small>AI</small>
+              <strong>FStea AI</strong>
+              <span>Beverage intelligence: nine signal collectors feed ranked trends and product concepts.</span>
+            </button>
+          </li>
+        </ul>
       </section>
-      <section
-        class="chapter"
-        id="research"
-        aria-labelledby="research-title"
-        data-label="Hardware & research"
-      >
-        <span class="anchor-alias" id="work"></span>
-        <div class="chapter-copy">
-          <p class="eyebrow">Hardware & research</p>
-          <h2 id="research-title">
-            Model memory.<br />
-            Build hardware.
-          </h2>
-          <p class="body-copy">
-            I model memory architectures for AI inference with Stanford’s
-            Engineering Robust Systems Group. My independent projects include
-            custom circuit boards and embedded hardware.
-          </p>
-          <p class="chapter-note">
-            Stanford Robust Systems Group · Independent builds
-          </p>
-          <button
-            class="detail-trigger"
-            data-dialog="research-details"
-            type="button"
-          >
-            Explore the projects <span aria-hidden="true">↗</span>
-          </button>
-        </div>
+
+      <section class="section" id="hobbies" aria-labelledby="hobbies-title">
+        <!--art:rule-d-->
+        <header class="section-head">
+          <h2 id="hobbies-title">hobbies</h2>
+          <p>Soccer, hiking, consumer electronics, AI agents, and music.</p>
+        </header>
+        <p class="lead">
+          My interests span computer architecture, robotics, and tools that make
+          everyday work better.
+        </p>
+        <ul class="hobbies">
+          <li class="hobby reveal" style="--r: -1.2deg">
+            <!--art:hobby-soccer-->
+            <h3>soccer</h3>
+            <p>I follow Bayern Munich and Chivas.</p>
+          </li>
+          <li class="hobby reveal" style="--r: 0.9deg">
+            <!--art:hobby-hiking-->
+            <h3>hiking</h3>
+            <p>I love hiking. I summited Mt. Cloudripper, the hardest scramble I have ever done.</p>
+          </li>
+          <li class="hobby reveal" style="--r: -0.7deg">
+            <!--art:hobby-electronics-->
+            <h3>electronics</h3>
+            <p>
+              I love consumer electronics. I play around with headphone EQ on a
+              Qudelix 5K, and my favorite headphones are the Sennheiser IE600. I
+              also built <a href="#ebike">the e-bike</a> I rode to Amazon every day.
+            </p>
+          </li>
+          <li class="hobby reveal" style="--r: 1deg">
+            <!--art:hobby-agents-->
+            <h3>agents</h3>
+            <p>
+              I love AI systems and personal agents. I have tinkered heavily with
+              Hermes and I'm an avid Grok bot user.
+            </p>
+          </li>
+          <li class="hobby reveal" style="--r: -0.9deg">
+            <!--art:hobby-music-->
+            <h3>music</h3>
+            <p>
+              I love music and I like to DJ; my favorite artists are Overmono and
+              Latin Mafia. I'm building an
+              <a href="#rmx">RMX-1000-style effects box</a>.
+            </p>
+          </li>
+        </ul>
       </section>
-      <section
-        class="chapter"
-        id="developer"
-        aria-labelledby="developer-title"
-        data-label="Software & tools"
-      >
-        <div class="chapter-copy">
-          <p class="eyebrow">Software & developer tools</p>
-          <h2 id="developer-title">
-            Build tools.<br />
-            Verify software.
-          </h2>
-          <p class="body-copy">
-            For Stanford's
-            <a
-              href="https://themodernsoftware.dev"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Modern Software Developer course</a
-            >, I'm exploring coding agents, MCP, and how to verify the software
-            people actually use.
-          </p>
-          <div class="links">
-            <a
-              href="https://github.com/manaflow-ai/cmux"
-              target="_blank"
-              rel="noopener noreferrer"
-              >CMUX ↗</a
-            ><a
-              href="https://github.com/earendil-works/pi"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Pi ↗</a
-            >
+
+      <section class="section" id="contact" aria-labelledby="contact-title">
+        <!--art:rule-c-->
+        <header class="section-head">
+          <h2 id="contact-title">contact</h2>
+          <p>Email, profiles, and resume for hardware, software, or research opportunities.</p>
+        </header>
+        <div class="contact-grid">
+          <div>
+            <a class="email-link" href="mailto:dsanchezt22@gmail.com">dsanchezt22@gmail.com</a>
+            <ul class="text-links">
+          <li><a href="https://github.com/dsanchezt22" target="_blank" rel="noopener noreferrer">GitHub ↗</a></li>
+          <li><a href="https://x.com/hnsmsquidwrd" target="_blank" rel="noopener noreferrer">X ↗</a></li>
+          <li><a href="https://www.linkedin.com/in/diego-sanchez-tirado" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></li>
+          <li><a href="Diego-Sanchez-Tirado-Resume.pdf" target="_blank" rel="noopener">Resume ↗</a></li>
+        </ul>
           </div>
-          <button
-            class="detail-trigger"
-            data-dialog="developer-details"
-            type="button"
-          >
-            Open my course notebook <span aria-hidden="true">↗</span>
-          </button>
-        </div>
-      </section>
-      <section
-        class="chapter"
-        id="verdnt"
-        aria-labelledby="verdnt-title"
-        data-label="Applied AI"
-      >
-        <div class="chapter-copy">
-          <p class="eyebrow">Applied AI / Verdnt Group</p>
-          <h2 id="verdnt-title">
-            Develop AI<br />
-            applications.
-          </h2>
-          <p class="body-copy">
-            At Verdnt Group, I build AI systems that turn scattered information
-            into useful tools. My work includes beverage intelligence,
-            hospitality prototypes, and a plate-scanning workflow.
-          </p>
-          <button
-            class="detail-trigger"
-            data-dialog="verdnt-details"
-            type="button"
-          >
-            See what I'm working on <span aria-hidden="true">↗</span>
-          </button>
-        </div>
-      </section>
-      <section
-        class="chapter"
-        id="contact"
-        aria-labelledby="contact-title"
-        data-label="Get in touch"
-      >
-        <div class="chapter-copy">
-          <p class="eyebrow">Contact</p>
-          <h2 id="contact-title">
-            Work with me.
-          </h2>
-          <p class="body-copy">
-            Contact me about hardware, software, or research opportunities.
-          </p>
-          <a class="email-link" href="mailto:dsanchezt22@gmail.com"
-            >dsanchezt22@gmail.com ↗</a
-          >
-          <div class="links">
-            <a
-              href="https://github.com/dsanchezt22"
-              target="_blank"
-              rel="noopener noreferrer"
-              >GitHub ↗</a
-            ><a
-              href="https://www.linkedin.com/in/diego-sanchez-tirado"
-              target="_blank"
-              rel="noopener noreferrer"
-              >LinkedIn ↗</a
-            ><a
-              href="Diego-Sanchez-Tirado-Resume.pdf"
-              target="_blank"
-              rel="noopener"
-              >Resume ↗</a
-            >
-          </div>
-          <button id="replay" class="quiet-button" type="button" hidden>
-            Replay the introduction
-          </button>
+          <div class="reveal"><!--art:post--></div>
         </div>
       </section>
     </main>
-    <nav class="chapter-nav" aria-label="Explore the site" hidden>
-      <a href="#home" aria-label="Hello"><span>Hello</span></a
-      ><a href="#about" aria-label="About me"><span>About me</span></a
-      ><a href="#research" aria-label="Hardware and research"
-        ><span>Hardware</span></a
-      ><a href="#developer" aria-label="Software and tools"
-        ><span>Software</span></a
-      ><a href="#verdnt" aria-label="Applied AI"><span>Applied AI</span></a
-      ><a href="#contact" aria-label="Get in touch"><span>Contact</span></a>
-    </nav>
-    <div class="journey-footer" hidden>
-      <span id="chapter-label">Hello</span
-      ><span class="scroll-hint"
-        >Scroll to explore <span aria-hidden="true">↓</span></span
-      >
-      <div class="controls">
-        <button id="motion" type="button" aria-pressed="true">Motion on</button
-        ><button id="sound" type="button" aria-pressed="false">
-          Sound off
-        </button>
-      </div>
-    </div>
 
-    <dialog id="about-details" aria-labelledby="experience-title">
-      <button class="close-dialog" type="button" aria-label="Close experience">
-        Close ×
-      </button>
-      <p class="eyebrow">Experience & education</p>
-      <h2 id="experience-title">
-        A few stops<br />
-        along the way.
-      </h2>
-      <div class="detail-list" id="experience">
-        <article>
-          <small>2026 - present</small>
-          <h3>Verdnt Group</h3>
-          <p>
-            Building AI systems for businesses, including FStea's beverage
-            intelligence engine.
-          </p>
-        </article>
-        <article>
-          <small>2026 - present</small>
-          <h3>Stanford Robust Systems Group</h3>
-          <p>
-            Undergraduate research in area-scalable memory for LLM inference.
-          </p>
-        </article>
-        <article>
-          <small>Summer 2026</small>
-          <h3>Amazon Lab126</h3>
-          <p>
-            Hardware Development Engineer Intern and Robotics Apprentice.
-            Engineering knowledge systems, retrieval safeguards, and bimanual
-            robot manipulation.
-          </p>
-        </article>
-        <article>
-          <small>2025</small>
-          <h3>Code Four (YC X25)</h3>
-          <p>
-            GTM Team Lead. Built outreach automation and helped onboard 520+
-            officers.
-          </p>
-        </article>
-        <article>
-          <small>2023 - 2025</small>
-          <h3>Duke University</h3>
-          <p>
-            Research across nanomaterials, thin films, and cyber threat
-            intelligence.
-          </p>
-        </article>
-        <article>
-          <small>Expected May 2029</small>
-          <h3>Stanford University</h3>
-          <p>B.S. Electrical Engineering</p>
-        </article>
+    <dialog id="memory-details" aria-labelledby="memory-title">
+      <button class="close-dialog" type="button">Close</button>
+      <div class="sheet">
+      <small>Research</small>
+      <h2 id="memory-title">Memory for AI inference</h2>
+      <p class="meta">Stanford Robust Systems Group · through summer 2026</p>
+      <p>
+        With Prof. Subhasish Mitra and Sam Dayo, I modeled how memory capacity,
+        bandwidth, and network topology shape LLM inference, comparing
+        area-scalable mesh memory with HBM.
+      </p>
       </div>
-      <a
-        class="detail-link"
-        href="Diego-Sanchez-Tirado-Resume.pdf"
-        target="_blank"
-        rel="noopener"
-        >Read my full resume ↗</a
-      >
     </dialog>
-    <dialog id="research-details" aria-labelledby="research-details-title">
-      <button
-        class="close-dialog"
-        type="button"
-        aria-label="Close research projects"
-      >
-        Close ×
-      </button>
-      <p class="eyebrow">Research & independent builds</p>
-      <h2 id="research-details-title">
-        From the model<br />
-        to the workbench.
-      </h2>
-      <div class="detail-list">
-        <article>
-          <small>Stanford Robust Systems Group</small>
-          <h3>Rethinking memory for AI inference</h3>
-          <p>
-            With Prof. Subhasish Mitra and Sam Dayo, I model how memory
-            capacity, bandwidth, and network topology shape LLM inference,
-            comparing area-scalable mesh memory with HBM.
-          </p>
-        </article>
-        <article>
-          <small>Bowman Brockman Grant</small>
-          <h3>ErgoTouch</h3>
-          <p>
-            A custom split keyboard, from a resin-printed case and KiCad PCB to
-            hand-soldered switches and RP2040 firmware.
-          </p>
-        </article>
-        <article>
-          <small>Independent build / 2026</small>
-          <h3>A bike, rebuilt</h3>
-          <p>
-            A mountain-bike conversion with a custom 48 V battery pack and
-            mid-drive motor. Built, tested, and put to work on my Amazon
-            commute.
-          </p>
-        </article>
-        <article>
-          <small>Digital logic & energy harvesting</small>
-          <h3>Logic you can touch</h3>
-          <p>
-            A gate-level 4-bit adder/subtractor with a two-digit display, plus a
-            piezoelectric rig that harvests typing force.
-          </p>
-        </article>
+    <dialog id="piezo-details" aria-labelledby="piezo-title">
+      <button class="close-dialog" type="button">Close</button>
+      <div class="sheet">
+      <small>Research</small>
+      <h2 id="piezo-title">Typing-force energy harvester</h2>
+      <p class="meta">NC Science &amp; Engineering Fair · 2024 · North Carolina School of Science and Mathematics</p>
+      <p>
+        Can the force of typing on a mechanical keyboard switch be harvested as
+        usable energy? The rig: a piezo disc under an MX black switch on a force
+        plate, a four-diode bridge rectifier charging a 470 µF capacitor, and a
+        rocker switch that dumps the stored charge into a red LED.
+      </p>
+      <p>
+        I swept press force (2.5 ± 1 N) and disc diameter (10 and 41 mm) over
+        360 actuations, about a minute of typing, logging force and voltage with
+        Vernier probes in Logger Pro. A press of about 3 N produced a spike of
+        about 6 V on the 41 mm disc. Voltage rose with force and with disc size;
+        at low force the 41 mm disc reached about 2 V and the 10 mm disc never did.
+      </p>
+      <p>
+        Conclusion: intermediate-to-large piezos under normal typing force
+        capture usable energy, a low-cost, battery-free idea for low-resource
+        settings.
+      </p>
+      </div>
+    </dialog>
+    <dialog id="ergotouch-details" aria-labelledby="ergotouch-title">
+      <button class="close-dialog" type="button">Close</button>
+      <div class="sheet">
+      <small>Hardware</small>
+      <h2 id="ergotouch-title">ErgoTouch</h2>
+      <p class="meta">Bowman Brockman Grant</p>
+      <p>
+        A custom split keyboard, from a resin-printed case and KiCad PCB to
+        hand-soldered switches and RP2040 firmware.
+      </p>
+      </div>
+    </dialog>
+    <dialog id="bike-details" aria-labelledby="bike-title">
+      <button class="close-dialog" type="button">Close</button>
+      <div class="sheet">
+      <small>Hardware</small>
+      <h2 id="bike-title">A bike, rebuilt</h2>
+      <p class="meta">Independent build · 2026</p>
+      <p>
+        A mountain-bike conversion with a custom 48 V battery pack and mid-drive
+        motor. Built, tested, and put to work on my Amazon commute.
+      </p>
+      </div>
+    </dialog>
+    <dialog id="logic-details" aria-labelledby="logic-title">
+      <button class="close-dialog" type="button">Close</button>
+      <div class="sheet">
+      <small>Hardware</small>
+      <h2 id="logic-title">Logic you can touch</h2>
+      <p class="meta">Digital logic</p>
+      <p>
+        A gate-level 4-bit adder/subtractor with a two-digit display.
+      </p>
+      </div>
+    </dialog>
+    <dialog id="rmx-details" aria-labelledby="rmx-title">
+      <button class="close-dialog" type="button">Close</button>
+      <div class="sheet">
+      <small>Hardware</small>
+      <h2 id="rmx-title">RMX-1000-style effects box</h2>
+      <p class="meta">Stanford EE 102A final project · with Anthony Yang and Daniel Tauhert · in progress</p>
+      <p>
+        A DIY version of the Pioneer RMX-1000: a small box with a button pad and
+        knobs that takes music in and applies effects in real time. Echo and
+        delay, reverb, filter sweeps (low-, high-, and band-pass, plus a
+        bass/mid/treble isolator), pitch changes, and build-ups before a drop.
+      </p>
+      <p>
+        Signal chain: music in → ADC → a microcontroller running the effects
+        from the pad and knobs → DAC → speakers. Each effect is prototyped first
+        in Python and MATLAB (echo as an LTI system, h[n] = δ[n] + a·δ[n−D];
+        reverb as convolution with a room impulse response; FFTs and
+        spectrograms), then moved to hardware: an ESP32, a Raspberry Pi, or an
+        audio board in a project-box enclosure, laser-cut if time allows.
+      </p>
+      <p>Status: being built now.</p>
       </div>
     </dialog>
     <dialog id="developer-details" aria-labelledby="developer-details-title">
-      <button
-        class="close-dialog"
-        type="button"
-        aria-label="Close course notebook"
-      >
-        Close ×
-      </button>
-      <p class="eyebrow">CS146S / Fall 2026</p>
-      <h2 id="developer-details-title">
-        Notes from<br />
-        the developer's bench.
-      </h2>
-      <ol class="detail-list course-list">
-        <li>
-          <small>Week 1</small>
-          <h3>Inside the agent loop</h3>
-          <p>
-            Inspecting a coding-agent session to understand prompts, tool calls,
-            and context.
-          </p>
-        </li>
-        <li>
-          <small>Week 2</small>
-          <h3>From plate to persistent log</h3>
-          <p>
-            A five-tool MCP server connecting Drive photos, plate analysis, and
-            a Sheets meal log, with OAuth and a preview before writing.
-          </p>
-        </li>
-        <li>
-          <small>Week 3</small>
-          <h3>Check the thing people use</h3>
-          <p>
-            A reusable skill for checking FStea AI's published interface, mobile
-            layouts, languages, and saved results.
-          </p>
-        </li>
-      </ol>
-      <p class="fine-print">
-        CMUX and Pi links point to the upstream tools. Course submissions are
-        private.
+      <button class="close-dialog" type="button">Close</button>
+      <div class="sheet">
+      <small>Software</small>
+      <h2 id="developer-details-title">Open-source contributions</h2>
+      <p class="meta">cmux · Pi</p>
+      <p>
+        I contribute to cmux and to Pi. Two of my cmux pull requests are open.
       </p>
-      <a
-        class="detail-link"
-        href="https://themodernsoftware.dev"
-        target="_blank"
-        rel="noopener noreferrer"
-        >Explore the course ↗</a
-      >
+      <ul class="text-links">
+        <li><a href="https://github.com/manaflow-ai/cmux/pull/45837" target="_blank" rel="noopener noreferrer">cmux #45837 ↗</a></li>
+        <li><a href="https://github.com/manaflow-ai/cmux/pull/42241" target="_blank" rel="noopener noreferrer">cmux #42241 ↗</a></li>
+        <li><a href="https://github.com/manaflow-ai/cmux" target="_blank" rel="noopener noreferrer">cmux ↗</a></li>
+        <li><a href="https://github.com/earendil-works/pi" target="_blank" rel="noopener noreferrer">Pi ↗</a></li>
+      </ul>
+      </div>
     </dialog>
-    <dialog id="verdnt-details" aria-labelledby="verdnt-details-title">
-      <button
-        class="close-dialog"
-        type="button"
-        aria-label="Close applied AI projects"
-      >
-        Close ×
-      </button>
-      <p class="eyebrow">Selected work at Verdnt Group</p>
-      <h2 id="verdnt-details-title">
-        Information<br />
-        into action.
-      </h2>
-      <div class="detail-list">
-        <article>
-          <small>Beverage intelligence</small>
-          <h3>FStea AI</h3>
-          <p>
-            Nine collectors bring together social, marketplace, retail-launch,
-            search, and seasonal signals. The engine turns them into ranked
-            trends, product concepts, and product specifications.
-          </p>
-        </article>
-        <article>
-          <small>Hospitality prototypes</small>
-          <h3>A better winery day</h3>
-          <p>
-            Two interactive concepts: guest preparation for Hill Family Estate
-            and a portfolio view for Soda Rock Winery.
-          </p>
-          <div class="links">
-            <a
-              href="https://hill-demo.diegosancheztirado.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Hill Family demo ↗</a
-            ><a
-              href="https://soda-demo.diegosancheztirado.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Soda Rock demo ↗</a
-            >
-          </div>
-          <p class="fine-print">Independent demos using fictional data.</p>
-        </article>
-        <article>
-          <small>Food meets software</small>
-          <h3>Plate Scanner</h3>
-          <p>
-            A phone-first tool for estimating what's on a dining-hall plate. My
-            course work adds an MCP server connecting plate photos in Google
-            Drive to a meal log in Google Sheets.
-          </p>
-        </article>
+    <dialog id="realization-details" aria-labelledby="realization-title">
+      <button class="close-dialog" type="button">Close</button>
+      <div class="sheet">
+      <small>AI</small>
+      <h2 id="realization-title">Realization Engine</h2>
+      <p class="meta">Spatial Realization · Stanford CS146S</p>
+      <p>
+        Realization Engine turns a property listing's photos into an
+        explorable, editable 3D model. You can view it as a dollhouse, walk
+        through it, or see the floor plan, and furnish it by describing a piece
+        ("a 2.1 m navy sofa against the wall"). Pieces are placed at real size
+        and checked for clearance and fit: doors unblocked, tight passages,
+        refused placements.
+      </p>
+      <p>
+        Room sizes are inferred from the photos, and the app says so: the model
+        is an estimate, not a survey.
+      </p>
+      <ul class="text-links">
+        <li><a href="https://realization.verdntgroup.com/" target="_blank" rel="noopener noreferrer">Open Realization Engine ↗</a></li>
+      </ul>
+      </div>
+    </dialog>
+    <dialog id="fstea-details" aria-labelledby="fstea-title">
+      <button class="close-dialog" type="button">Close</button>
+      <div class="sheet">
+      <small>AI</small>
+      <h2 id="fstea-title">FStea AI</h2>
+      <p class="meta">Verdnt Group · Beverage intelligence</p>
+      <p>
+        Nine collectors bring together social, marketplace, retail-launch,
+        search, and seasonal signals. The engine turns them into ranked trends,
+        product concepts, and product specifications.
+      </p>
       </div>
     </dialog>
   </body>
