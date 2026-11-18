@@ -1,0 +1,1 @@
+() => new Promise((res) => { const t = []; const t0 = performance.now(); (function step(now) { t.push(now); now - t0 < 4000 ? requestAnimationFrame(step) : res(JSON.stringify(t.slice(1).map((v, i) => +(v - t[i]).toFixed(1)))); })(t0); })
