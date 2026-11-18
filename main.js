@@ -27,17 +27,21 @@ hero.addEventListener("pointermove", (event) => {
 const circuit = document.querySelector(".circuit");
 const stops = [...circuit.querySelectorAll(".stop")];
 const animate = matchMedia("(prefers-reduced-motion: no-preference)").matches;
-// The gold trace is drawn whole, once, inside a window (.cut) whose lower edge is
-// moved to the signal's position, and the spark is a small element of its own.
-// Scrolling then only changes transforms: the wobble filter never runs again.
+// The trace is three stacked drawings, so that nothing which changes shares a layer
+// with something that does not: the copper (never repainted); the gold trace, drawn
+// whole once inside a window (.cut) whose lower edge is moved to the signal; and on
+// top the pads and the short taps to each stop, which light up one at a time. The
+// spark is an element of its own. Scrolling then only changes transforms, and the
+// wobble filter is not re-run.
 circuit.insertAdjacentHTML(
   "afterbegin",
-  '<svg class="wire" aria-hidden="true"><path class="co"/><path class="ci"/><g></g></svg>' +
-    '<div class="cut" aria-hidden="true"><div><svg class="wire"></svg></div></div><i class="spark" hidden></i>',
+  '<svg class="wire" aria-hidden="true"><g><path class="co"/><path class="ci"/></g></svg>' +
+    '<div class="cut" aria-hidden="true"><div><svg class="wire"></svg></div></div>' +
+    '<svg class="wire taps" aria-hidden="true"></svg><i class="spark" hidden></i>',
 );
 circuit.classList.add("wired");
-const [wire, cut, spark] = circuit.children;
-const [copper, core, pads] = wire.children;
+const [wire, cut, tapWire, spark] = circuit.children;
+const [copper, core] = wire.firstChild.children;
 const gold = cut.firstChild;
 const lit = gold.firstChild;
 let bus = [];
@@ -72,12 +76,17 @@ function route() {
   const stubs = taps.map((tap) => `M${tap.x} ${tap.y}H${tap.end}`);
   copper.setAttribute("d", line + stubs.join(""));
   core.setAttribute("d", line + stubs.join(""));
-  // Pads and ground sit over the trace, so the gold layer carries its own copy of them.
-  const over =
-    taps.map((tap) => `<circle class="pad" cx="${tap.x}" cy="${tap.y}" r="5"/><circle class="pad" cx="${tap.end}" cy="${tap.y}" r="4"/>`).join("") +
-    `<circle class="pad" cx="${mid}" cy="0" r="6"/><path class="gnd" d="M${endX - 11} ${endY + 46}h22M${endX - 7} ${endY + 51}h14M${endX - 3} ${endY + 56}h6"/>`;
-  pads.innerHTML = stubs.map((d, i) => `<path class="stub${stops[i].classList.contains("on") ? " lit" : ""}" pathLength="1" d="${d}"/>`).join("") + over;
-  lit.innerHTML = `<path class="hot" d="${line}"/><g>${over}</g>`;
+  // The unseen strut gives the group some width: on a phone the trace is one straight
+  // vertical line, and a filter is not applied to a box with no width.
+  lit.innerHTML = `<g><path class="hot" d="${line}"/><path stroke="none" d="M${mid - 12} 0h24"/></g>`;
+  // The top layer: each tap with the pads at its two ends, then the pad the trace starts
+  // from and the ground it ends in.
+  const pad = (x, y, r) => `<circle class="pad" cx="${x}" cy="${y}" r="${r}"/>`;
+  tapWire.innerHTML =
+    taps
+      .map((tap, i) => `<g><path class="stub${stops[i].classList.contains("on") ? " lit" : ""}" pathLength="1" d="${stubs[i]}"/>${pad(tap.x, tap.y, 5)}${pad(tap.end, tap.y, 4)}</g>`)
+      .join("") +
+    `<g>${pad(mid, 0, 6)}<path class="gnd" d="M${endX - 11} ${endY + 46}h22M${endX - 7} ${endY + 51}h14M${endX - 3} ${endY + 56}h6"/></g>`;
   reached = NaN;
   energise();
 }
@@ -95,7 +104,7 @@ function energise() {
     else if (reach > ay) tip = [ax + ((bx - ax) * (reach - ay)) / (by - ay), reach];
   }
   // At the end the window opens fully, so the trace's rounded end is not cut off.
-  const open = reach < end ? `${reach}px` : "100%";
+  const open = reach < end ? `${Math.round(reach)}px` : "100%"; // whole pixels keep the layer sharp
   cut.style.transform = `translateY(calc(${open} - 100%))`;
   gold.style.transform = `translateY(calc(100% - ${open}))`;
   spark.style.transform = `translate(${tip[0]}px, ${tip[1]}px)`;
@@ -103,7 +112,7 @@ function energise() {
   stops.forEach((stop, i) => {
     const on = reach >= taps[i].y;
     stop.classList.toggle("on", on);
-    pads.children[i].classList.toggle("lit", on);
+    tapWire.children[i].firstChild.classList.toggle("lit", on);
   });
 }
 route();

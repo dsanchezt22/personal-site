@@ -451,7 +451,14 @@ h3 {
   height: 100%;
   overflow: visible;
   pointer-events: none;
-  filter: url(#ink-ui);
+}
+/* The wobble is applied to groups, not the svg: each filter then covers only what it
+   draws (the strip the trace occupies, or one tap) instead of the whole section. */
+.wire > g {
+  filter: url(#ink-wire);
+}
+.taps {
+  will-change: transform;
 }
 /* The gold layer: a window with its lower edge at the signal. main.js moves the
    window and moves the drawing inside it back, so the two stay registered. */
