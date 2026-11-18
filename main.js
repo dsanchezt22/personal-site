@@ -84,7 +84,7 @@ function route() {
   const pad = (x, y, r) => `<circle class="pad" cx="${x}" cy="${y}" r="${r}"/>`;
   tapWire.innerHTML =
     taps
-      .map((tap, i) => `<g><path class="stub${stops[i].classList.contains("on") ? " lit" : ""}" pathLength="1" d="${stubs[i]}"/>${pad(tap.x, tap.y, 5)}${pad(tap.end, tap.y, 4)}</g>`)
+      .map((tap, i) => `<g><path class="stub${stops[i].classList.contains("on") ? " lit" : ""}" pathLength="1" d="${stubs[i]}"/>${pad(tap.x, tap.y, 5)}${pad(tap.end, tap.y, 4)}<path stroke="none" d="M${tap.x} ${tap.y - 9}v18"/></g>`)
       .join("") +
     `<g>${pad(mid, 0, 6)}<path class="gnd" d="M${endX - 11} ${endY + 46}h22M${endX - 7} ${endY + 51}h14M${endX - 3} ${endY + 56}h6"/></g>`;
   reached = NaN;
