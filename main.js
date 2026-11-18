@@ -1,13 +1,3 @@
-// Every X/LinkedIn link on the page uses these.
-const SOCIALS = {
-  x: "https://x.com/hnsmsquidwrd",
-  linkedin: "https://www.linkedin.com/in/diego-sanchez-tirado",
-};
-
-for (const link of document.querySelectorAll("[data-social]")) {
-  link.href = SOCIALS[link.dataset.social];
-}
-
 // Reveal styles only apply once this class is set, so the page reads fine without JavaScript.
 document.documentElement.classList.add("js");
 const seen = new IntersectionObserver(

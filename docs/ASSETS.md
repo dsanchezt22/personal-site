@@ -1,6 +1,6 @@
 # Artwork and fonts
 
-- scripts/art: original drawings generated as inline SVG at build time (hero circuit board, eight project drawings, campus strip, contact still-life, schematic rules, timeline marks, social marks). They follow the hand-drawn spirit of toryn.bio; none of that site's art, text, or code was copied. The illustrations are conceptual, not product photography or actual client packaging.
+- scripts/art: original drawings generated as inline SVG at build time (hero circuit board, nine project drawings, five hobby drawings, campus strip, contact still-life, schematic rules, experience stop drawings and marks, social marks). They follow the hand-drawn spirit of toryn.bio; none of that site's art, text, or code was copied. The illustrations are conceptual, not product photography or actual client packaging.
 - fonts/manrope-800.ttf: Google Fonts Manrope, SIL Open Font License in fonts/manrope-OFL.txt.
 - fonts/inter-*.woff2: existing Inter files, license in fonts/OFL.txt.
 - favicon.svg: project-native personal ds. monogram.

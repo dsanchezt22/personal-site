@@ -57,7 +57,6 @@ for url in ('https://github.com/dsanchezt22', 'https://x.com/hnsmsquidwrd', 'htt
     assert url in page.urls, f'Missing public link: {url}'
 for social in ('mailto:dsanchezt22@gmail.com', 'Diego-Sanchez-Tirado-Resume.pdf'):
     assert social in page.urls, f'Missing social link: {social}'
-assert html.count('data-social="x"') >= 2 and html.count('data-social="linkedin"') >= 2, 'Missing X/LinkedIn links'
 assert 'id="world"' not in html and 'id="intro"' not in html, 'Superseded WebGL scene or intro'
 assert not any('modern-software-dev-assignments' in url or 'staging.fsteaai.com' in url for url in page.urls)
 with urlopen(urljoin(base, 'Diego-Sanchez-Tirado-Resume.pdf')) as response:
