@@ -10,6 +10,7 @@ const H = 80;
 const DX = [1, 1, 0, -1, -1, -1, 0, 1];
 const DY = [0, 1, 1, 1, 0, -1, -1, -1];
 const dirOf = (dx, dy) => DX.findIndex((v, i) => v === dx && DY[i] === dy);
+const collinear = (a, p, b) => (p[0] - a[0]) * (b[1] - p[1]) === (p[1] - a[1]) * (b[0] - p[0]);
 
 export function pcb() {
   reseed(2029);
@@ -437,11 +438,7 @@ export function pcb() {
         clip[idx(px, y)] |= bit;
       }
     }
-    const keep = pts.filter((p, i) => {
-      if (!i || i === pts.length - 1) return true;
-      const [a, b] = [pts[i - 1], pts[i + 1]];
-      return (p[0] - a[0]) * (b[1] - p[1]) !== (p[1] - a[1]) * (b[0] - p[0]);
-    });
+    const keep = pts.filter((p, i) => !i || i === pts.length - 1 || !collinear(pts[i - 1], p, pts[i + 1]));
     add("tr", poly(keep.map(([x, y]) => [cx(x), cx(y)])));
   }
 
@@ -631,23 +628,30 @@ export function pcb() {
   const order = ["sk", "vh", "sk2", "ld", "sf", "bf", "tm", "lit", "dot", "h", "f", "i"];
   const paths = (o) => o.filter((k) => B[k]).map((k) => `<path class="${k}" d="${B[k]}"/>`).join("");
   const copper = `<use href="#pcb-tr" class="co"/><use href="#pcb-pad" class="po"/><use href="#pcb-tr" class="ci"/><use href="#pcb-pad" class="pi"/>`;
+  // Pulses ride a few long traces. Each is a transform-only CSS animation in its own
+  // svg, so the compositor moves it and the filtered board underneath is never repainted.
+  let pulseKeys = "";
   const pulses = routed
     .filter((p) => p.length > 26)
     .sort((a, b) => b.length - a.length)
     .slice(0, 10)
     .map((p, i) => {
-      const d = poly(p.map(([x, y]) => [cx(x), cx(y)]));
-      const dur = f(7 + (i % 4) * 1.7);
-      const begin = f(i * 1.3);
-      return `<circle r="3.2" opacity="0"><animateMotion dur="${dur}s" begin="${begin}s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;.45;1" calcMode="linear" path="${d}"/><animate attributeName="opacity" dur="${dur}s" begin="${begin}s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;.04;.41;.45;1"/></circle>`;
+      const pts = p.filter((q, k) => !k || k === p.length - 1 || !collinear(p[k - 1], q, p[k + 1])).map(([x, y]) => [cx(x), cx(y)]);
+      const at = [0];
+      for (let k = 1; k < pts.length; k++) at.push(at[k - 1] + Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]));
+      // the dot travels for the first 45% of each cycle and waits, unseen, for the rest
+      const stops = pts.map(([x, y], k) => `${k === pts.length - 1 ? "45%,to" : +((45 * at[k]) / at.at(-1)).toFixed(2) + "%"}{transform:translate(${x}px,${y}px)}`);
+      pulseKeys += `@keyframes pcb-p${i}{${stops.join("")}}`;
+      return `<circle r="3.2" style="animation-name:pcb-p${i},pcb-fade;animation-duration:${f(7 + (i % 4) * 1.7)}s;animation-delay:${f(i * 1.3)}s"/>`;
     })
     .join("");
   const attrs = `viewBox="0 0 ${W * G} ${H * G}" preserveAspectRatio="xMinYMid slice" aria-hidden="true"`;
   const base =
     `<svg class="pcb" ${attrs}><defs><path id="pcb-tr" d="${B.tr}"/><path id="pcb-pad" d="${B.pad}"/></defs>` +
-    `<g filter="url(#ink-hero)">${paths(["sk"])}${copper}${paths(order.slice(1))}${labels}</g>` +
-    `<g class="pulse">${pulses}</g></svg>`;
+    `<g filter="url(#ink-hero)">${paths(["sk"])}${copper}${paths(order.slice(1))}${labels}</g></svg>` +
+    `<svg class="pcb-pulse" ${attrs}><style>${pulseKeys}</style>${pulses}</svg>`;
   const washes = Object.entries(wash).map(([k, d]) => `<path class="${k}" d="${d}"/>`).join("");
-  const washSvg = `<svg class="pcb-wash" ${attrs}><rect class="wboard" width="${W * G}" height="${H * G}"/><use href="#pcb-tr" class="wcu"/><use href="#pcb-pad" class="wcupad"/>${washes}</svg>`;
+  // The colour layer sits in a window that follows the pointer (see .pcb-spot in styles.css).
+  const washSvg = `<div class="pcb-spot"><svg class="pcb-wash" ${attrs}><rect class="wboard" width="${W * G}" height="${H * G}"/><use href="#pcb-tr" class="wcu"/><use href="#pcb-pad" class="wcupad"/>${washes}</svg></div>`;
   return base + washSvg;
 }

@@ -14,10 +14,11 @@ for (const item of document.querySelectorAll(".reveal")) seen.observe(item);
 
 // The hero board is coloured only around the pointer.
 const hero = document.querySelector(".hero");
+const spot = hero.querySelector(".pcb-spot");
 hero.addEventListener("pointermove", (event) => {
   const box = hero.getBoundingClientRect();
-  hero.style.setProperty("--mx", `${event.clientX - box.left}px`);
-  hero.style.setProperty("--my", `${event.clientY - box.top}px`);
+  spot.style.setProperty("--mx", `${event.clientX - box.left}px`);
+  spot.style.setProperty("--my", `${event.clientY - box.top}px`);
 });
 
 // Experience circuit: a trace runs past every stop. Scrolling energises it from the
@@ -26,15 +27,22 @@ hero.addEventListener("pointermove", (event) => {
 const circuit = document.querySelector(".circuit");
 const stops = [...circuit.querySelectorAll(".stop")];
 const animate = matchMedia("(prefers-reduced-motion: no-preference)").matches;
-const wire = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-wire.setAttribute("class", "wire");
-wire.setAttribute("aria-hidden", "true");
-wire.innerHTML = '<path class="co"/><path class="ci"/><path class="hot"/><g></g><circle class="halo" r="11"/><circle class="spark" r="4.5"/>';
-circuit.prepend(wire);
+// The gold trace is drawn whole, once, inside a window (.cut) whose lower edge is
+// moved to the signal's position, and the spark is a small element of its own.
+// Scrolling then only changes transforms: the wobble filter never runs again.
+circuit.insertAdjacentHTML(
+  "afterbegin",
+  '<svg class="wire" aria-hidden="true"><path class="co"/><path class="ci"/><g></g></svg>' +
+    '<div class="cut" aria-hidden="true"><div><svg class="wire"></svg></div></div><i class="spark" hidden></i>',
+);
 circuit.classList.add("wired");
-const [copper, core, hot, pads, halo, spark] = wire.children;
+const [wire, cut, spark] = circuit.children;
+const [copper, core, pads] = wire.children;
+const gold = cut.firstChild;
+const lit = gold.firstChild;
 let bus = [];
 let taps = [];
+let reached = NaN;
 if (animate) circuit.classList.add("live");
 
 // Lay the trace out from where the stops actually are.
@@ -64,40 +72,34 @@ function route() {
   const stubs = taps.map((tap) => `M${tap.x} ${tap.y}H${tap.end}`);
   copper.setAttribute("d", line + stubs.join(""));
   core.setAttribute("d", line + stubs.join(""));
-  hot.setAttribute("d", line);
-  pads.innerHTML =
-    stubs.map((d, i) => `<path class="stub${stops[i].classList.contains("on") ? " lit" : ""}" pathLength="1" d="${d}"/>`).join("") +
+  // Pads and ground sit over the trace, so the gold layer carries its own copy of them.
+  const over =
     taps.map((tap) => `<circle class="pad" cx="${tap.x}" cy="${tap.y}" r="5"/><circle class="pad" cx="${tap.end}" cy="${tap.y}" r="4"/>`).join("") +
     `<circle class="pad" cx="${mid}" cy="0" r="6"/><path class="gnd" d="M${endX - 11} ${endY + 46}h22M${endX - 7} ${endY + 51}h14M${endX - 3} ${endY + 56}h6"/>`;
+  pads.innerHTML = stubs.map((d, i) => `<path class="stub${stops[i].classList.contains("on") ? " lit" : ""}" pathLength="1" d="${d}"/>`).join("") + over;
+  lit.innerHTML = `<path class="hot" d="${line}"/><g>${over}</g>`;
+  reached = NaN;
   energise();
 }
 
 function energise() {
   const end = bus.at(-1)[1];
   const reach = animate ? Math.min(Math.max(innerHeight * 0.62 - circuit.getBoundingClientRect().top, 0), end) : end;
-  let done = 0;
-  let total = 0;
+  if (reach === reached) return;
+  reached = reach;
   let tip = bus[0];
   for (let i = 1; i < bus.length; i++) {
     const [ax, ay] = bus[i - 1];
     const [bx, by] = bus[i];
-    const length = Math.hypot(bx - ax, by - ay);
-    total += length;
-    if (reach >= by) {
-      done += length;
-      tip = bus[i];
-    } else if (reach > ay) {
-      const part = (reach - ay) / (by - ay);
-      done += length * part;
-      tip = [ax + (bx - ax) * part, reach];
-    }
+    if (reach >= by) tip = bus[i];
+    else if (reach > ay) tip = [ax + ((bx - ax) * (reach - ay)) / (by - ay), reach];
   }
-  hot.style.strokeDasharray = `${done} ${total}`;
-  for (const dot of [halo, spark]) {
-    dot.setAttribute("cx", tip[0]);
-    dot.setAttribute("cy", tip[1]);
-    dot.style.display = animate && reach > 0 && reach < end ? "" : "none";
-  }
+  // At the end the window opens fully, so the trace's rounded end is not cut off.
+  const open = reach < end ? `${reach}px` : "100%";
+  cut.style.transform = `translateY(calc(${open} - 100%))`;
+  gold.style.transform = `translateY(calc(100% - ${open}))`;
+  spark.style.transform = `translate(${tip[0]}px, ${tip[1]}px)`;
+  spark.hidden = !(animate && reach > 0 && reach < end);
   stops.forEach((stop, i) => {
     const on = reach >= taps[i].y;
     stop.classList.toggle("on", on);
@@ -107,6 +109,8 @@ function energise() {
 route();
 new ResizeObserver(route).observe(circuit);
 addEventListener("scroll", energise, { passive: true });
+// The trace hangs from the viewport, so its reach also changes when the window's height does.
+addEventListener("resize", energise);
 
 for (const dialog of document.querySelectorAll("dialog")) {
   dialog.querySelector(".close-dialog").addEventListener("click", () => dialog.close());

@@ -160,12 +160,28 @@ nav a:hover {
   height: max(640px, calc(100svh - 70px));
   overflow: hidden;
   background: var(--paper);
+  container-type: size;
 }
-.hero-art svg {
+/* The board is painted once. Everything that moves over it (pulses, the colour
+   spot) is its own layer changed only by transform or opacity, so the wobble
+   filter underneath never has to run again. */
+.hero-art {
+  --u: max(calc(100cqw / 1280), calc(100cqh / 800)); /* the drawing's exact scale */
+}
+.hero-art > svg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+}
+.pcb-pulse {
+  will-change: transform;
+}
+.pcb-pulse circle {
+  fill: var(--accent);
+  stroke: none;
+  opacity: 0;
+  animation: linear infinite;
 }
 .pcb {
   --pl: #848484;
@@ -238,16 +254,33 @@ nav a:hover {
   fill: var(--pl);
   stroke: none;
 }
-.pcb .pulse circle {
-  fill: var(--accent);
-  stroke: none;
-}
-/* Colour follows the pointer: the wash layer shows only inside a soft spot. */
-.pcb-wash {
+/* Colour follows the pointer: the wash layer shows only inside a soft spot. The
+   spot is a round window that main.js moves to --mx/--my; the wash inside moves
+   back by the same amount, so it stays registered with the board. */
+.pcb-spot {
+  --mx: 76cqw;
+  --my: 30cqh;
+  --r: calc(250 * var(--u));
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(2 * var(--r));
+  height: calc(2 * var(--r));
+  transform: translate(calc(var(--mx) - var(--r)), calc(var(--my) - var(--r)));
   mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(closest-side, #000 35%, transparent);
+  mask-image: radial-gradient(closest-side, #000 35%, transparent);
+  will-change: transform;
+}
+.pcb-wash {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100cqw;
+  height: 100cqh;
+  transform: translate(calc(var(--r) - var(--mx)), calc(var(--r) - var(--my)));
   stroke: none;
-  -webkit-mask-image: radial-gradient(circle calc(250 * var(--u)) at var(--mx, 76%) var(--my, 30%), #000 35%, transparent);
-  mask-image: radial-gradient(circle calc(250 * var(--u)) at var(--mx, 76%) var(--my, 30%), #000 35%, transparent);
+  will-change: transform;
 }
 .wboard {
   fill: #e2f1e7;
@@ -417,6 +450,38 @@ h3 {
   pointer-events: none;
   filter: url(#ink-ui);
 }
+/* The gold layer: a window with its lower edge at the signal. main.js moves the
+   window and moves the drawing inside it back, so the two stay registered. */
+.cut,
+.cut div {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+.cut {
+  overflow: hidden;
+  transform: translateY(-100%);
+}
+.spark,
+.spark::before {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.spark {
+  left: -4.5px;
+  top: -4.5px;
+  width: 9px;
+  height: 9px;
+  pointer-events: none;
+  will-change: transform;
+}
+.spark::before {
+  content: "";
+  inset: -6.5px;
+  opacity: 0.22;
+}
 .wire .co {
   stroke: var(--line);
   stroke-width: 7;
@@ -446,16 +511,6 @@ h3 {
 .wire .gnd {
   stroke: var(--line);
   stroke-width: 1.6;
-}
-.wire .spark,
-.wire .halo {
-  fill: var(--accent);
-  stroke: none;
-}
-.wire .halo {
-  opacity: 0.22;
-  transform-box: fill-box;
-  transform-origin: center;
 }
 .timeline {
   position: relative;
@@ -1043,6 +1098,17 @@ dialog::backdrop {
 
 /* Motion: things come in as they scroll into view, and each drawing has one
    small movement of its own while its card is hovered. */
+@keyframes pcb-fade {
+  0%,
+  45%,
+  to {
+    opacity: 0;
+  }
+  4%,
+  41% {
+    opacity: 1;
+  }
+}
 @keyframes hop {
   15%,
   80% {
@@ -1247,7 +1313,7 @@ dialog::backdrop {
   .live .stop:not(.on) .inside .wash {
     animation: none;
   }
-  .wire .halo {
+  .spark::before {
     animation: halo 1.4s ease-in-out infinite;
   }
   /* where the browser can animate to auto height, the board grows open */
@@ -1377,7 +1443,7 @@ dialog::backdrop {
   :root {
     scroll-behavior: auto;
   }
-  .pcb .pulse {
+  .pcb-pulse {
     display: none;
   }
   * {
