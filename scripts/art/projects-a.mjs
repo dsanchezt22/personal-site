@@ -1,26 +1,8 @@
 // Project drawings, first half: research and hardware.
-import { reseed, R, f, poly, line, rect, ell, rectPts, ellPts, hatch, curve, sheet, text, iso, tube, xf, rr, scribble, svg } from "./kit.mjs";
+import { reseed, R, f, poly, line, rect, ell, rectPts, ellPts, hatch, curve, sheet, text, iso, tube, xf, rr, scribble, svg, box } from "./kit.mjs";
 
 const W = 480;
 const H = 270;
-
-// Isometric block: silhouette, the three visible edges, shading on the two fronts.
-function box(s, P, x, y, z, w, d, h, o = {}) {
-  const A = P(x, y, z + h);
-  const B = P(x + w, y, z + h);
-  const C = P(x + w, y + d, z + h);
-  const D = P(x, y + d, z + h);
-  const B0 = P(x + w, y, z);
-  const C0 = P(x + w, y + d, z);
-  const D0 = P(x, y + d, z);
-  s.shape(poly([A, B, B0, C0, D0, D], true));
-  s.ink(poly([D, C, B]) + line(...C, ...C0));
-  s.hair(hatch([D, C, C0, D0], 90, o.g ?? 2.4, 0.35));
-  if (h > 4) s.hair(hatch([C, B, B0, C0], 90, (o.g ?? 2.4) * 2.4, 0.4));
-  if (o.tint) s.wash(o.tint, poly([A, B, B0, C0, D0, D], true));
-  s.wash("wsh", poly([D, C, C0, D0], true));
-  return { A, B, C, D };
-}
 
 // Memory for AI inference: a logic die inside a mesh of memory tiles, next to a
 // stacked (HBM-style) memory for comparison.

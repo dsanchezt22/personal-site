@@ -30,6 +30,93 @@ hero.addEventListener("pointermove", (event) => {
   hero.style.setProperty("--my", `${event.clientY - box.top}px`);
 });
 
+// Experience circuit: a trace runs past every stop. Scrolling energises it from the
+// top, and each stop switches on, showing what is inside, when the signal reaches it.
+// With reduced motion the whole trace is live and every stop is on.
+const circuit = document.querySelector(".circuit");
+const stops = [...circuit.querySelectorAll(".stop")];
+const animate = matchMedia("(prefers-reduced-motion: no-preference)").matches;
+const wire = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+wire.setAttribute("class", "wire");
+wire.setAttribute("aria-hidden", "true");
+wire.innerHTML = '<path class="co"/><path class="ci"/><path class="hot"/><g></g><circle class="halo" r="11"/><circle class="spark" r="4.5"/>';
+circuit.prepend(wire);
+circuit.classList.add("wired");
+const [copper, core, hot, pads, halo, spark] = wire.children;
+let bus = [];
+let taps = [];
+if (animate) circuit.classList.add("live");
+
+// Lay the trace out from where the stops actually are.
+function route() {
+  const box = circuit.getBoundingClientRect();
+  const phone = innerWidth < 760;
+  const mid = phone ? 12 : box.width / 2;
+  taps = stops.map((stop) => {
+    const r = stop.getBoundingClientRect();
+    const side = r.right - box.left < mid ? -1 : 1;
+    return {
+      y: r.top - box.top + 37,
+      x: mid + (phone ? 0 : side * 12),
+      end: side < 0 ? r.right - box.left + 9 : r.left - box.left - 9,
+    };
+  });
+  bus = [[mid, 0]];
+  for (const tap of taps) {
+    const [x, y] = bus.at(-1);
+    const jog = Math.abs(tap.x - x);
+    if (jog && tap.y - 26 - jog > y) bus.push([x, tap.y - 26 - jog], [tap.x, tap.y - 26]);
+    bus.push([tap.x, tap.y]);
+  }
+  const [endX, endY] = bus.at(-1);
+  bus.push([endX, endY + 46]);
+  const line = "M" + bus.map((point) => point.join(" ")).join("L");
+  const stubs = taps.map((tap) => `M${tap.x} ${tap.y}H${tap.end}`);
+  copper.setAttribute("d", line + stubs.join(""));
+  core.setAttribute("d", line + stubs.join(""));
+  hot.setAttribute("d", line);
+  pads.innerHTML =
+    stubs.map((d, i) => `<path class="stub${stops[i].classList.contains("on") ? " lit" : ""}" pathLength="1" d="${d}"/>`).join("") +
+    taps.map((tap) => `<circle class="pad" cx="${tap.x}" cy="${tap.y}" r="5"/><circle class="pad" cx="${tap.end}" cy="${tap.y}" r="4"/>`).join("") +
+    `<circle class="pad" cx="${mid}" cy="0" r="6"/><path class="gnd" d="M${endX - 11} ${endY + 46}h22M${endX - 7} ${endY + 51}h14M${endX - 3} ${endY + 56}h6"/>`;
+  energise();
+}
+
+function energise() {
+  const end = bus.at(-1)[1];
+  const reach = animate ? Math.min(Math.max(innerHeight * 0.62 - circuit.getBoundingClientRect().top, 0), end) : end;
+  let done = 0;
+  let total = 0;
+  let tip = bus[0];
+  for (let i = 1; i < bus.length; i++) {
+    const [ax, ay] = bus[i - 1];
+    const [bx, by] = bus[i];
+    const length = Math.hypot(bx - ax, by - ay);
+    total += length;
+    if (reach >= by) {
+      done += length;
+      tip = bus[i];
+    } else if (reach > ay) {
+      const part = (reach - ay) / (by - ay);
+      done += length * part;
+      tip = [ax + (bx - ax) * part, reach];
+    }
+  }
+  hot.style.strokeDasharray = `${done} ${total}`;
+  for (const dot of [halo, spark]) {
+    dot.setAttribute("cx", tip[0]);
+    dot.setAttribute("cy", tip[1]);
+    dot.style.display = animate && reach > 0 && reach < end ? "" : "none";
+  }
+  stops.forEach((stop, i) => {
+    const on = reach >= taps[i].y;
+    stop.classList.toggle("on", on);
+    pads.children[i].classList.toggle("lit", on);
+  });
+}
+new ResizeObserver(route).observe(circuit);
+addEventListener("scroll", energise, { passive: true });
+
 for (const dialog of document.querySelectorAll("dialog")) {
   dialog.querySelector(".close-dialog").addEventListener("click", () => dialog.close());
   // Clicking the backdrop closes the dialog.

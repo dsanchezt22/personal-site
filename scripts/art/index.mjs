@@ -3,6 +3,7 @@ import { pcb } from "./pcb.mjs";
 import { projectsA } from "./projects-a.mjs";
 import { projectsB } from "./projects-b.mjs";
 import { scenes } from "./scenes.mjs";
+import { stops } from "./stops.mjs";
 
 // Hand wobble: every stroke is nudged by smooth noise, so no line is ruler-straight.
 const wobble = (id, freq, scale) =>
@@ -14,4 +15,5 @@ export const art = {
   ...projectsA,
   ...projectsB,
   ...scenes,
+  ...stops,
 };

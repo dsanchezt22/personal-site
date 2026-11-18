@@ -37,7 +37,8 @@ for phrase in ('A little curiosity goes a long way', 'made tangible', 'Ideas int
     assert phrase not in html, f'Superseded copy: {phrase}'
 assert '<span class="monogram">dst</span>' in html, 'Missing dst monogram'
 assert '<!--art:' not in html, 'A drawing placeholder was not filled by the build'
-assert html.count('class="art art-') >= 16 and 'class="pcb"' in html, 'Missing drawings'
+assert html.count('class="art art-') >= 22 and 'class="pcb"' in html, 'Missing drawings'
+assert html.count('<li class="stop"') == 6 and html.count('<details open>') == 6, 'Experience circuit needs six stops, open without JavaScript'
 assert len(page.ids) == len(set(page.ids)), 'Duplicate HTML IDs'
 for anchor in ('about', 'work', 'experience', 'contact', 'verdnt', 'research', 'developer'):
     assert anchor in page.ids, f'Missing section: {anchor}'
