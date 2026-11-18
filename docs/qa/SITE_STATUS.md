@@ -18,6 +18,6 @@ Verified in real Chrome:
 
 Automated checks cover bounded chapter progress, readable stops, clear travel transitions, reversal, JavaScript syntax, artifact integrity, and the resume. Formatting and Wrangler dry-run packaging are included in release verification.
 
-Screenshots and observations are local and gitignored in docs/qa/runtime, including world-journey.json, world-ice-intro.jpg, world-home.jpg, world-developer.jpg, world-mobile-home.jpg, world-short-desktop.jpg, and world-narrow-research.jpg. Live release checks are recorded there after deployment.
+Screenshots and observations are local and gitignored in docs/qa/runtime, including desktop, phone, and narrow screenshots. Live release checks are recorded there after deployment.
 
 Coverage limits: Chrome responsive emulation is not physical mobile-device testing. Safari, Firefox, OS reduced-motion changes, WebGL context loss, and JavaScript-disabled browsing were not driven end to end. Their fallback paths were inspected in source. Domain and DNS settings are unchanged; the target remains the existing diego-personal-site Cloudflare Worker.

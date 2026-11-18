@@ -1,7 +1,7 @@
-# Projects and course notebook
+# Project board
 
-Work reaches the research chapter. The shared scene also has Software and tools and Applied AI chapters. Each opens a native detail dialog with a visible close button and Escape support. The dialog traps focus while open and returns focus to its trigger when closed.
+At 760px and wider, #work is a dotted board of tilted double-bordered cards (one line drawing, one-word category, title, one-line description). Cards drag with mouse or touch inside the board; a drag is not a click and opens nothing. A plain click opens that project's native dialog. Below 760px the board is a plain stacked list with no dragging, so touch scrolling is never trapped.
 
-Research includes memory modeling, ErgoTouch, the bike, and digital logic. The developer dialog names CS146S, CMUX, and Pi and has three ordered assignment notes. Links reach the course and upstream projects, never the private assignment repository. Verdnt describes FStea and Plate Scanner, with two public winery demos explicitly labeled fictional independent demos.
+Cards: Memory for AI inference (Research, #research), ErgoTouch, A bike rebuilt, Logic you can touch (Hardware), Course notebook (Software, #developer), FStea AI (AI, #verdnt), A better winery day, Plate Scanner (AI). The course dialog names CS146S, CMUX, and Pi with three ordered week notes, never the private assignment repository. The winery dialog links both public demos and labels them fictional independent demos.
 
-Open and close every detail dialog, scroll its content, and check headings and link destinations. Verify course notes and close controls at 320 and 390 pixels. Returning to the journey must retain the current chapter.
+Drive a real drag (`chrome-devtools-axi drag @card @target`) and confirm the card's `--x/--y` changed and no dialog opened; then click a card and confirm its dialog opens. Tab to a card and press Enter to open it. Close with the Close button, Escape, and a backdrop click; focus returns to the card. Check dialogs at 320 and 390 pixels.

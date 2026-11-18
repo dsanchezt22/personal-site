@@ -1,7 +1,7 @@
-# Automatic entrance, landing, and navigation
+# Landing and navigation
 
-A fresh tab without a fragment automatically shows a processor assembling onto its circuit board, then pulls the camera back to reveal Diego's workspace and homepage. No click is required. The same circuit board remains in the workspace afterward. The introduction takes about 2.2 seconds. Skip intro and Escape are optional exits. Replay the introduction, in Contact, returns to Home and plays it again. The rest of the page is hidden and inaccessible during the opening.
+A plain white page with a static line-drawn circuit board beside the name. There is no intro, WebGL scene, motion toggle, or sound. The hero shows "Stanford EE student · Class of 2029", the name, "I design circuits and build software.", and outlined buttons for GitHub, X, LinkedIn, Email, and Resume.
 
-Watch and capture the processor assembly, transition, and automatic completion. Verify there is no Step inside gate, no old tea hero, and no curiosity slogan. Drive Skip, Escape, and Replay. Reload within the session and confirm no repeated intro. A fresh direct chapter fragment bypasses it. Check the personal name, direct engineering headline and Stanford student introduction, profile links, and navigation at desktop, tablet, and phone sizes. Skip to content selects the readable layout and focuses main. JavaScript-disabled markup includes all essential content and detail sections.
+The sticky header links to #about (background), #work (projects), and #contact. Section titles are single lowercase words with one objective description line beneath, not slogans. Skip to content focuses main. Without JavaScript all section content is readable; project details live in dialogs and need JavaScript.
 
-The school line uses the muted site palette and a resistor/circuit SVG, with no red status-dot badge. Observe accelerating descent and small contact settling during the unchanged 2.2-second opening. The interface fades in over 160ms without waiting for another timer.
+Check 1440x900, 390x844, and 320x568: document width equals viewport width, the circuit drawing never covers the hero text, and console errors are absent.
