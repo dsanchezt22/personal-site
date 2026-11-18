@@ -39,6 +39,8 @@ assert '<span class="monogram">dst</span>' in html, 'Missing dst monogram'
 assert '<!--art:' not in html, 'A drawing placeholder was not filled by the build'
 assert html.count('class="art art-') >= 28 and 'class="pcb"' in html, 'Missing drawings'
 assert html.count('<li class="stop"') == 6 and html.count('<details open>') == 6, 'Experience circuit needs six stops, open without JavaScript'
+assert '<animate' not in html, 'SMIL animation repaints the filtered hero board on every frame; animate transform or opacity in CSS'
+assert 'class="pcb-pulse"' in html and 'class="pcb-spot"' in html, 'Hero pulses and colour spot must be their own layers'
 assert len(page.ids) == len(set(page.ids)), 'Duplicate HTML IDs'
 for gone in ('hill-demo', 'soda-demo', 'Plate Scanner', 'Course notebook', 'winery'):
     assert gone not in html, f'Removed project still present: {gone}'
