@@ -134,10 +134,11 @@ let suppressClick = false;
 
 board.addEventListener("pointerdown", (event) => {
   const card = event.target.closest(".card");
-  if (!card || !canDrag.matches || event.button !== 0) return;
+  if (!card || !canDrag.matches || event.button !== 0 || (drag && drag.id !== event.pointerId)) return;
   const box = board.getBoundingClientRect();
   suppressClick = false;
   drag = {
+    id: event.pointerId,
     card,
     box,
     dx: event.clientX - box.left - card.offsetLeft,
@@ -150,7 +151,7 @@ board.addEventListener("pointerdown", (event) => {
 });
 
 addEventListener("pointermove", (event) => {
-  if (!drag) return;
+  if (drag?.id !== event.pointerId) return;
   const { card, box } = drag;
   if (!drag.moved && Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) < 5) return;
   if (!drag.moved) {
@@ -166,8 +167,8 @@ addEventListener("pointermove", (event) => {
   card.style.setProperty("--y", `${(y / box.height) * 100}%`);
 });
 
-function endDrag() {
-  if (!drag) return;
+function endDrag(event) {
+  if (drag?.id !== event.pointerId) return;
   drag.card.classList.remove("dragging");
   // A drag is not a click: ignore the click that follows pointerup.
   suppressClick = drag.moved;
